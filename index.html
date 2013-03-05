@@ -24,12 +24,16 @@
     width: 50px;
 }
 
+#draggable { width: 150px; height: 150px; padding: 0.5em; background-color: #FFAACC;    position: fixed; 
+}
 
     </style>
 
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="https://raw.github.com/FrancisShanahan/Identicon5/master/jquery.identicon5.js"></script>
+    <script src="https://raw.github.com/FrancisShanahan/Identicon5/master/jquery.identicon5.js"></script> 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+  
     <script>
     function log(text){
         var _body = $('#stuff');
@@ -42,7 +46,7 @@
     }
 
     window.onload = function() {
-      socket = io.connect('http://localhost:8080');
+      socket = io.connect('/');
       socket.on('news', function (data) {
         log(data)
         
@@ -51,11 +55,28 @@
         log(data);
       })
 
+      socket.on('collab', function(data) {
+        console.log(data.shape);
+        window.shape = data.shape
+        $("#draggable").css("left",data.shape.x + "px")
+        $("#draggable").css("top",data.shape.y + "px")
+
+      })
+
       $("#message").keyup(function (e) {
         if (e.keyCode == 13) {
             chat()
         }
         });
+
+      $("#draggable").draggable({
+
+        stop: function( event, ui ) {
+            window.shape.x = parseInt( $(this).css("left"), 10)
+            window.shape.y = parseInt( $(this).css("top"), 10)
+            socket.emit("collab", {shape: window.shape})
+        }
+      })
 
     }
 
@@ -83,7 +104,9 @@
         </div>
 
     </div><!-- wrapper -->
-
+    <div id="draggable" class="ui-widget-content">
+        <p>Drag me around</p>
+    </div>
    
        
     

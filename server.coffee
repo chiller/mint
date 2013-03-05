@@ -1,3 +1,15 @@
+LATENCY = 0
+
+class Shape
+  constructor: (@x, @y) ->
+
+  set: (x,y) =>
+    @x = x
+    @y = y
+
+shape = new Shape 100,100
+console.log shape
+
 handler = (req, res) ->
   fs.readFile __dirname + "/index.html", (err, data) ->
     if err
@@ -21,12 +33,27 @@ io.sockets.on "connection", (socket) ->
     sender: "system"
     hello: "Hello world"
 
+  socket.emit "collab",
+    sender: "system"
+    shape: shape
+
+  socket.on "collab", (data) ->
+    shape = data.shape
+    xshape = shape
+    do (xshape)-> 
+      setTimeout( =>
+        io.sockets.in("room").emit "collab",
+          sender: "system"
+          shape: xshape 
+      ,LATENCY)
+
   socket.on "chat", (data) ->
     md5sum = crypto.createHash("md5")
     md5sum.update socket.id
     io.sockets.in("room").emit "chat",
       sender: md5sum.digest("hex")
       hello: data.hello
+
 
   socket.on "disconnect", ->
     io.sockets.in("room").emit "chat",

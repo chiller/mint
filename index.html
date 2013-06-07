@@ -1,32 +1,73 @@
 <html>
 <head>
     <style>
+        body {
+            background: #444;
+            color: #CCC;
+            font-family: Monaco, Consolas, "Lucida Console", monospace;
+            font-size: 0.5em;
+        }
+        .bordered {
+            border-style:solid;
+            border-width: 1px;
+            border-color: #CCC;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 10px;
+        }
+        #wrapper { 
+            height: 95%; 
+            width:200px;
+            float: left;
+            position: relative;
+        }
+        #content {
+            height: 100%;
+            overflow: scroll;
+        }
+        #footer {
+            height: 20px;
+            position: absolute;
+            bottom: 10px;
+            margin-top: 20px;
+        }
+        #message{
+            height:20px;
+            width: 135px;
+            background-color: #333;
+            border: 0;
+            text-decoration: none;
+            outline: none;
+            color: #CCC;
+        }
+        #btn{
+            width: 30px;
+            padding-bottom: 3px;
+            padding-top: 3px;
+            margin-bottom: 1px;
+        }
 
-#wrapper { 
-    height: 100%; 
-    width:400px;
-}
-#content {
-    height: 400px;
-    overflow: scroll;
-}
-#footer {
-    background-color: #FFCCCC;
-    height: 50px;
-    
-}
-#message{
-    height:50px;
-    width: 340px;
-}
-#btn{
-    height:50px;
-    width: 50px;
-}
+        #draggable { width: 150px; height: 150px; padding: 0.5em; background-color: #FFAA77;    
+            position: absolute; 
+        }
+        #right {
+            height: 95%;
+            overflow: hidden;
+        }
+        #stuff p{
+        margin-top: 0px;
+        margin-bottom: 0px;
+        }
+        #messagecontainer {
+            float:left;
+        }
+        .floater {
+            
+            margin-top: 5px;
+            margin-bottom: 5px;
+            float:left;  
 
-#draggable { width: 150px; height: 150px; padding: 0.5em; background-color: #FFAACC;    position: fixed; 
-}
-
+        }
     </style>
 
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -41,13 +82,13 @@
 
         var objDiv = document.getElementById("content");
         objDiv.scrollTop = objDiv.scrollHeight;
-        $(".random").identicon5()
+        $(".random").identicon5({size:20})
         $(".random").removeClass("random")
     }
 
     window.onload = function() {
       socket = io.connect('/');
-      socket.on('news', function (data) {
+      socket.on('news', function(data) {
         log(data)
         
       });
@@ -70,13 +111,15 @@
         });
 
       $("#draggable").draggable({
-
+        grid: [ 20,20 ],
+        containment: "#right",
         stop: function( event, ui ) {
             window.shape.x = parseInt( $(this).css("left"), 10)
             window.shape.y = parseInt( $(this).css("top"), 10)
             socket.emit("collab", {shape: window.shape})
         }
       })
+
 
     }
 
@@ -89,25 +132,32 @@
 </head>
 <body>
 
-    <div id="wrapper">
+    <div class="bordered" id="wrapper">
         <div id="content">
             <div id="top-padding"></div>
             <div id="stuff">
                 
             </div>
             <div id="bottom-padding"></div>
+            <div style="display: block; clear: both;"></div>
         </div><!-- content -->
         
          <div id="footer" class="border1">    
-                <input id="message" type="text"></input>
-                <button id="btn" onclick="chat()">Send</button>
+                <div class="floater ">
+                    <input id="message" type="text"></input>
+                </div>
+                <div class="floater ">
+                    <div id="btn" class="bordered" onclick="chat()">Send</div>
+                </div>
+
         </div>
 
     </div><!-- wrapper -->
-    <div id="draggable" class="ui-widget-content">
-        <p>Drag me around</p>
+    <div class="bordered" id="right">
+        <div id="draggable" class="ui-widget-content">
+            <p>Drag me around</p>
+        </div>
     </div>
-   
        
     
 </body>

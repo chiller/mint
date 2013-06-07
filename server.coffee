@@ -1,3 +1,18 @@
+mongo = require 'mongojs'
+collections = ['shapes',]
+db = mongo.connect 'mongodb://nodejitsu:e515ef4c53426703b4788e96c448986c@linus.mongohq.com:10046/nodejitsudb1933730153', collections
+
+shape = null
+
+db.shapes.find
+  name: "alma"
+, (err, dbshape) ->
+  if err 
+    console.log "Mongo Error"
+  else
+    shape = new Shape dbshape[0].x, dbshape[0].y
+    console.log shape
+
 LATENCY = 0
 
 class Shape
@@ -6,9 +21,20 @@ class Shape
   set: (x,y) =>
     @x = x
     @y = y
+    db.shapes.update({"name":"alma"},{$set:{x: 150} })
+    db.shapes.update
+      name: "alma"
+    ,
+      $set:
+        x: x
+        y: y
+    , (err, updated) ->
+      if err or not updated
+        console.log "Shape not updated"
+      else
+        console.log "Shape updated"
 
-shape = new Shape 100,100
-console.log shape
+
 
 handler = (req, res) ->
   fs.readFile __dirname + "/index.html", (err, data) ->
@@ -38,8 +64,11 @@ io.sockets.on "connection", (socket) ->
     shape: shape
 
   socket.on "collab", (data) ->
-    shape = data.shape
+    shape.set  data.shape.x, data.shape.y
+    console.log "try update"
     xshape = shape
+
+    #to run setTimout in local context
     do (xshape)-> 
       setTimeout( =>
         io.sockets.in("room").emit "collab",

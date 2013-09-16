@@ -11,24 +11,7 @@ var ntmodule = angular.module('myApp.directives', []).
 
   }])
 
- ntmodule.directive('ntdraggable', function() {
-
-  return {
-    link: function(scope, elm, attrs) {
-      //var options = scope.$eval(attrs.andyDraggable); //allow options to be passed in
-      //debugger
-      jsPlumb.draggable($(elm),{stop:
-      	function( event, ui ) {
-      		console.log(scope.$index)
-      		scope.seeds[scope.$index].text = "Lajos"
-      		scope.$apply()
-            
-        }});
-    }
-  };
-});
-
- ntmodule.directive('andyDraggable', function() {
+ ntmodule.directive('ntDraggable', function() {
 
   return {
     template: "<div class='draggable' style='top:{{entity.position.top}}px;\

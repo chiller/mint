@@ -5,7 +5,7 @@ block body
     
   div(ng-controller='EditorCtrl')
     .container
-      .drag(ng-repeat='entity in shared_document.entities', andy-draggable) 
+      .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     p(ng-repeat="con in shared_document.connections") 
       {{shared_document.entities[con.from].title}} -> 
       {{shared_document.entities[con.to].title}}

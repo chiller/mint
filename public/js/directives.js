@@ -15,9 +15,12 @@ var ntmodule = angular.module('myApp.directives', []).
 
   return {
     template: "<div class='draggable' style='top:{{entity.position.top}}px;\
-    		left:{{entity.position.left}}px'>{{entity.title}}</div>",
+    		left:{{entity.position.left}}px' \
+        ng-class='{selected1 : $index==selectedEntity, selected2 : $index==selectedEntity2 }'\
+        ng-click='selectEntity($index)'>\
+        {{entity.title}}</div>",
     link: function(scope, elm, attrs) {
-      
+
       $(elm.children()[0]).draggable({
       	containment: ".container",
       	//use this for performance optimisation

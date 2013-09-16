@@ -55,7 +55,13 @@ function EditorCtrl($scope, socket) {
     entities: entities,
     connections: connections
   }
-
+  $scope.selectEntity = function(i) {
+    if ($scope.selectedEntity != i) {
+      $scope.selectedEntity2 = $scope.selectedEntity;
+      $scope.selectedEntity = i; 
+    }
+  }
+  
   //shared
   socket.on('shared:update', function (data) {
     $scope.shared_document = data.shared_document

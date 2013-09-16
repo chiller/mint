@@ -1,0 +1,29 @@
+extends layout
+
+block body
+  h1 Editor
+    
+  div(ng-controller='EditorCtrl')
+    .container
+      .drag(ng-repeat='entity in shared_document.entities', andy-draggable) 
+    p(ng-repeat="con in shared_document.connections") 
+      {{shared_document.entities[con.from].title}} -> 
+      {{shared_document.entities[con.to].title}}
+
+
+    form(ng-submit="addconn()")
+      input(ng-model='confrom')
+      input(ng-model='conto')
+      input(type='submit', value='Add connection')
+
+  script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+  script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
+  script(src="http://jsplumbtoolkit.com/js/jquery.jsPlumb-1.5.2-min.js")
+  script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
+  script(src='/socket.io/socket.io.js')
+  script(src='js/app.js')
+  script(src='js/services.js')
+  script(src='js/controllers/editor.js')
+  script(src='js/filters.js')
+  script(src='js/directives.js')
+  

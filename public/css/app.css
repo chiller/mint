@@ -1,0 +1,30 @@
+/* app css stylesheet */
+
+.overflowable {
+  height: 240px;
+  overflow-y: auto;
+  border: 1px solid #000;
+}
+
+.overflowable p {
+  margin: 0;
+}
+
+.col {
+  float: left;
+  width: 350px;
+}
+
+.clr {
+  clear: both;
+}
+
+.draggable { 
+	width: 50px; height: 50px; padding: 0.5em; background-color: #AAAA77;    
+            position: absolute; 
+}
+
+.container {
+	width: 600px; height: 400px; background-color: #CCCCCC;
+
+}

@@ -1,38 +1,6 @@
 'use strict';
 
 /* Controllers */
-
-function setUpPlumb() {
-
-        jsPlumb.importDefaults({
-          PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
-          Endpoint:[ "Dot", { radius:5 } ],
-          EndpointStyle:{ fillStyle:"#ffa500" }
-        });
-          
-        var shapes = $(".draggable");
-          
-        // make everything draggable
-        //jsPlumb.draggable(shapes);
-        window.pcon = [];
-        // loop through them and connect each one to each other one.
-        for (var i = 0; i < shapes.length; i++) {
-          for (var j = i + 1; j < shapes.length; j++) {           
-            window.pcon.push(jsPlumb.connect({
-              source:shapes[i],  // just pass in the current node in the selector for source 
-              target:shapes[j],
-              // here we supply a different anchor for source and for target, and we get the element's "data-shape"
-              // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
-            }));       
-          } 
-        }
-
-}
-
 function setUpPlumbWithScope($scope) {
 
         jsPlumb.importDefaults({
@@ -112,4 +80,7 @@ function EditorCtrl($scope, socket) {
     $scope.sendshared();
   }
 
+  $scope.addEntity = function() {
+    $scope.shared_document.entities.push({position: {'left':0, 'top':300 }, title:"untitled"})
+  }
 }

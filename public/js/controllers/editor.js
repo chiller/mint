@@ -18,7 +18,7 @@ function setUpPlumbWithScope($scope) {
           
           var t = $scope.shared_document.connections[i]
            jsPlumb.connect({
-
+              scope: t,
               source:shapes[t.from],  // just pass in the current node in the selector for source 
               target:shapes[t.to],
               // here we supply a different anchor for source and for target, and we get the element's "data-shape"
@@ -30,21 +30,28 @@ function setUpPlumbWithScope($scope) {
             });   
 
 
-         };    
+         };   
+        jsPlumb.bind('click', function (connection, e) {
+          var conn_object = connection.scope;
+          $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
+          jsPlumb.detach(connection);
+          $scope.$apply();
+          //TODO: propagate changes
+        }); 
 }
 
 function EditorCtrl($scope, socket) {
 
     var entities = [
-    {position: {'left':100, 'top':100 }, title:"alma"},
-    {position: {'left':200, 'top':100 }, title:"korte"},
-    {position: {'left':300, 'top':100 }, title:"birs"},
-    {position: {'left':300, 'top':300 }, title:"citrom"},
-    {position: {'left':400, 'top':200 }, title:"lime"},
-    {position: {'left':400, 'top':300 }, title:"pari"},
+    {id: 1, position: {'left':100, 'top':100 }, title:"alma"},
+    {id: 2, position: {'left':200, 'top':100 }, title:"korte"},
+    {id: 3, position: {'left':300, 'top':100 }, title:"birs"},
+    {id: 4, position: {'left':300, 'top':300 }, title:"citrom"},
+    {id: 5, position: {'left':400, 'top':200 }, title:"lime"},
+    {id: 6, position: {'left':400, 'top':300 }, title:"pari"},
   ]
   var connections = [
-    {"from":1, "to":2},
+    {id: 1, "from":1, "to":2},
   ]
 
   setTimeout(function(){
@@ -76,14 +83,26 @@ function EditorCtrl($scope, socket) {
     });
   };
 
+  $scope.addPlumb = function(connection) {
+           var shapes = $(".draggable");
+           jsPlumb.connect({
+              source:shapes[connection.from], 
+              target:shapes[connection.to],
+              anchors:[
+                [ "Perimeter", { shape:"Rectangle" }],
+                [ "Perimeter", { shape:"Rectangle" }]
+              ]
+            });   
+  }
  
-
-  $scope.addconn = function() {
-
-    $scope.shared_document.connections.push({"from":$scope.confrom, "to":$scope.conto})
-    console.log($scope.shared_document);
-    setUpPlumbWithScope($scope);
-    $scope.sendshared();
+  $scope.addConnection = function() {
+    if ($scope.selectedEntity>=0 && $scope.selectedEntity2>=0) {
+      var new_connection = {"from":$scope.selectedEntity, "to":$scope.selectedEntity2};
+      $scope.shared_document.connections.push(new_connection)
+      //TODO: only set up new ones
+      $scope.addPlumb(new_connection)
+      $scope.sendshared();
+    }
   }
 
   $scope.addEntity = function() {

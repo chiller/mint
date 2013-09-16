@@ -8,17 +8,11 @@ block body
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     
     button(ng-click="addEntity()") + 
+    button(ng-click="addConnection()") + 
     
     p(ng-repeat="con in shared_document.connections") 
       {{shared_document.entities[con.from].title}} -> 
       {{shared_document.entities[con.to].title}}
-
-
-
-    form(ng-submit="addconn()")
-      input(ng-model='confrom')
-      input(ng-model='conto')
-      input(type='submit', value='Add connection')
 
   script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")

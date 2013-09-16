@@ -1,14 +1,10 @@
 {
-  "name": "nodechat",
-  "subdomain": "nodechat.galacziendre",
-  "scripts": {
-    "start": "server.js"
-  },
-  "version": "0.0.0-4",
-  "engines": {
-    "node": "0.8.x"
-  },
-  "dependencies": {
-    "socket.io": "0.9.x"
+    "name": "mint-editor"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": "2.5.10"
+    , "jade": ">= 0.26.1"
+    , "socket.io": ">= 0.9.6"
   }
 }

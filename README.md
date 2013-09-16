@@ -1,17 +1,13 @@
-nodechat
-========
+# Mint Collaborative Model Editor
 
-Example project for node.js implementing a simple chat page
+## Running it
 
+First, grab the dependencies with npm:
 
-Setting Up and Running
-======================
+    npm install
 
+Then run the app like so:
 
-`npm install socket.io`
+    node app.js
 
-`coffee -cbw server.coffee`
-
-`node server.js`
-
-`open http://localhost:8080`
+And navigate to `localhost:3000`

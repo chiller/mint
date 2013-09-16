@@ -63,9 +63,9 @@ function EditorCtrl($scope, socket) {
     connections: connections
   }
   $scope.selectEntity = function(i) {
-    if ($scope.selectedEntity != i) {
+    if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
       $scope.selectedEntity2 = $scope.selectedEntity;
-      $scope.selectedEntity = i; 
+      $scope.selectedEntity = $scope.shared_document.entities[i]; 
     }
   }
   
@@ -86,8 +86,8 @@ function EditorCtrl($scope, socket) {
   $scope.addPlumb = function(connection) {
            var shapes = $(".draggable");
            jsPlumb.connect({
-              source:shapes[connection.from], 
-              target:shapes[connection.to],
+              source:$("#"+connection.from.toString()), 
+              target:$("#"+connection.to.toString()),
               anchors:[
                 [ "Perimeter", { shape:"Rectangle" }],
                 [ "Perimeter", { shape:"Rectangle" }]
@@ -96,8 +96,8 @@ function EditorCtrl($scope, socket) {
   }
  
   $scope.addConnection = function() {
-    if ($scope.selectedEntity>=0 && $scope.selectedEntity2>=0) {
-      var new_connection = {"from":$scope.selectedEntity, "to":$scope.selectedEntity2};
+    if ($scope.selectedEntity && $scope.selectedEntity2) {
+      var new_connection = {"from":$scope.selectedEntity.id, "to":$scope.selectedEntity2.id};
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
       $scope.addPlumb(new_connection)
@@ -107,5 +107,11 @@ function EditorCtrl($scope, socket) {
 
   $scope.addEntity = function() {
     $scope.shared_document.entities.push({position: {'left':0, 'top':300 }, title:"untitled"})
+  }
+
+  $scope.deleteEntity = function() {
+    //debugger
+    jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));
+    $scope.shared_document.entities.splice($scope.shared_document.entities.indexOf($scope.selectedEntity),1)
   }
 }

@@ -7,8 +7,9 @@ block body
     .container
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     
-    button(ng-click="addEntity()") + 
-    button(ng-click="addConnection()") + 
+    button(ng-click="addEntity()") E 
+    button(ng-click="addConnection()") C
+    button(ng-click="deleteEntity()") D 
     
     p(ng-repeat="con in shared_document.connections") 
       {{shared_document.entities[con.from].title}} -> 

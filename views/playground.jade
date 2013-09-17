@@ -1,0 +1,25 @@
+extends layout
+
+block body
+  h1 Playground
+    
+  div(ng-controller='RestCtrl')
+    p(ng-repeat='doc in docs'){{doc}}
+
+
+    form(ng-submit='addDoc()')
+        input(ng-model="newDoc.author")
+        input(ng-model="newDoc.text")
+        input(type='submit', value='Make New Doc')
+
+
+  script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+  script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
+  script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
+  script(src='js/lib/angular/angular-resource.js')
+  script(src='js/app.js')
+  script(src='js/services.js')
+  script(src='js/controllers/playground.js')
+  script(src='js/filters.js')
+  script(src='js/directives.js')
+  

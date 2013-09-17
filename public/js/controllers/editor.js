@@ -111,7 +111,7 @@ function EditorCtrl($scope, socket) {
 
   $scope.deleteEntity = function(keyc) {
     
-    if (keyc!=68) {return;}
+    if (keyc!=46) {return;}
 
     if ($scope.selectedEntity) {
       jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));

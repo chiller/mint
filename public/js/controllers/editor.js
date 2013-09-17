@@ -19,8 +19,8 @@ function setUpPlumbWithScope($scope) {
           var t = $scope.shared_document.connections[i]
            jsPlumb.connect({
               scope: t,
-              source:shapes[t.from],  // just pass in the current node in the selector for source 
-              target:shapes[t.to],
+              source:$("#"+t.from.toString()), 
+              target:$("#"+t.to.toString()),
               // here we supply a different anchor for source and for target, and we get the element's "data-shape"
               // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
               anchors:[
@@ -109,9 +109,16 @@ function EditorCtrl($scope, socket) {
     $scope.shared_document.entities.push({position: {'left':0, 'top':300 }, title:"untitled"})
   }
 
-  $scope.deleteEntity = function() {
-    //debugger
-    jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));
-    $scope.shared_document.entities.splice($scope.shared_document.entities.indexOf($scope.selectedEntity),1)
+  $scope.deleteEntity = function(keyc) {
+    
+    if (keyc!=68) {return;}
+
+    if ($scope.selectedEntity) {
+      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));
+      $scope.shared_document.entities.splice($scope.shared_document.entities.indexOf($scope.selectedEntity),1)  
+      $scope.selectedEntity = null;
+      
+    }
+    
   }
 }

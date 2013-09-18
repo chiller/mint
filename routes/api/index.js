@@ -1,3 +1,4 @@
+var mongo = require('mongodb');
 
 module.exports = Api = function (db) {
   "use strict";
@@ -13,13 +14,15 @@ module.exports = Api = function (db) {
   var docs = db.collection("docs");
 
   this.docs = function (req, res) {
-    db.collection('docs').find().toArray(function(err, items){
+    docs.find().toArray(function(err, items){
       res.json(items);
     })
   }
   this.doc = function (req, res) {
-      var q = quotes[req.params.id];
-      res.json(q);
+    var oid = mongo.BSONPure.ObjectID(req.params.id)
+    docs.findOne({"_id": oid }, function(err, doc) {
+       res.json(doc);
+    });
   }
 
   this.adddoc = function(req, res) {

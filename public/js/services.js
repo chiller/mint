@@ -34,3 +34,9 @@ app.factory('Doc', ['$resource', function($resource){
     { update: {method:'PUT' } , 
       query: {method:'GET', isArray: true}});
 }]);
+
+app.factory('EntityService', ['$resource', function($resource){
+  return $resource('/api/entities/:id', {id:'@_id'}, 
+    { update: {method:'PUT' } , 
+      query: {method:'GET', isArray: true}});
+}]);

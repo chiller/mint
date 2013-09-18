@@ -2,7 +2,6 @@
 
 /* Controllers */
 function setUpPlumbWithScope($scope) {
-
         jsPlumb.importDefaults({
           Connector:"StateMachine",
           PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
@@ -40,28 +39,25 @@ function setUpPlumbWithScope($scope) {
         }); 
 }
 
-function EditorCtrl($scope, socket) {
+function EditorCtrl($scope, socket, EntityService) {
 
-    var entities = [
-    {id: 1, position: {'left':100, 'top':100 }, title:"alma"},
-    {id: 2, position: {'left':200, 'top':100 }, title:"korte"},
-    {id: 3, position: {'left':300, 'top':100 }, title:"birs"},
-    {id: 4, position: {'left':300, 'top':300 }, title:"citrom"},
-    {id: 5, position: {'left':400, 'top':200 }, title:"lime"},
-    {id: 6, position: {'left':400, 'top':300 }, title:"pari"},
-  ]
-  var connections = [
-    {id: 1, "from":1, "to":2},
-  ]
+  EntityService.query(function(response){
+    var entities = response;
+    var connections = [
+      {id: 1, 
+        from:"5239bc6dd72e4bb612def3fc", 
+        to:"5239c042d72e4bb612def3fd"},
+    ]
+    $scope.shared_document = {
+      entities: entities,
+      connections: connections
+    }
+    setTimeout(function(){
+      setUpPlumbWithScope($scope);
+    },1000)
+  });
 
-  setTimeout(function(){
-    setUpPlumbWithScope($scope);
-  },1000)
-
-  $scope.shared_document = {
-    entities: entities,
-    connections: connections
-  }
+  
   $scope.selectEntity = function(i) {
     if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
       $scope.selectedEntity2 = $scope.selectedEntity;

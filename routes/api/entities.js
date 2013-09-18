@@ -29,7 +29,7 @@ module.exports = function (db) {
       res.json(removed);
     })  
   }
-  
+
   this.update = function(req, res) {
     var oid = mongo.BSONPure.ObjectID(req.params.id)
     delete req.body._id

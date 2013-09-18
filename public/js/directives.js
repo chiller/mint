@@ -18,7 +18,7 @@ var ntmodule = angular.module('myApp.directives', []).
     		left:{{entity.position.left}}px' \
         ng-class='{selected1 : entity==selectedEntity, selected2 : entity==selectedEntity2 }'\
         ng-click='selectEntity($index, $event)'\
-        id={{entity.id}}>\
+        id={{entity._id}}>\
         {{entity.title}}</div>",
     link: function(scope, elm, attrs) {
       $(elm.children()[0]).draggable({

@@ -38,7 +38,7 @@ module.exports = Api = function (db) {
     };
 
     docs.insert(newQuote, {safe:true}, function(err, record){
-      res.json(record);
+      res.json(record[0]);
     });
     
   }

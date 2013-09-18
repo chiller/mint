@@ -6,8 +6,10 @@ function RestCtrl ($scope, $resource, Doc) {
     $scope.newDoc
     $scope.selDoc = null;
     $scope.addDoc = function () {
-        Doc.save($scope.newDoc);
-        $scope.fetch();
+        Doc.save($scope.newDoc, function(res){
+            $scope.docs.push(res);    
+        });
+        
     }
     $scope.deleteDoc = function(doc) {
 

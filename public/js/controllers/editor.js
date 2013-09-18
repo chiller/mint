@@ -104,9 +104,12 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
     })
     
   }
-
+  $scope.updateEntity = function(idx) {
+    EntityService.update($scope.shared_document.entities[idx], function(){
+            console.log("success");
+        })
+  }
   $scope.deleteEntity = function(keyc) {
-    console.log("*");
     //if (keyc!=46) {return;}
 
     if ($scope.selectedEntity) {

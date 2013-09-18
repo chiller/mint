@@ -39,23 +39,20 @@ function setUpPlumbWithScope($scope) {
         }); 
 }
 
-function EditorCtrl($scope, socket, EntityService) {
+function EditorCtrl($scope, socket, DocumentService, EntityService) {
+  DocumentService.get({id:"52398f413a8f579dc5000001"}, function(response){
+    $scope.shared_document = response;
+    EntityService.query(function(response){
+      var entities = response;
+      $scope.shared_document.entities = entities;
+      //TODO: this is ugly
+      setTimeout(function(){
+        setUpPlumbWithScope($scope);
+      },500)
+    });
 
-  EntityService.query(function(response){
-    var entities = response;
-    var connections = [
-      {id: 1, 
-        from:"5239bc6dd72e4bb612def3fc", 
-        to:"5239c042d72e4bb612def3fd"},
-    ]
-    $scope.shared_document = {
-      entities: entities,
-      connections: connections
-    }
-    setTimeout(function(){
-      setUpPlumbWithScope($scope);
-    },1000)
-  });
+  })
+
 
   
   $scope.selectEntity = function(i) {
@@ -93,7 +90,7 @@ function EditorCtrl($scope, socket, EntityService) {
  
   $scope.addConnection = function() {
     if ($scope.selectedEntity && $scope.selectedEntity2) {
-      var new_connection = {"from":$scope.selectedEntity.id, "to":$scope.selectedEntity2.id};
+      var new_connection = {"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id};
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
       $scope.addPlumb(new_connection)
@@ -102,17 +99,24 @@ function EditorCtrl($scope, socket, EntityService) {
   }
 
   $scope.addEntity = function() {
-    $scope.shared_document.entities.push({position: {'left':0, 'top':300 }, title:"untitled"})
+    EntityService.save({position: {'left':0, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
+        $scope.shared_document.entities.push(res)
+    })
+    
   }
 
   $scope.deleteEntity = function(keyc) {
-    
-    if (keyc!=46) {return;}
+    console.log("*");
+    //if (keyc!=46) {return;}
 
     if ($scope.selectedEntity) {
-      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));
-      $scope.shared_document.entities.splice($scope.shared_document.entities.indexOf($scope.selectedEntity),1)  
-      $scope.selectedEntity = null;
+      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity._id.toString()));
+      var idx = $scope.shared_document.entities.indexOf($scope.selectedEntity);
+      EntityService.delete({id: $scope.selectedEntity._id}, function(){
+        $scope.selectedEntity = null;
+        $scope.shared_document.entities.splice(idx,1)  
+      })
+      
       
     }
     

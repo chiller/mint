@@ -9,7 +9,15 @@ function RestCtrl ($scope, $resource, Doc) {
         Doc.save($scope.newDoc);
         $scope.fetch();
     }
+    $scope.deleteDoc = function(doc) {
 
+        Doc.delete({id:doc._id}, function(res, data, data2){
+            if(res[0]) {
+            idx = $scope.docs.indexOf(doc)
+            $scope.docs.splice(idx,1);
+            }
+        } );
+    }
 
 
 

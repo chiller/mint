@@ -4,7 +4,8 @@ block body
   h1 Playground
     
   div(ng-controller='RestCtrl')
-    p(ng-repeat='doc in docs'){{doc}}
+    p(ng-repeat='doc in docs'){{doc}} 
+      button(ng-click="deleteDoc(doc)") x
 
 
     form(ng-submit='addDoc()')

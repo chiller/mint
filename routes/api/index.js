@@ -1,45 +1,51 @@
-var quotes = [
-  { author : 'Audrey Hepburn', text : "Nothing is impossible, the word itself says 'I'm possible'!"},
-  { author : 'Walt Disney', text : "You may not realize it when it happens, but a kick in the teeth may be the best thing in the world for you"},
-  { author : 'Unknown', text : "Even the greatest was once a beginner. Don't be afraid to take that first step."},
-  { author : 'Neale Donald Walsch', text : "You are afraid to die, and you're afraid to live. What a way to exist."}
-];
 
-exports.docs = function (req, res) {
-   
+module.exports = Api = function (db) {
+  "use strict";
 
-    res.json(quotes);
-}
+  var quotes = [
+    { author : 'Audrey Hepburn', text : "Nothing is impossible, the word itself says 'I'm possible'!"},
+    { author : 'Walt Disney', text : "You may not realize it when it happens, but a kick in the teeth may be the best thing in the world for you"},
+    { author : 'Unknown', text : "Even the greatest was once a beginner. Don't be afraid to take that first step."},
+    { author : 'Neale Donald Walsch', text : "You are afraid to die, and you're afraid to live. What a way to exist."}
+  ];
 
-exports.doc = function (req, res) {
 
-    var q = quotes[req.params.id];
-    res.json(q);
-}
+  var docs = db.collection("docs");
 
-exports.adddoc = function(req, res) {
-  if(!req.body.hasOwnProperty('author') || 
-     !req.body.hasOwnProperty('text')) {
-    res.statusCode = 400;
-    return res.send('Error 400: Post syntax incorrect.');
+  this.docs = function (req, res) {
+    db.collection('docs').find().toArray(function(err, items){
+      res.json(items);
+    })
+  }
+  this.doc = function (req, res) {
+      var q = quotes[req.params.id];
+      res.json(q);
   }
 
-  var newQuote = {
-    author : req.body.author,
-    text : req.body.text
-  };
+  this.adddoc = function(req, res) {
+    if(!req.body.hasOwnProperty('author') || 
+       !req.body.hasOwnProperty('text')) {
+      res.statusCode = 400;
+      return res.send('Error 400: Post syntax incorrect.');
+    }
 
-  quotes.push(newQuote);
-  res.json(true);
-}
+    var newQuote = {
+      author : req.body.author,
+      text : req.body.text
+    };
 
-exports.deletedoc = function(req, res) {
-    if(quotes.length <= req.params.id) {
-    res.statusCode = 404;
-    return res.send('Error 404: No quote found');
+    quotes.push(newQuote);
+    res.json(true);
   }
 
-  quotes.splice(req.params.id, 1);
-  res.json(true);
-    
+  this.deletedoc = function(req, res) {
+      if(quotes.length <= req.params.id) {
+      res.statusCode = 404;
+      return res.send('Error 404: No quote found');
+    }
+
+    quotes.splice(req.params.id, 1);
+    res.json(true);
+      
+  }
 }

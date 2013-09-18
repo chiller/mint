@@ -5,13 +5,23 @@ block body
     
   div(ng-controller='RestCtrl')
     p(ng-repeat='doc in docs'){{doc}} 
+      button(ng-click="selectDoc(doc)") &#9999;
       button(ng-click="deleteDoc(doc)") x
 
 
+    p Create doc
     form(ng-submit='addDoc()')
         input(ng-model="newDoc.author")
         input(ng-model="newDoc.text")
         input(type='submit', value='Make New Doc')
+
+
+    p Edit doc
+    form(ng-submit='updateDoc()')
+        span {{selDoc._id}}
+        input(ng-model="selDoc.author")
+        input(ng-model="selDoc.text")
+        input(type='submit', value='Update')
 
 
   script(src='http://code.jquery.com/jquery-1.9.1.min.js')

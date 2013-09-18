@@ -50,4 +50,12 @@ module.exports = Api = function (db) {
     })  
 
   }
+  this.updatedoc = function(req, res) {
+    var oid = mongo.BSONPure.ObjectID(req.params.id)
+    delete req.body._id
+    docs.update({_id: oid}, req.body, {upsert:true}, function(err, data){
+      if (err) throw err;
+      res.json(data);
+    })
+  }
 }

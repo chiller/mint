@@ -30,5 +30,5 @@ app.factory('socket', function ($rootScope) {
 });
 
 app.factory('Doc', ['$resource', function($resource){
-  return $resource('/api/docs/:id', {id:'@_id'});
+  return $resource('/api/docs/:id', {id:'@_id'}, { update: {method:'PUT' } });
 }]);

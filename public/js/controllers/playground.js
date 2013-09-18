@@ -4,7 +4,7 @@ function RestCtrl ($scope, $resource, Doc) {
     })};
     $scope.fetch()
     $scope.newDoc
-
+    $scope.selDoc = null;
     $scope.addDoc = function () {
         Doc.save($scope.newDoc);
         $scope.fetch();
@@ -18,8 +18,14 @@ function RestCtrl ($scope, $resource, Doc) {
             }
         } );
     }
-
-
+    $scope.selectDoc = function(doc) {
+        $scope.selDoc = doc;
+    }
+    $scope.updateDoc = function() {
+        Doc.update($scope.selDoc, function(){
+            console.log("success");
+        })
+    }
 
 
 }

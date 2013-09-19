@@ -2,7 +2,6 @@
 
 /* Controllers */
 function setUpPlumbWithScope($scope) {
-
         jsPlumb.importDefaults({
           Connector:"StateMachine",
           PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
@@ -36,32 +35,27 @@ function setUpPlumbWithScope($scope) {
           $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
           jsPlumb.detach(connection);
           $scope.$apply();
+          $scope.updateDocument();
           //TODO: propagate changes
         }); 
 }
 
-function EditorCtrl($scope, socket) {
+function EditorCtrl($scope, socket, DocumentService, EntityService) {
+  DocumentService.get({id:"52398f413a8f579dc5000001"}, function(response){
+    $scope.shared_document = response;
+    EntityService.query(function(response){
+      var entities = response;
+      $scope.shared_document.entities = entities;
+      //TODO: this is ugly
+      setTimeout(function(){
+        setUpPlumbWithScope($scope);
+      },500)
+    });
 
-    var entities = [
-    {id: 1, position: {'left':100, 'top':100 }, title:"alma"},
-    {id: 2, position: {'left':200, 'top':100 }, title:"korte"},
-    {id: 3, position: {'left':300, 'top':100 }, title:"birs"},
-    {id: 4, position: {'left':300, 'top':300 }, title:"citrom"},
-    {id: 5, position: {'left':400, 'top':200 }, title:"lime"},
-    {id: 6, position: {'left':400, 'top':300 }, title:"pari"},
-  ]
-  var connections = [
-    {id: 1, "from":1, "to":2},
-  ]
+  })
 
-  setTimeout(function(){
-    setUpPlumbWithScope($scope);
-  },1000)
 
-  $scope.shared_document = {
-    entities: entities,
-    connections: connections
-  }
+  
   $scope.selectEntity = function(i) {
     if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
       $scope.selectedEntity2 = $scope.selectedEntity;
@@ -97,26 +91,39 @@ function EditorCtrl($scope, socket) {
  
   $scope.addConnection = function() {
     if ($scope.selectedEntity && $scope.selectedEntity2) {
-      var new_connection = {"from":$scope.selectedEntity.id, "to":$scope.selectedEntity2.id};
+      var new_connection = {"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id};
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
+      DocumentService.update($scope.shared_document)
       $scope.addPlumb(new_connection)
       $scope.sendshared();
     }
   }
-
-  $scope.addEntity = function() {
-    $scope.shared_document.entities.push({position: {'left':0, 'top':300 }, title:"untitled"})
+  $scope.updateDocument = function() {
+    DocumentService.update($scope.shared_document)
   }
-
-  $scope.deleteEntity = function(keyc) {
+  $scope.addEntity = function() {
+    EntityService.save({position: {'left':0, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
+        $scope.shared_document.entities.push(res)
+    })
     
-    if (keyc!=46) {return;}
+  }
+  $scope.updateEntity = function(idx) {
+    EntityService.update($scope.shared_document.entities[idx], function(){
+            console.log("success");
+        })
+  }
+  $scope.deleteEntity = function(keyc) {
+    //if (keyc!=46) {return;}
 
     if ($scope.selectedEntity) {
-      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity.id.toString()));
-      $scope.shared_document.entities.splice($scope.shared_document.entities.indexOf($scope.selectedEntity),1)  
-      $scope.selectedEntity = null;
+      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity._id.toString()));
+      var idx = $scope.shared_document.entities.indexOf($scope.selectedEntity);
+      EntityService.delete({id: $scope.selectedEntity._id}, function(){
+        $scope.selectedEntity = null;
+        $scope.shared_document.entities.splice(idx,1)  
+      })
+      
       
     }
     

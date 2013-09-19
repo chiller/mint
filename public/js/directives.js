@@ -11,15 +11,15 @@ var ntmodule = angular.module('myApp.directives', []).
 
   }])
 
- ntmodule.directive('ntDraggable', function() {
+ ntmodule.directive('ntDraggable', function($timeout) {
 
   return {
     template: "<div class='draggable' style='top:{{entity.position.top}}px;\
     		left:{{entity.position.left}}px' \
         ng-class='{selected1 : entity==selectedEntity, selected2 : entity==selectedEntity2 }'\
         ng-click='selectEntity($index, $event)'\
-        id={{entity.id}}>\
-        {{entity.title}}</div>",
+        id={{entity._id}}>\
+        <div>{{entity.title}}</div></div>",
     link: function(scope, elm, attrs) {
       $(elm.children()[0]).draggable({
       	containment: ".container",
@@ -32,10 +32,12 @@ var ntmodule = angular.module('myApp.directives', []).
       	,
       	stop:
       	function( event, ui ) {
-      		scope.shared_document.entities[scope.$index].position = ui.position 
+      		//TODO: move this code to controller
+          scope.shared_document.entities[scope.$index].position = ui.position 
       		scope.sendshared();
             scope.$apply()
             jsPlumb.repaintEverything();
+            scope.updateEntity(scope.$index);
         }});
     }
   };

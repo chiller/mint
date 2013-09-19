@@ -29,8 +29,14 @@ app.factory('socket', function ($rootScope) {
   };
 });
 
-app.factory('Doc', ['$resource', function($resource){
+app.factory('DocumentService', ['$resource', function($resource){
   return $resource('/api/docs/:id', {id:'@_id'}, 
+    { update: {method:'PUT' } , 
+      query: {method:'GET', isArray: true}});
+}]);
+
+app.factory('EntityService', ['$resource', function($resource){
+  return $resource('/api/entities/:id', {id:'@_id'}, 
     { update: {method:'PUT' } , 
       query: {method:'GET', isArray: true}});
 }]);

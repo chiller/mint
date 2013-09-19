@@ -5,7 +5,7 @@ block body
     
   div(ng-controller='EditorCtrl')
     .container
-      .drag(ng-repeat='entity in shared_document.entities', nt-draggable, on-keyup-fn='deleteEntity') 
+      .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     
     button(ng-click="addEntity()") E 
     button(ng-click="addConnection()") C

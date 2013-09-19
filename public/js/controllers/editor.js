@@ -35,6 +35,7 @@ function setUpPlumbWithScope($scope) {
           $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
           jsPlumb.detach(connection);
           $scope.$apply();
+          $scope.updateDocument();
           //TODO: propagate changes
         }); 
 }
@@ -93,11 +94,14 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
       var new_connection = {"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id};
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
+      DocumentService.update($scope.shared_document)
       $scope.addPlumb(new_connection)
       $scope.sendshared();
     }
   }
-
+  $scope.updateDocument = function() {
+    DocumentService.update($scope.shared_document)
+  }
   $scope.addEntity = function() {
     EntityService.save({position: {'left':0, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
         $scope.shared_document.entities.push(res)

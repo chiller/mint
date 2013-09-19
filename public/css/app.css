@@ -35,6 +35,16 @@
 }
 
 .container {
-	width: 600px; height: 400px; background-color: #CCCCCC;
+	width: 80%; height: 400px; background-color: #CCCCCC;
+  float: left;
+}
 
+.edit {
+  width: 20%;
+  float: right;
+}
+
+.toolbox {
+  clear: both;
+  float: left;
 }

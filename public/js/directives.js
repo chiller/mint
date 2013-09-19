@@ -43,6 +43,19 @@ var ntmodule = angular.module('myApp.directives', []).
   };
 });
 //angular.element(".container").scope()
+ntmodule.directive('saveSelected', function(EntityService){
+    return {
+      link:function(scope, elm, attrs) {
+        $(elm).blur(function(){
+          EntityService.update(scope.selectedEntity)
+        });    
+
+      }
+    };
+
+  
+})
+
 ntmodule.directive('onKeyupFn', function() {
     return function(scope, elm, attrs) {
         //Evaluate the variable that was passed

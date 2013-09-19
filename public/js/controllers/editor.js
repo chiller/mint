@@ -16,6 +16,13 @@ function setUpPlumbWithScope($scope) {
         for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
           
           var t = $scope.shared_document.connections[i]
+          if ($("#"+t.from.toString()).length == 0 || $("#"+t.to.toString()).length == 0) {
+            //TODO: rethink this
+            console.log("STALE CONNECTION")
+            $scope.shared_document.connections.splice(i, 1)
+            $scope.updateDocument();
+            continue
+          }
            jsPlumb.connect({
               scope: t,
               source:$("#"+t.from.toString()), 
@@ -128,4 +135,5 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
     }
     
   }
+
 }

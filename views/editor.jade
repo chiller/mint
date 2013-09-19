@@ -1,20 +1,20 @@
 extends layout
 
-block body
-  h1 Editor
-    
+block body    
   div(ng-controller='EditorCtrl')
     .container
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     
-    button(ng-click="addEntity()") E 
-    button(ng-click="addConnection()") C
-    button(ng-click="deleteEntity()") D 
-    
-    p(ng-repeat="con in shared_document.connections") 
-      {{shared_document.entities[con.from].title}} -> 
-      {{shared_document.entities[con.to].title}}
+    .edit
+      input(ng-model="selectedEntity.title",save-selected)
 
+    .toolbox
+      button(ng-click="addEntity()") E 
+      button(ng-click="addConnection()") C
+      button(ng-click="deleteEntity()") D 
+    
+    
+  
   script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
   script(src="http://jsplumbtoolkit.com/js/jquery.jsPlumb-1.5.2-min.js")

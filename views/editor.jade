@@ -2,6 +2,10 @@ extends layout
 
 block body    
   div(ng-controller='EditorCtrl')
+    br
+    .listleft
+      .doc(ng-repeat='doc in docs', ng-click='loadDoc($index)',ng-class="{selected: $index==selectedDocIndex}") {{doc.text}}
+    
     .container
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     

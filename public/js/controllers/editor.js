@@ -10,7 +10,7 @@ function setUpPlumbWithScope($scope) {
         });
           
         var shapes = $(".draggable");
-       
+        jsPlumb.detachEveryConnection();
         
         // loop through them and connect each one to each other one.
         for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
@@ -48,18 +48,29 @@ function setUpPlumbWithScope($scope) {
 }
 
 function EditorCtrl($scope, socket, DocumentService, EntityService) {
-  DocumentService.get({id:"52398f413a8f579dc5000001"}, function(response){
-    $scope.shared_document = response;
-    EntityService.query(function(response){
-      var entities = response;
-      $scope.shared_document.entities = entities;
-      //TODO: this is ugly
-      setTimeout(function(){
-        setUpPlumbWithScope($scope);
-      },500)
-    });
+  DocumentService.query(function(response){$scope.docs=response});
+  $scope.init = function(id){
+    DocumentService.get({id:id}, function(response){
+      
+      $scope.shared_document = response;
+      
+      EntityService.query({document:response._id },function(response){
+        var entities = response;
+        $scope.shared_document.entities = entities;
+        //TODO: this is ugly
+        setTimeout(function(){
+          setUpPlumbWithScope($scope);
+        },500)
+      });
 
-  })
+    })
+  }
+
+  $scope.loadDoc = function(idx) {
+
+    $scope.selectedDocIndex = idx;
+    $scope.init($scope.docs[idx]._id);
+  }
 
 
   
@@ -110,7 +121,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
     DocumentService.update($scope.shared_document)
   }
   $scope.addEntity = function() {
-    EntityService.save({position: {'left':0, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
+    EntityService.save({position: {'left':300, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
         $scope.shared_document.entities.push(res)
     })
     

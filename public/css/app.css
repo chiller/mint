@@ -33,9 +33,11 @@
   border-style:solid;
   border-width:2px;
 }
-
+.listleft {
+  width: 10%;float:left;
+}
 .container {
-	width: 80%; height: 400px; background-color: #CCCCCC;
+	width: 70%; height: 400px; background-color: #EEEEEE;
   float: left;
 }
 
@@ -47,4 +49,8 @@
 .toolbox {
   clear: both;
   float: left;
+}
+
+.selected {
+  background-color: #EEEEEE; 
 }

@@ -26,7 +26,8 @@ module.exports = function (db) {
 
     var newDoc = {
       author : req.body.author,
-      text : req.body.text
+      text : req.body.text,
+      connections:[],
     };
 
     docs.insert(newDoc, {safe:true}, function(err, record){

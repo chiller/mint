@@ -6,7 +6,8 @@ module.exports = function (db) {
   var entities = db.collection("entities");
 
   this.getAll = function (req, res) {
-    entities.find().toArray(function(err, items){
+    
+    entities.find(req.query).toArray(function(err, items){
       res.json(items);
     })
   }

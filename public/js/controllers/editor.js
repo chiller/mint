@@ -4,7 +4,10 @@
 
 
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService, AQ) {
-  DocumentService.query(function(response){$scope.docs=response});
+  DocumentService.query(function(response){
+      $scope.docs=response
+      $scope.loadDoc(0);
+  });
   $scope.init = function(id){
     DocumentService.get({id:id}, function(response){
       
@@ -49,12 +52,15 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
       entities.push(data.obj);
       console.log(data.msg);
   });
-    socket.on('entity:update', function (data) {
+  socket.on('entity:update', function (data) {
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj._id)
         console.log(entity);
         if (entity) {
+          //TODO: this only updates position and title
+
           entities[entity].position = data.obj.position;
+          entities[entity].title = data.obj.title;
           setTimeout(function(){jsPlumb.repaintEverything();},0);
         }
         console.log(data.msg);

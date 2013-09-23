@@ -29,6 +29,8 @@ app.factory('socket', function ($rootScope) {
   };
 });
 
+
+
 app.factory('DocumentService', ['$resource', function($resource){
   return $resource('/api/docs/:id', {id:'@_id'}, 
     { update: {method:'PUT' } , 

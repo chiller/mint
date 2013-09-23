@@ -69,6 +69,8 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj)
         if (entity!=null) {
+            //debugger
+            console.log("deleting"+entity.toString())
             jsPlumb.detachAllConnections($("#"+data.obj));
             entities.splice(entity,1);
         }
@@ -76,8 +78,10 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     });
     socket.on('connection:create', function (data) {
 
+
+        console.log("connection:create")
         var c = AQ.findConnection($scope.shared_document.connections, data.obj);
-        if (c!=null){
+        if (c==null){
             $scope.shared_document.connections.push(data.obj);
             PlumbService.addPlumb(data.obj);
         }
@@ -137,7 +141,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
       var idx = $scope.shared_document.entities.indexOf($scope.selectedEntity);
       EntityService.delete({id: $scope.selectedEntity._id}, function(){
         $scope.selectedEntity = null;
-        $scope.shared_document.entities.splice(idx,1)  
+        //$scope.shared_document.entities.splice(idx,1)
       })
       
       

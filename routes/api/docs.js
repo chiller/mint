@@ -1,12 +1,12 @@
 var mongo = require('mongodb');
 
-module.exports = function (db) {
+module.exports = function (db, sa) {
   "use strict";
 
   var docs = db.collection("docs");
 
   this.docs = function (req, res) {
-    docs.find().toArray(function(err, items){
+    docs.find({},{sort:"_id"}).toArray(function(err, items){
       res.json(items);
     })
   }

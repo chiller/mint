@@ -34,7 +34,7 @@ var ntmodule = angular.module('myApp.directives', []).
       	function( event, ui ) {
       		//TODO: move this code to controller
           scope.shared_document.entities[scope.$index].position = ui.position 
-      		scope.sendshared();
+      		//scope.sendshared();
             scope.$apply()
             jsPlumb.repaintEverything();
             scope.updateEntity(scope.$index);

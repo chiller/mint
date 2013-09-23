@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService, AQ) {
+function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
   DocumentService.query(function(response){
       $scope.docs=response
       $scope.loadDoc(0);
@@ -74,16 +74,24 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
         }
         console.log(data.msg);
     });
+    socket.on('connection:create', function (data) {
+
+        var c = AQ.findConnection($scope.shared_document.connections, data.obj);
+        if (!c){
+            $scope.shared_document.connections.push(data.obj);
+            PlumbService.addPlumb(data.obj);
+        }
+        console.log(data.msg);
+
+    });
+    socket.on('connection:delete', function (data) {
+    });
    //socket.on('chat', function (data) {
    //     console.log("on socket: "+data.msg);
    //});
   //shared-end
 
-    $scope.sendshared = function () {
-    socket.emit('shared:update', {
-      shared_document : $scope.shared_document
-    });
-  };
+
 
  
   $scope.addConnection = function() {
@@ -91,9 +99,9 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
       var new_connection = {"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id};
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
-      DocumentService.update($scope.shared_document)
-      PlumbService.addPlumb(new_connection)
-      $scope.sendshared();
+      //DocumentService.update($scope.shared_document)
+       ConnectionService.save({_id: $scope.selectedEntity.document,"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id });
+       PlumbService.addPlumb(new_connection)
     }
   }
   $scope.updateDocument = function() {

@@ -12,6 +12,7 @@ app.factory('socket', function ($rootScope) {
       socket.on(eventName, function () {  
         var args = arguments;
         $rootScope.$apply(function () {
+          console.log(args)
           callback.apply(socket, args);
         });
       });
@@ -43,6 +44,12 @@ app.factory('EntityService', ['$resource', function($resource){
       query: {method:'GET', isArray: true}});
 }]);
 
+app.factory('ConnectionService', ['$resource', function($resource){
+    return $resource('/api/docs/:id/connections/', {id:'@_id'},
+        { update: {method:'PUT' } ,
+            query: {method:'GET', isArray: true}});
+}]);
+
 app.factory('AQ', function($rootScope){
     return {
        find: function(array, field, value) {
@@ -52,7 +59,14 @@ app.factory('AQ', function($rootScope){
                }
            }
            return null;
-    }
+    } , findConnection: function(array, connection){
+            for (var i=0;i<array.length;i++){
+                if(array[i]["from"]==connection.from && array[i]["to"]==connection.to) {
+                    return i;
+                }
+            }
+            return null;
+        }
     }
 });
 

@@ -28,7 +28,9 @@ module.exports = function (db, sa) {
   this.delete = function(req, res) {
     var oid = mongo.BSONPure.ObjectID(req.params.id)
     entities.remove({_id: oid}, function(err, removed){
-      res.json(removed);
+        if (err) throw err;
+        sa.broadcast("room","entity:delete",{msg: "deleted", obj: oid});
+        res.json(oid);
     })  
   }
 
@@ -37,6 +39,9 @@ module.exports = function (db, sa) {
     delete req.body._id
     entities.update({_id: oid}, req.body, {upsert:true}, function(err, data){
       if (err) throw err;
+      var updated = req.body;
+      updated._id = req.params.id;
+      sa.broadcast("room","entity:update",{msg: "updated", obj: updated});
       res.json(data);
     })
   }

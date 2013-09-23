@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService) {
+function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService, AQ) {
   DocumentService.query(function(response){$scope.docs=response});
   $scope.init = function(id){
     DocumentService.get({id:id}, function(response){
@@ -43,12 +43,31 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService)
   }
   
   //shared
+  //TODO: this needsto be extracted from here
   socket.on('entity:create', function (data) {
       var entities = $scope.shared_document.entities;
       entities.push(data.obj);
-      console.log("on socket: "+data.msg);
+      console.log(data.msg);
   });
-
+    socket.on('entity:update', function (data) {
+        var entities = $scope.shared_document.entities;
+        var entity = AQ.find(entities, "_id", data.obj._id)
+        console.log(entity);
+        if (entity) {
+          entities[entity].position = data.obj.position;
+          setTimeout(function(){jsPlumb.repaintEverything();},0);
+        }
+        console.log(data.msg);
+    });
+    socket.on('entity:delete', function (data) {
+        var entities = $scope.shared_document.entities;
+        var entity = AQ.find(entities, "_id", data.obj)
+        if (entity) {
+            jsPlumb.detachAllConnections($("#"+data.obj));
+            entities.splice(entity,1);
+        }
+        console.log(data.msg);
+    });
    //socket.on('chat', function (data) {
    //     console.log("on socket: "+data.msg);
    //});

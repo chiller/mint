@@ -56,7 +56,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj._id)
         console.log(entity);
-        if (entity) {
+        if (entity!=null) {
           //TODO: this only updates position and title
 
           entities[entity].position = data.obj.position;
@@ -68,7 +68,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     socket.on('entity:delete', function (data) {
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj)
-        if (entity) {
+        if (entity!=null) {
             jsPlumb.detachAllConnections($("#"+data.obj));
             entities.splice(entity,1);
         }
@@ -77,7 +77,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     socket.on('connection:create', function (data) {
 
         var c = AQ.findConnection($scope.shared_document.connections, data.obj);
-        if (!c){
+        if (c!=null){
             $scope.shared_document.connections.push(data.obj);
             PlumbService.addPlumb(data.obj);
         }
@@ -92,7 +92,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
             {
                 jsPlumb.detach(cons[i]);
                 var c = AQ.findConnection($scope.shared_document.connections, data.obj);
-                if (!c){
+                if (c!=null){
                     $scope.shared_document.connections.splice(c, 1);
                 }
             }

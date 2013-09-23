@@ -44,9 +44,10 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService)
   
   //shared
   socket.on('shared:update', function (data) {
-    $scope.shared_document = data.shared_document
-    PlumbService.setUpPlumbWithScope($scope);
-    setTimeout(function(){jsPlumb.repaintEverything()}, 0);
+    //$scope.shared_document = data.shared_document
+    //PlumbService.setUpPlumbWithScope($scope);
+    //setTimeout(function(){jsPlumb.repaintEverything()}, 0);
+    console.log("on socket: "+data);
   });
   //shared-end
 

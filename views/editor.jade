@@ -5,7 +5,8 @@ block body
     br
     .listleft
       .doc(ng-repeat='doc in docs', ng-click='loadDoc($index)',ng-class="{selected: $index==selectedDocIndex}") {{doc.text}}
-    
+      input(ng-model="newDoc.text")
+      button(ng-click="addDoc()") +
     .container
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
     

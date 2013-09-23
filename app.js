@@ -10,8 +10,7 @@ var express = require('express'),
 
 var app = module.exports = express.createServer();
 
-// Hook Socket.io into Express
-var io = require('socket.io').listen(app);
+
 
 // Configuration
 var conn_string_prod = "mongodb://nodejitsu:54994e0b6fa6817af58f0160756facf7@paulo.mongohq.com:10060/nodejitsudb6288570733";
@@ -45,9 +44,6 @@ MongoClient.connect(conn_string_local, function(err, db) {
     routes(app, db);
     
 
-    // Socket.io Communication
-
-    io.sockets.on('connection', socket);
 
     // Start server
 

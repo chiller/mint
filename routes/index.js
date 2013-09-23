@@ -2,7 +2,15 @@ var DocumentApi = require('./api/docs.js');
 var EntityApi = require('./api/entities.js');
 module.exports = exports = function(app, db) {
 // Routes
-    
+    // Socket.io Communication
+    // Hook Socket.io into Express
+    var io = require('socket.io').listen(app);
+    //io.sockets.on('connection', socket);
+    io.sockets.on("connection", function(socket){
+        socket.join("room");
+        io.sockets["in"]("room").emit("chat", {msg: "client joined"});
+    })
+
     //document api
     api = new DocumentApi(db);
     app.get('/api/docs', api.docs);
@@ -11,7 +19,7 @@ module.exports = exports = function(app, db) {
     app.put('/api/docs/:id', api.updatedoc);
     app.delete('/api/docs/:id', api.deletedoc);
     //entity api
-    entities = new EntityApi(db);
+    entities = new EntityApi(db, io);
     app.get('/api/entities', entities.getAll);
     app.get('/api/entities/:id', entities.getOne);
     app.post('/api/entities', entities.create);

@@ -43,12 +43,14 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService)
   }
   
   //shared
-  socket.on('shared:update', function (data) {
-    //$scope.shared_document = data.shared_document
-    //PlumbService.setUpPlumbWithScope($scope);
-    //setTimeout(function(){jsPlumb.repaintEverything()}, 0);
-    console.log("on socket: "+data);
+  socket.on('entity:create', function (data) {
+      $scope.shared_document.entities.push(data.obj)
+      console.log("on socket: "+data.msg);
   });
+
+   //socket.on('chat', function (data) {
+   //     console.log("on socket: "+data.msg);
+   //});
   //shared-end
 
     $scope.sendshared = function () {

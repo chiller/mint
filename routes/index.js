@@ -23,7 +23,7 @@ module.exports = exports = function(app, db) {
     app.delete('/api/entities/:id', entities.delete);
     connections = new ConnectionApi(db,sa);
     app.post('/api/docs/:id/connections', connections.create);
-    app.delete('/api/docs/:id/connections/:from/:to', connections.remove);
+    app.delete('/api/docs/connections/delete', connections.remove);
 
     //pages
     app.get('/editor', function(req, res){

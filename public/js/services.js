@@ -50,6 +50,12 @@ app.factory('ConnectionService', ['$resource', function($resource){
             query: {method:'GET', isArray: true}});
 }]);
 
+app.factory('ConnectionDeleteService', ['$resource', function($resource){
+    return $resource('/api/docs/connections/delete/', {},
+        { update: {method:'PUT' } ,
+            query: {method:'GET', isArray: true}});
+}]);
+
 app.factory('AQ', function($rootScope){
     return {
        find: function(array, field, value) {
@@ -70,7 +76,7 @@ app.factory('AQ', function($rootScope){
     }
 });
 
-app.factory('PlumbService', function ($rootScope) {
+app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
   return {
     setUpPlumbWithScope: function ($scope) {
         jsPlumb.importDefaults({
@@ -113,7 +119,9 @@ app.factory('PlumbService', function ($rootScope) {
           $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
           jsPlumb.detach(connection);
           $scope.$apply();
-          $scope.updateDocument();
+          //$scope.updateDocument();
+          console.log(ConnectionDeleteService);
+          ConnectionDeleteService.delete({_id: $scope.shared_document._id, from:conn_object.from, to:conn_object.to});
           //TODO: propagate changes
         }); 
     },
@@ -128,4 +136,4 @@ app.factory('PlumbService', function ($rootScope) {
               ]
             });   
   }
-}})
+}},{$inject: ['ConnectionDeleteService']})

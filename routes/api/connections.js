@@ -1,5 +1,5 @@
 var mongo = require('mongodb');
-
+var url = require('url');
 module.exports = function (db, sa) {
     "use strict";
 
@@ -15,10 +15,14 @@ module.exports = function (db, sa) {
 
     };
     this.remove = function(req,res){
-        var oid = mongo.BSONPure.ObjectID(req.params.id)
-        docs.update({_id:oid},{ $pull: {connections: {from:req.body.from, to: req.body.to}}}  ,function(obj){
-            sa.broadcast("room","connection:delete",obj);
-            res.json( {from:req.body.from, to: req.body.to}) ;
+
+        var url_parts = url.parse(req.url, true);
+        console.log("*");
+        console.log(url_parts);
+        var oid = mongo.BSONPure.ObjectID(url_parts.query._id)
+        docs.update({_id:oid},{ $pull: {connections: {from:url_parts.query.from, to: url_parts.query.to}}}  ,function(obj){
+            sa.broadcast("room","connection:delete", {msg:"deleted",obj: {from:url_parts.query.from, to: url_parts.query.to}});
+            res.json({msg:"deleted",obj: {from:url_parts.query.from, to: url_parts.query.to}}) ;
         })
 
     };

@@ -85,6 +85,18 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
 
     });
     socket.on('connection:delete', function (data) {
+        //TODO: optimise this
+        var cons = jsPlumb.getAllConnections();
+        for(var i = 0;i<cons.length;i++){
+            if(cons[i].scope.from == data.obj.from && cons[i].scope.to == data.obj.to )
+            {
+                jsPlumb.detach(cons[i]);
+                var c = AQ.findConnection($scope.shared_document.connections, data.obj);
+                if (!c){
+                    $scope.shared_document.connections.splice(c, 1);
+                }
+            }
+        }
     });
    //socket.on('chat', function (data) {
    //     console.log("on socket: "+data.msg);

@@ -41,6 +41,19 @@ app.factory('EntityService', ['$resource', function($resource){
       query: {method:'GET', isArray: true}});
 }]);
 
+app.factory('AQ', function($rootScope){
+    return {
+       find: function(array, field, value) {
+           for (var i=0;i<array.length;i++){
+               if(array[i][field]==value) {
+                   return i;
+               }
+           }
+           return null;
+    }
+    }
+});
+
 app.factory('PlumbService', function ($rootScope) {
   return {
     setUpPlumbWithScope: function ($scope) {

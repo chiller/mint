@@ -7,9 +7,10 @@ html(ng-app="myApp")
     link(rel='stylesheet', href='/css/app.css')
   body
    block header
-     a(href="/editor") Editor 
-     &#58;&#58;
-     a(href="/playground") Playground 
-     &#58;&#58;
+    .header
      a(href="/") Main 
+     &nbsp;&nbsp;&nbsp;
+     a(href="/playground") ApiPlayground 
+     &nbsp;&nbsp;&nbsp;
+     a(href="/editor") Editor 
    block body

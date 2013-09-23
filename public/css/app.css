@@ -1,5 +1,17 @@
 /* app css stylesheet */
+input {
+  background-color:transparent;
+  border: 1px solid #DCF2E3;
+  color:#CCC;
+}
+button {
+  border-style:none;
+  background-color: #DCF2E3;
+}
 
+.header {
+  margin-left: 10%;
+}
 .overflowable {
   height: 240px;
   overflow-y: auto;
@@ -9,7 +21,9 @@
 .overflowable p {
   margin: 0;
 }
-
+a {
+  text-decoration:none;
+}
 .col {
   float: left;
   width: 350px;
@@ -37,7 +51,7 @@
   width: 10%;float:left;
 }
 .container {
-	width: 70%; height: 400px; background-color: #EEEEEE;
+	width: 70%; height: 600px; background-color: #DCF2E3;
   float: left;
 }
 
@@ -45,12 +59,16 @@
   width: 20%;
   float: right;
 }
-
+.editinside{
+  margin-left: 20px;
+}
 .toolbox {
+  margin-left: 10%;
   clear: both;
   float: left;
 }
 
 .selected {
-  background-color: #EEEEEE; 
+  background-color: #DCF2E3; 
 }
+

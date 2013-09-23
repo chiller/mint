@@ -65,7 +65,12 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
 
     })
   }
-
+  $scope.addDoc = function() {
+    $scope.newDoc.author="";
+    DocumentService.save($scope.newDoc, function(res){
+      $scope.docs.push(res)
+    })
+  }
   $scope.loadDoc = function(idx) {
 
     $scope.selectedDocIndex = idx;

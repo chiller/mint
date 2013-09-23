@@ -1,6 +1,6 @@
 var mongo = require('mongodb');
 
-module.exports = function (db, io) {
+module.exports = function (db, sa) {
   "use strict";
 
   var entities = db.collection("entities");
@@ -20,7 +20,7 @@ module.exports = function (db, io) {
 
   this.create = function(req, res) {
     entities.insert(req.body, {safe:true}, function(err, record){
-      io.sockets["in"]("room").emit("entity:create", {msg: "created", obj: record[0]});
+      sa.broadcast("room","entity:create",{msg: "created", obj: record[0]});
       res.json(record[0]);
     });
   }

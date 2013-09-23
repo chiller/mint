@@ -5,12 +5,9 @@
 
 var express = require('express'),
   routes = require('./routes'),
-  socket = require('./routes/socket.js'),
   MongoClient = require('mongodb').MongoClient;
 
 var app = module.exports = express.createServer();
-
-
 
 // Configuration
 var conn_string_prod = "mongodb://nodejitsu:54994e0b6fa6817af58f0160756facf7@paulo.mongohq.com:10060/nodejitsudb6288570733";

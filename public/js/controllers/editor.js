@@ -44,7 +44,8 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService)
   
   //shared
   socket.on('entity:create', function (data) {
-      $scope.shared_document.entities.push(data.obj)
+      var entities = $scope.shared_document.entities;
+      entities.push(data.obj);
       console.log("on socket: "+data.msg);
   });
 
@@ -75,7 +76,6 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService)
   }
   $scope.addEntity = function() {
     EntityService.save({position: {'left':300, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
-        $scope.shared_document.entities.push(res)
     })
     
   }

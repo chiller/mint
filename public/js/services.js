@@ -128,7 +128,8 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
   addPlumb: function(connection) {
            var shapes = $(".draggable");
            jsPlumb.connect({
-              source:$("#"+connection.from.toString()), 
+              scope: connection,
+              source:$("#"+connection.from.toString()),
               target:$("#"+connection.to.toString()),
               anchors:[
                 [ "Perimeter", { shape:"Rectangle" }],

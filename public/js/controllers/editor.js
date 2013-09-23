@@ -1,53 +1,9 @@
 'use strict';
 
 /* Controllers */
-function setUpPlumbWithScope($scope) {
-        jsPlumb.importDefaults({
-          Connector:"StateMachine",
-          PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
-          Endpoint:[ "Dot", { radius:5 } ],
-          EndpointStyle:{ fillStyle:"#ffa500" }
-        });
-          
-        var shapes = $(".draggable");
-        jsPlumb.detachEveryConnection();
-        
-        // loop through them and connect each one to each other one.
-        for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
-          
-          var t = $scope.shared_document.connections[i]
-          if ($("#"+t.from.toString()).length == 0 || $("#"+t.to.toString()).length == 0) {
-            //TODO: rethink this
-            console.log("STALE CONNECTION")
-            $scope.shared_document.connections.splice(i, 1)
-            $scope.updateDocument();
-            continue
-          }
-           jsPlumb.connect({
-              scope: t,
-              source:$("#"+t.from.toString()), 
-              target:$("#"+t.to.toString()),
-              // here we supply a different anchor for source and for target, and we get the element's "data-shape"
-              // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
-            });   
 
 
-         };   
-        jsPlumb.bind('click', function (connection, e) {
-          var conn_object = connection.scope;
-          $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
-          jsPlumb.detach(connection);
-          $scope.$apply();
-          $scope.updateDocument();
-          //TODO: propagate changes
-        }); 
-}
-
-function EditorCtrl($scope, socket, DocumentService, EntityService) {
+function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService) {
   DocumentService.query(function(response){$scope.docs=response});
   $scope.init = function(id){
     DocumentService.get({id:id}, function(response){
@@ -59,7 +15,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
         $scope.shared_document.entities = entities;
         //TODO: this is ugly
         setTimeout(function(){
-          setUpPlumbWithScope($scope);
+          PlumbService.setUpPlumbWithScope($scope);
         },500)
       });
 
@@ -89,7 +45,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
   //shared
   socket.on('shared:update', function (data) {
     $scope.shared_document = data.shared_document
-    setUpPlumbWithScope($scope);
+    PlumbService.setUpPlumbWithScope($scope);
     setTimeout(function(){jsPlumb.repaintEverything()}, 0);
   });
   //shared-end
@@ -100,17 +56,6 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
     });
   };
 
-  $scope.addPlumb = function(connection) {
-           var shapes = $(".draggable");
-           jsPlumb.connect({
-              source:$("#"+connection.from.toString()), 
-              target:$("#"+connection.to.toString()),
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
-            });   
-  }
  
   $scope.addConnection = function() {
     if ($scope.selectedEntity && $scope.selectedEntity2) {
@@ -118,7 +63,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService) {
       $scope.shared_document.connections.push(new_connection)
       //TODO: only set up new ones
       DocumentService.update($scope.shared_document)
-      $scope.addPlumb(new_connection)
+      PlumbService.addPlumb(new_connection)
       $scope.sendshared();
     }
   }

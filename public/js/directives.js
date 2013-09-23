@@ -49,11 +49,8 @@ ntmodule.directive('saveSelected', function(EntityService){
         $(elm).blur(function(){
           EntityService.update(scope.selectedEntity)
         });    
-
       }
-    };
-
-  
+    };  
 })
 
 ntmodule.directive('onKeyupFn', function() {

@@ -11,6 +11,7 @@ var ntmodule = angular.module('myApp.directives', []).
 
   }])
 
+
  ntmodule.directive('ntDraggable', function($timeout) {
 
   return {
@@ -20,8 +21,10 @@ var ntmodule = angular.module('myApp.directives', []).
         ng-click='selectEntity($index, $event)'\
         id={{entity._id}}>\
         <div>{{entity.title}}</div></div>",
+    replace: true,
     link: function(scope, elm, attrs) {
-      $(elm.children()[0]).draggable({
+      /*
+      $(elm).draggable({
       	containment: ".container",
       	//use this for performance optimisation
       	grid: [5,5],
@@ -39,6 +42,13 @@ var ntmodule = angular.module('myApp.directives', []).
             jsPlumb.repaintEverything();
             scope.updateEntity(scope.$index);
         }});
+      */
+      jsPlumb.draggable(elm,
+          {stop: function( event, ui ) {
+            scope.shared_document.entities[scope.$index].position = ui.position
+            scope.$apply()
+            scope.updateEntity(scope.$index);
+        }} );
     }
   };
 });

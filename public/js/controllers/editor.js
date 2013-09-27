@@ -6,7 +6,7 @@
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
     angular.element(document).on("keydown", function(event){
         var doPrevent = false;
-        if (event.keyCode === 8) {
+        if (event.keyCode === 8 || event.keyCode === 69) {
             var d = event.srcElement || event.target;
             if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'FILE'))
                 || d.tagName.toUpperCase() === 'TEXTAREA') {
@@ -18,12 +18,15 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
         }
         if (doPrevent) {
             event.preventDefault();
-            if($scope.selectedEntity){
-                $scope.deleteEntity()
+            if (event.keyCode === 8) {
+                if($scope.selectedEntity){
+                    $scope.deleteEntity()
+                }
+            } else if (event.keyCode === 69) {
+                $scope.addEntity();
             }
             return false
         }
-        console.log(event)
     })
 
     jsPlumb.importDefaults({

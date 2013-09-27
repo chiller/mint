@@ -20,7 +20,7 @@ var ntmodule = angular.module('myApp.directives', []).
         ng-class='{selected1 : entity==selectedEntity, selected2 : entity==selectedEntity2 }'\
         ng-click='selectEntity($index, $event)'\
         id={{entity._id}}>\
-        <div>{{entity.title}}</div></div>",
+        <div class='entity_title'>{{entity.title}}</div></div>",
     replace: true,
     link: function(scope, elm, attrs) {
       /*
@@ -44,11 +44,25 @@ var ntmodule = angular.module('myApp.directives', []).
         }});
       */
       jsPlumb.draggable(elm,
-          {stop: function( event, ui ) {
+          {containment: ".container",
+           stop: function( event, ui ) {
             scope.shared_document.entities[scope.$index].position = ui.position
             scope.$apply()
             scope.updateEntity(scope.$index);
         }} );
+
+      jsPlumb.makeSource(elm.children()[0], {
+            //anchor:sourceAnchors,		// you could supply this if you want, but it was set in the defaults above.
+            filter:function(evt, el) {
+                var t = evt.target || evt.srcElement;
+                return t.tagName !== "A";
+            },
+            isSource:true
+      });
+
+        jsPlumb.makeTarget(elm.children()[0], {
+        });
+
     }
   };
 });

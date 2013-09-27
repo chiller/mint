@@ -35,7 +35,8 @@ a {
 
 .draggable { 
 	width: 50px; height: 50px; padding: 0.5em; background-color: #AAAA77;    
-            position: absolute; 
+            position: absolute;
+    z-index:2;
 }
 .draggable.selected1 {
   border-color: #FFAA77;
@@ -47,12 +48,18 @@ a {
   border-style:solid;
   border-width:2px;
 }
+.entity_title{
+    border-style:solid;
+    border-width:1px;
+    border-color: #DDAA77;
+}
 .listleft {
   width: 10%;float:left;
 }
 .container {
 	width: 70%; height: 600px; background-color: #DCF2E3;
   float: left;
+    z-index:1;
 }
 
 .edit {
@@ -72,3 +79,13 @@ a {
   background-color: #DCF2E3; 
 }
 
+.hover {
+    background-color: #cfcf92;
+}
+
+._jsPlumb_endpoint{
+ z-index: 100;
+}
+._jsPlumb_connector{
+    z-index: 100;
+}

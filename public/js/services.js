@@ -79,12 +79,9 @@ app.factory('AQ', function($rootScope){
 app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
   return {
     setUpPlumbWithScope: function ($scope) {
-        jsPlumb.importDefaults({
-          Connector:"StateMachine",
-          PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
-          Endpoint:[ "Dot", { radius:5 } ],
-          EndpointStyle:{ fillStyle:"#ffa500" }
-        });
+
+
+
           
         var shapes = $(".draggable");
         jsPlumb.detachEveryConnection();
@@ -129,6 +126,7 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
            var shapes = $(".draggable");
            jsPlumb.connect({
               scope: connection,
+              curviness: 0,
               source:$("#"+connection.from.toString()),
               target:$("#"+connection.to.toString()),
               anchors:[

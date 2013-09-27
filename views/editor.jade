@@ -12,9 +12,12 @@ block body
     
     .edit
       input(ng-model="selectedEntity.title",save-selected)
+      br
+      input(ng-model="selectedEntity._id",readonly)
 
     .toolbox
-      button(ng-click="addEntity()") E 
+
+      button(ng-click="addEntity()") E
       button(ng-click="addConnection()") C
       button(ng-click="deleteEntity()") D 
     

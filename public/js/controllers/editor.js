@@ -4,6 +4,27 @@
 
 
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
+    jsPlumb.importDefaults({
+        Connector:["StateMachine",{curviness: 1}],
+        PaintStyle:{ lineWidth:4, strokeStyle:"#ffa500" },
+        Endpoint:[ "Dot", { radius:4 } ],
+        EndpointStyle:{ fillStyle:"#ffa500" }
+
+    });
+
+  jsPlumb.bind("beforeDrop", function(i,c) {
+
+      var new_connection = {
+      from: $("#"+i.sourceId).parent().attr('id'),
+      to: $("#"+i.targetId).parent().attr('id')
+        }
+      console.log(i)
+      $scope.shared_document.connections.push(new_connection)
+      ConnectionService.save({_id: $scope.shared_document._id,"from":new_connection.from, "to":new_connection.to });
+      PlumbService.addPlumb(new_connection)
+
+      return false;
+  })
   DocumentService.query(function(response){
       $scope.docs=response
       $scope.loadDoc(0);
@@ -148,5 +169,4 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     }
     
   }
-
 }

@@ -172,7 +172,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     DocumentService.update($scope.shared_document)
   }
   $scope.addEntity = function() {
-    EntityService.save({position: {'left':300, 'top':300 }, title:"untitled", document: $scope.shared_document._id}, function(res){
+    EntityService.save({position: {'left':300, 'top':300 }, title:"*", document: $scope.shared_document._id}, function(res){
     })
     
   }
@@ -195,5 +195,6 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     }
     
   }
+
 
 }

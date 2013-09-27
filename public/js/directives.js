@@ -52,16 +52,14 @@ var ntmodule = angular.module('myApp.directives', []).
         }} );
 
       jsPlumb.makeSource(elm.children()[0], {
-            //anchor:sourceAnchors,		// you could supply this if you want, but it was set in the defaults above.
-            filter:function(evt, el) {
-                var t = evt.target || evt.srcElement;
-                return t.tagName !== "A";
-            },
+
             isSource:true
       });
 
         jsPlumb.makeTarget(elm.children()[0], {
         });
+
+
 
     }
   };

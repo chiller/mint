@@ -4,6 +4,21 @@
 
 
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
+    angular.element(document).on("keydown", function(event){
+        var doPrevent = false;
+            var d = event.srcElement || event.target;
+                doPrevent = d.readOnly || d.disabled;
+            else {
+            }
+            event.preventDefault();
+            if($scope.selectedEntity){
+                $scope.deleteEntity()
+            }
+            return false
+        }
+        console.log(event)
+    })
+
     jsPlumb.importDefaults({
         Connector:["StateMachine",{curviness: 1}],
         PaintStyle:{ lineWidth:4, strokeStyle:"#ffa500" },

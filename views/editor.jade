@@ -1,6 +1,6 @@
 extends layout
 
-block body    
+block body
   div(ng-controller='EditorCtrl')
     br
     .listleft
@@ -8,12 +8,17 @@ block body
       input(ng-model="newDoc.text")
       button(ng-click="addDoc()") +
     .container
-      .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
+      .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
     
     .edit
+      p label:
       input(ng-model="selectedEntity.title",save-selected)
       br
+      p Entity id:
       input(ng-model="selectedEntity._id",readonly)
+      br
+      p document id:
+      input(ng-model="selectedEntity.document",readonly)
 
     .toolbox
 
@@ -32,7 +37,6 @@ block body
   //script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
   script(src='js/lib/angular/angular.min.js')
   script(src='js/lib/angular/angular-resource.js')
-  
   script(src='/socket.io/socket.io.js')
   script(src='js/app.js')
   script(src='js/services.js')

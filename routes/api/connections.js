@@ -17,8 +17,6 @@ module.exports = function (db, sa) {
     this.remove = function(req,res){
 
         var url_parts = url.parse(req.url, true);
-        console.log("*");
-        console.log(url_parts);
         var oid = mongo.BSONPure.ObjectID(url_parts.query._id)
         docs.update({_id:oid},{ $pull: {connections: {from:url_parts.query.from, to: url_parts.query.to}}}  ,function(obj){
             sa.broadcast("room","connection:delete", {msg:"deleted",obj: {from:url_parts.query.from, to: url_parts.query.to}});

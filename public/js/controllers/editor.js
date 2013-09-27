@@ -6,10 +6,17 @@
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
     angular.element(document).on("keydown", function(event){
         var doPrevent = false;
+        if (event.keyCode === 8) {
             var d = event.srcElement || event.target;
+            if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'FILE'))
+                || d.tagName.toUpperCase() === 'TEXTAREA') {
                 doPrevent = d.readOnly || d.disabled;
-            else {
             }
+            else {
+                doPrevent = true;
+            }
+        }
+        if (doPrevent) {
             event.preventDefault();
             if($scope.selectedEntity){
                 $scope.deleteEntity()
@@ -70,6 +77,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
 
     $scope.selectedDocIndex = idx;
     $scope.init($scope.docs[idx]._id);
+    socket.emit("room:change", {id: $scope.docs[idx]._id});
   }
 
 
@@ -104,6 +112,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     socket.on('entity:delete', function (data) {
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj)
+        console.log("*")
         if (entity!=null) {
             //debugger
             console.log("deleting"+entity.toString())
@@ -138,9 +147,9 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
             }
         }
     });
-   //socket.on('chat', function (data) {
-   //     console.log("on socket: "+data.msg);
-   //});
+   socket.on('chat', function (data) {
+        console.log("chat: "+data.msg);
+   });
   //shared-end
 
 
@@ -169,13 +178,12 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
             console.log("success");
         })
   }
-  $scope.deleteEntity = function(keyc) {
-    //if (keyc!=46) {return;}
+  $scope.deleteEntity = function() {
 
     if ($scope.selectedEntity) {
       jsPlumb.detachAllConnections($("#"+$scope.selectedEntity._id.toString()));
       var idx = $scope.shared_document.entities.indexOf($scope.selectedEntity);
-      EntityService.delete({id: $scope.selectedEntity._id}, function(){
+      EntityService.delete({id: $scope.selectedEntity._id, document: $scope.selectedEntity.document}, function(){
         $scope.selectedEntity = null;
         //$scope.shared_document.entities.splice(idx,1)
       })
@@ -184,4 +192,5 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     }
     
   }
+
 }

@@ -1,5 +1,5 @@
 var mongo = require('mongodb');
-
+var url = require('url');
 module.exports = function (db, sa) {
   "use strict";
 
@@ -20,16 +20,18 @@ module.exports = function (db, sa) {
 
   this.create = function(req, res) {
     entities.insert(req.body, {safe:true}, function(err, record){
-      sa.broadcast("room","entity:create",{msg: "created", obj: record[0]});
+      sa.broadcast(req.body.document,"entity:create",{msg: "created", obj: record[0]});
       res.json(record[0]);
     });
   }
 
   this.delete = function(req, res) {
     var oid = mongo.BSONPure.ObjectID(req.params.id)
+    var url_parts = url.parse(req.url, true);
     entities.remove({_id: oid}, function(err, removed){
         if (err) throw err;
-        sa.broadcast("room","entity:delete",{msg: "deleted", obj: oid});
+        console.log(url_parts.query.document)
+        sa.broadcast(url_parts.query.document,"entity:delete",{msg: "deleted", obj: oid});
         res.json(oid);
     })  
   }
@@ -41,7 +43,8 @@ module.exports = function (db, sa) {
       if (err) throw err;
       var updated = req.body;
       updated._id = req.params.id;
-      sa.broadcast("room","entity:update",{msg: "updated", obj: updated});
+      console.log(req.body.document)
+      sa.broadcast(req.body.document,"entity:update",{msg: "updated", obj: updated});
       res.json(data);
     })
   }

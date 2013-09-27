@@ -103,10 +103,7 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
               target:$("#"+t.to.toString()),
               // here we supply a different anchor for source and for target, and we get the element's "data-shape"
               // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
+
             });   
 
 
@@ -129,10 +126,7 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
               curviness: 0,
               source:$("#"+connection.from.toString()),
               target:$("#"+connection.to.toString()),
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
+
             });   
   }
 }},{$inject: ['ConnectionDeleteService']})

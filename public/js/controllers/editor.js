@@ -30,12 +30,22 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     })
 
     jsPlumb.importDefaults({
-        Connector:["StateMachine",{curviness: 1}],
+        Connector:["Bezier",{curviness: 10}],
         PaintStyle:{ lineWidth:4, strokeStyle:"#ffa500" },
-        Endpoint:[ "Dot", { radius:4 } ],
-        EndpointStyle:{ fillStyle:"#ffa500" }
+        Endpoint:[ "Dot", { radius:1 } ],
+        EndpointStyle:{ fillStyle:"#ffa500" }   ,
+        Anchor: "Continuous",
+        Overlays : [
+        [ "Arrow", {
+            location:1,
+            id:"arrow",
+            length:14,
+            foldback:0.8
+        } ]//,
+        //[ "Label", { label:"FOOOOOOOOOOOOOOOOOOOOO" }]
+        ]
 
-    });
+});
 
   jsPlumb.bind("beforeDrop", function(i,c) {
 

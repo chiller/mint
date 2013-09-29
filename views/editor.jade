@@ -11,6 +11,7 @@ block body
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
     
     .edit
+      p Entity
       p label:
       input(ng-model="selectedEntity.title",save-selected)
       br
@@ -19,7 +20,14 @@ block body
       br
       p document id:
       input(ng-model="selectedEntity.document",readonly)
-
+      br
+      p Connection
+      p From:
+      input(ng-model="selectedConnection.from",readonly)
+      p To:
+      input(ng-model="selectedConnection.to",readonly)
+      p label:
+      input(ng-model="selectedConnection.label", save-selected-con)
     .toolbox
 
       button(ng-click="addEntity()") E

@@ -41,8 +41,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
             id:"arrow",
             length:14,
             foldback:0.8
-        } ]//,
-        //[ "Label", { label:"FOOOOOOOOOOOOOOOOOOOOO" }]
+        } ]
         ]
 
 });
@@ -101,7 +100,9 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
       $scope.selectedEntity = $scope.shared_document.entities[i]; 
     }
   }
-  
+
+
+
   //shared
   //TODO: this needsto be extracted from here
   socket.on('entity:create', function (data) {

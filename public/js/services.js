@@ -103,20 +103,29 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
               target:$("#"+t.to.toString()),
               // here we supply a different anchor for source and for target, and we get the element's "data-shape"
               // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-
+              label: t.label
             });   
 
 
          };   
+        var deleteConnection = function(){
+            var conn_object = connection.scope;
+            $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
+            jsPlumb.detach(connection);
+            $scope.$apply();
+            //$scope.updateDocument();
+            console.log(ConnectionDeleteService);
+            ConnectionDeleteService.delete({_id: $scope.shared_document._id, from:conn_object.from, to:conn_object.to});
+            //TODO: propagate changes
+        }
+
         jsPlumb.bind('click', function (connection, e) {
-          var conn_object = connection.scope;
-          $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
-          jsPlumb.detach(connection);
-          $scope.$apply();
-          //$scope.updateDocument();
-          console.log(ConnectionDeleteService);
-          ConnectionDeleteService.delete({_id: $scope.shared_document._id, from:conn_object.from, to:conn_object.to});
-          //TODO: propagate changes
+            console.log(connection)
+            var idx = $scope.shared_document.connections.indexOf(connection.scope);
+
+            $scope.selectedConnection = $scope.shared_document.connections[idx];
+
+            $scope.$apply();
         }); 
     },
   addPlumb: function(connection) {

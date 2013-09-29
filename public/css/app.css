@@ -63,7 +63,8 @@ a {
 }
 
 .edit {
-  width: 20%;
+  padding-left: 10px;
+  width: 19%;
   float: right;
 }
 .editinside{
@@ -88,4 +89,8 @@ a {
 }
 ._jsPlumb_connector{
     z-index: 100;
+}
+
+._jsPlumb_overlay{
+    z-index: 110;
 }

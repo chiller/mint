@@ -76,3 +76,19 @@ ntmodule.directive('saveSelected', function(EntityService){
 })
 
 
+ntmodule.directive('saveSelectedCon', function(DocumentService){
+    return {
+        link:function(scope, elm, attrs) {
+            $(elm).blur(function(){
+                DocumentService.update(scope.shared_document)
+                var cons = jsPlumb.getAllConnections();
+                for(var i = 0; i< cons.length; i++) {
+                    var con = cons[i];
+                    if(con.scope.to == scope.selectedConnection.to && con.scope.from == scope.selectedConnection.from){
+                       con.setLabel(scope.selectedConnection.label)
+                   }
+                }
+            });
+        }
+    };
+})

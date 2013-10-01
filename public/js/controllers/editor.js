@@ -3,7 +3,7 @@
 /* Controllers */
 
 
-function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ) {
+function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
     angular.element(document).on("keydown", function(event){
         var doPrevent = false;
         if (event.keyCode === 8 || event.keyCode === 69) {
@@ -65,7 +65,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
   });
   $scope.init = function(id){
     DocumentService.get({id:id}, function(response){
-      
+        $scope.compile_result = " ";
       $scope.shared_document = response;
       
       EntityService.query({document:response._id },function(response){
@@ -207,5 +207,12 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     
   }
 
+  $scope.compile = function(){
+      $http.get('/api/compile/'+$scope.shared_document._id).
+          success(function(data, status, headers, config) {
 
+              $scope.compile_result = data.toString();
+          })
+
+  }
 }

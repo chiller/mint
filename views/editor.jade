@@ -34,7 +34,10 @@ block body
       button(ng-click="addConnection()") C
       button(ng-click="deleteEntity()") D 
     
-    
+    #templateholder
+      textarea(ng-model="shared_document.template",save-selected-tmp)
+      textarea#result(ng-model="compile_result",readonly)
+      button(ng-click="compile()") Compile
   
   //script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src='js/lib/jquery-1.9.1.min.js')

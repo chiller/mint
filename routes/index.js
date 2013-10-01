@@ -1,12 +1,15 @@
 var DocumentApi = require('./api/docs.js');
 var EntityApi = require('./api/entities.js');
+var CompileApi = require('./api/compile.js');
 var ConnectionApi = require('./api/connections.js');
 var SocketAdapter = require('./socketAdapter.js');
 module.exports = exports = function(app, db) {
 // Routes
     // Socket.io Communication
     sa = new SocketAdapter(app);
-
+    //compile
+    compile = new CompileApi(db, sa);
+    app.get('/api/compile/:id', compile.compile);
     //document api
     api = new DocumentApi(db, sa);
     app.get('/api/docs', api.docs);

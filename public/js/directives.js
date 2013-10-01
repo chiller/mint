@@ -92,3 +92,15 @@ ntmodule.directive('saveSelectedCon', function(DocumentService){
         }
     };
 })
+
+
+ntmodule.directive('saveSelectedTmp', function(DocumentService){
+    return {
+        link:function(scope, elm, attrs) {
+            $(elm).blur(function(){
+                DocumentService.update(scope.shared_document)
+
+            });
+        }
+    };
+})

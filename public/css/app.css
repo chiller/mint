@@ -94,3 +94,8 @@ a {
 ._jsPlumb_overlay{
     z-index: 110;
 }
+
+#templateholder textarea{
+    width: 580px;
+    height:400px;
+}

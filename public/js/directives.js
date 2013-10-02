@@ -104,3 +104,45 @@ ntmodule.directive('saveSelectedTmp', function(DocumentService){
         }
     };
 })
+
+
+ntmodule.directive('ntDelete', function(ConnectionDeleteService){
+    return {
+        link: function($scope, elm, attrs){
+            console.log("ntDelete")
+            angular.element(document).on("keydown", function(event){
+                var doPrevent = false;
+                if (event.keyCode === 8 || event.keyCode === 69) {
+                    var d = event.srcElement || event.target;
+                    if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'FILE'))
+                        || d.tagName.toUpperCase() === 'TEXTAREA') {
+                        doPrevent = d.readOnly || d.disabled;
+                    }
+                    else {
+                        doPrevent = true;
+                    }
+                }
+                if (doPrevent) {
+                    event.preventDefault();
+                    if (event.keyCode === 8) {
+                        if($scope.selectedEntity){
+                            $scope.deleteEntity()
+                        } else if($scope.selectedConnection){
+                            var connection = $scope.selectedConnection_obj
+                            var conn_object = $scope.selectedConnection_obj.scope;
+                            $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
+                            jsPlumb.detach(connection);
+                            $scope.$apply();
+                            ConnectionDeleteService.delete({_id: $scope.shared_document._id, from:conn_object.from, to:conn_object.to});
+
+
+                        }
+                    } else if (event.keyCode === 69) {
+                        $scope.addEntity();
+                    }
+                    return false
+                }
+            })
+        }
+    }
+})

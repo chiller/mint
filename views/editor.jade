@@ -1,7 +1,9 @@
 extends layout
 
 block body
+
   div(ng-controller='EditorCtrl')
+    div(nt-delete)
     br
     .listleft
       .doc(ng-repeat='doc in docs', ng-click='loadDoc($index)',ng-class="{selected: $index==selectedDocIndex}") {{doc.text}}

@@ -4,30 +4,7 @@
 
 
 function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
-    angular.element(document).on("keydown", function(event){
-        var doPrevent = false;
-        if (event.keyCode === 8 || event.keyCode === 69) {
-            var d = event.srcElement || event.target;
-            if ((d.tagName.toUpperCase() === 'INPUT' && (d.type.toUpperCase() === 'TEXT' || d.type.toUpperCase() === 'PASSWORD' || d.type.toUpperCase() === 'FILE'))
-                || d.tagName.toUpperCase() === 'TEXTAREA') {
-                doPrevent = d.readOnly || d.disabled;
-            }
-            else {
-                doPrevent = true;
-            }
-        }
-        if (doPrevent) {
-            event.preventDefault();
-            if (event.keyCode === 8) {
-                if($scope.selectedEntity){
-                    $scope.deleteEntity()
-                }
-            } else if (event.keyCode === 69) {
-                $scope.addEntity();
-            }
-            return false
-        }
-    })
+
 
     jsPlumb.importDefaults({
         Connector:["Bezier",{curviness: 10}],
@@ -95,6 +72,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
 
   
   $scope.selectEntity = function(i) {
+    $scope.selectedConnection = null;
     if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
       $scope.selectedEntity2 = $scope.selectedEntity;
       $scope.selectedEntity = $scope.shared_document.entities[i]; 

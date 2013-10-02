@@ -120,11 +120,13 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
         }
 
         jsPlumb.bind('click', function (connection, e) {
-            console.log(connection)
+
             var idx = $scope.shared_document.connections.indexOf(connection.scope);
-
+            $("path").each(function(){this.style.setProperty("stroke","#ffa500")})
+            e.target.style.setProperty("stroke","#fc0")
             $scope.selectedConnection = $scope.shared_document.connections[idx];
-
+            $scope.selectedConnection_obj = connection
+            $scope.selectedEntity = null;
             $scope.$apply();
         }); 
     },
@@ -139,3 +141,4 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
             });   
   }
 }},{$inject: ['ConnectionDeleteService']})
+

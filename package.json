@@ -1,18 +1,19 @@
 {
-    "name": "mint-editor",
-    "version": "0.0.1-7",
-    "private": true,
-    "dependencies": {
-        "express": "2.5.10",
-        "jade": ">= 0.26.1",
-        "socket.io": ">= 0.9.6",
-        "mongodb": "~1.3.9"
-    },
-    "subdomain": "galacziendre-mint",
-    "scripts": {
-        "start": "node app.js"
-    },
-    "engines": {
-        "node": "0.10.x"
-    }
+  "name": "mint-editor",
+  "version": "0.0.1-10",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.10",
+    "jade": ">= 0.26.1",
+    "socket.io": ">= 0.9.6",
+    "mongodb": "~1.3.9",
+    "underscore": "~1.5.2"
+  },
+  "subdomain": "galacziendre-mint",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
 }

@@ -1,0 +1,16 @@
+mint/node_modules/*
+mint/node_modules/express/History.md
+node_modules
+LaTeX_diplomaterv/diploma.pdf
+
+*.aux
+
+LaTeX_diplomaterv/diploma.log
+
+LaTeX_diplomaterv/diploma.out
+
+LaTeX_diplomaterv/diploma.synctex.gz
+
+LaTeX_diplomaterv/diploma.thm
+
+LaTeX_diplomaterv/diploma.toc

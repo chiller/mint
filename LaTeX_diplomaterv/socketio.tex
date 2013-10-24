@@ -1,0 +1,30 @@
+%----------------------------------------------------------------------------
+\section{Socket.IO}
+%----------------------------------------------------------------------------
+A Socket.IO egy JavaScript könyvtár ami valósidejű alkalmazásokat tesz lehetővé. Ha a hagyományos kliens-szerver weboldal modellre gondolunk, akkor azt a hiányosságot oldja meg, hogy miután letöltődik a honlap a böngészőbe nem egyértelmű, hogy hogyan tudnánk a kliens oldalon reagálni szerver oldali eseményekre. A WebSocket protokoll egy TCP kapcsolaton full-duplex kommunikációt biztosít.
+
+Valósidejű alkalmazásra egy naív próbálkozás az egyszerű AJAX polling, ami így nézhet ki:
+\medskip
+\begin{lstlisting}[caption=Egyszerű polling]
+setInterval(function(){
+    $.ajax({ url: "server", success: function(data){
+        //
+    }, dataType: "json"});
+}, 30000);
+\end{lstlisting}
+
+Ez több próblémát is felvet, többek között azt, hogy, ha a polling intervallum túl kicsi, akkor túl sok lekérés megy a szerverhez, ha az intervallum túl nagy, akkor nem kapunk elég gyakran értesítést. Minden egyes lekérdezés egy-egy kapcsolatfelépítést jelentene, ami pazarló lenne.
+
+Erre egy alternatíva a Long Polling, ekkor a válasz nem érkezik meg a szervertől addig, amíg nincsen olyan esemény amiről a klienst értesítenénk:
+
+\begin{lstlisting}[caption=Long Polling]
+(function poll(){
+    $.ajax({ url: "server", success: function(data){
+        // 
+    }, dataType: "json", complete: poll, timeout: 30000 });
+})();
+\end{lstlisting}
+
+%Itt is láthatunk néhány hiányosságot: újra kell kapcsolódni periodikusan, mert a kérés lejárhat (timeout), a kommunikációs protokoll még mindig HTTP, ami 
+
+Megoldások mint a \url{http://pusher.com} megkönnyítik a Websockets implementációt egy 3rd party szolgáltatás keretein belül.

@@ -1,1 +1,1 @@
-nodemon -x "pdflatex -output-directory ./out diploma" -w ./ -e .tex
+nodemon -x "pdflatex diploma" -w ./ -e .tex

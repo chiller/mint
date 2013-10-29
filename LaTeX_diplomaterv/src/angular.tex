@@ -2,4 +2,42 @@
 \section{AngularJS}
 %----------------------------------------------------------------------------
 
-AngularDerpJS
+Az AngularJS egy nyílt forrású JavaScript keretrendszer ami ``single-page''\footnote{Egy olyan webalkalmazás ami egy weboldalon kifér dinamikusan betöltött tartalommal a jobb felhasználói élmény céljából.} webalkalmazások fejlesztését támogatja. A Google karbantartása alatt van és az első verziója 2009-ben jelent meg. 
+
+\subsection{Kliensoldali HTML generálás}
+
+A hagyományos weboldal esetében a böngészőben megjelenített HTML a szerver oldali alkalmazás által van létrehozva.  A single-page alkalmazás ebben az esetben úgy jön létre, hogy AJAX felhasználásával betöltés után töltődnek be újabb részei az oldalnak\cite{angularbook}. AngularJS esetében ez a művelet a kliens oldalra kerül így a szerver inkább egy adatforrás és statikus tartalom szolgáltatóvá válik. Így lazább csatolást érünk el a szerver és kliens oldal között esetleg párhuzamosítva a fejlesztést és növelve az újrafelhasználhatóságot. 
+
+
+\subsection{Direktívák}
+
+Az AngularJS fordító segítségével ki lehet terjeszteni a HTML szintaxist új attribútum és elem típusokkal, ezeket hívják direktívának. 
+
+\lstset{language=HTML}
+\begin{lstlisting}[frame=single]  
+<ul>
+  <li ng-repeat="action in user.actions">
+    {{action.description}}
+  </li>
+</ul>
+\end{lstlisting}
+
+\subsection{Model View Controller}
+
+\subsection{Adatkötés}
+
+jQuery és hasonló megoldások segítségével újratöltés nélkül frissíteni tudjuk a DOM-ot felhasználói események hatására vagy adatok frissítése esetében, de még az egyszerű esetekben sem biztos hogy triviális a DOM és adatok összehangolása. Az AngularJS ezt két irányú adatkötéssel próbálja megoldani ráadásul deklaratívan. Egy egyszerű példa adatkötésre:
+
+\lstset{language=HTML}
+\begin{lstlisting}[frame=single]  
+<div ng-controller="HelloController">
+  <input ng-model="greeting.text"/>
+  <p>{{greeting.text}}, World!</p>
+</div>
+\end{lstlisting}
+Ekkor az input mező módosítása automatikusan a model-t is frissíti és ez a cimkét is frissíti alatta. Ehhez az alap funkcionalitáshoz nem is szükséges más kódot írni.
+
+
+\subsection{Függőséginjektálás}
+
+

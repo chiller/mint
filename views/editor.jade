@@ -11,7 +11,7 @@ block body
       button(ng-click="addDoc()") +
     .container
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
-    
+
     .edit
       p Entity
       p label:
@@ -30,17 +30,19 @@ block body
       input(ng-model="selectedConnection.to",readonly)
       p label:
       input(ng-model="selectedConnection.label", save-selected-con)
+      div
+          p {{documentHash}}
     .toolbox
 
       button(ng-click="addEntity()") E
       button(ng-click="addConnection()") C
-      button(ng-click="deleteEntity()") D 
-    
+      button(ng-click="deleteEntity()") D
+
     #templateholder
       textarea(ng-model="shared_document.template",save-selected-tmp)
       textarea#result(ng-model="compile_result",readonly)
       button(ng-click="compile()") Compile
-  
+
   //script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src='js/lib/jquery-1.9.1.min.js')
   //script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
@@ -53,7 +55,10 @@ block body
   script(src='/socket.io/socket.io.js')
   script(src='js/app.js')
   script(src='js/services.js')
+  script(src="http://www.webtoolkit.info/djs/webtoolkit.md5.js")
+
   script(src='js/controllers/editor.js')
+  script(src='js/controllers/hash.js')
   script(src='js/filters.js')
   script(src='js/directives.js')
-  
+

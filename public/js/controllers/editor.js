@@ -193,4 +193,26 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
           })
 
   }
+
+  $scope.$watch('shared_document.entities', function (newVal) {
+      var entities = []
+      if ($scope.shared_document){
+          angular.forEach($scope.shared_document.entities, function(e){
+            entities.push({
+                _id: e._id,
+                position: e.position,
+                title: e.title
+            })
+          })
+          entities.sort(function (a, b) {
+              if (a._id > b._id)
+                  return 1;
+              if (a._id < b._id)
+                  return -1;
+              // a must be equal to b
+              return 0;
+          });
+          $scope.documentHash = MD5(JSON.stringify(entities))
+      }
+  }, true);
 }

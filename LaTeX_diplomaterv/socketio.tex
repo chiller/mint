@@ -27,4 +27,24 @@ Erre egy alternatíva a Long Polling, ekkor a válasz nem érkezik meg a szerver
 
 %Itt is láthatunk néhány hiányosságot: újra kell kapcsolódni periodikusan, mert a kérés lejárhat (timeout), a kommunikációs protokoll még mindig HTTP, ami 
 
+%TODO
+\section{Websockets}
+
+\include{rfc6455}
+
+
+
+A Socket.IO átlátszó módon kiválasztja a legjobb protokollt az aktuális böngésző által támogatottak közül ebben a sorrendben:
+\begin{enumerate}
+\item{WebSocket}
+\item{Adobe Flash Socket}
+\item{AJAX long polling}
+\item{AJAX multipart streaming}
+\item{Forever Iframe}
+\item{JSONP Polling}
+\end{enumerate}
+
+\section{origin-based security model}
+
 Megoldások mint a \url{http://pusher.com} megkönnyítik a Websockets implementációt egy 3rd party szolgáltatás keretein belül.
+

@@ -1,0 +1,1 @@
+nodemon -x "python browsertest.py" -w ./ -e .py

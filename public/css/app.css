@@ -17,6 +17,24 @@ button {
   overflow-y: auto;
   border: 1px solid #000;
 }
+p {
+    margin:0px;
+    padding:0px;
+}
+
+.hashholder {
+    margin: 30px;
+    position: fixed;
+    right: 100px;
+    bottom: 100px;
+    border-style: solid;
+}
+.inactive {
+    opacity: 0.2;
+}
+.hashholder p {
+    font-family: "Lucida Console", Monaco, monospace;
+}
 
 .overflowable p {
   margin: 0;

@@ -3,7 +3,8 @@
 /* Controllers */
 
 
-function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
+function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
+
 
 
     jsPlumb.importDefaults({
@@ -21,7 +22,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
         } ]
         ]
 
-});
+    });
 
   jsPlumb.bind("beforeDrop", function(i,c) {
 
@@ -63,7 +64,8 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
     })
   }
   $scope.loadDoc = function(idx) {
-
+    $scope.documentHash = []
+    $scope.HASHARRAYLENGTH = 4
     $scope.selectedDocIndex = idx;
     $scope.init($scope.docs[idx]._id);
     socket.emit("room:change", {id: $scope.docs[idx]._id});
@@ -91,15 +93,12 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
   socket.on('entity:update', function (data) {
         var entities = $scope.shared_document.entities;
         var entity = AQ.find(entities, "_id", data.obj._id)
-        console.log(entity);
         if (entity!=null) {
-          //TODO: this only updates position and title
-
           entities[entity].position = data.obj.position;
           entities[entity].title = data.obj.title;
           setTimeout(function(){jsPlumb.repaintEverything();},0);
         }
-        console.log(data.msg);
+
     });
     socket.on('entity:delete', function (data) {
         var entities = $scope.shared_document.entities;
@@ -142,6 +141,34 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
    socket.on('chat', function (data) {
         console.log("chat: "+data.msg);
    });
+
+    $scope.arrdiff = function (a1, a2)
+    {
+        var a=[], diff=[];
+        for(var i=0;i<a1.length;i++)
+            a[a1[i]]=true;
+        for(var i=0;i<a2.length;i++)
+            if(a[a2[i]]) delete a[a2[i]];
+            else a[a2[i]]=true;
+        for(var k in a)
+            diff.push(k);
+        return diff;
+    }
+
+    socket.on('sync', function (data) {
+
+        console.log("sync: "+$scope.arrdiff(data.sync, $scope.documentHash));
+        if($scope.arrdiff(data.sync, $scope.documentHash).length && $scope.documentHash.length == $scope.HASHARRAYLENGTH){
+            $scope.conflict = true;
+        }  else {
+            $scope.conflict = false;
+        }
+    });
+   $scope.sendChat = function(){
+       socket.emit("chat", { "msg": $scope.message} , function(result){
+           console.log(result)
+       })
+   }
   //shared-end
 
 
@@ -167,7 +194,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
   }
   $scope.updateEntity = function(idx) {
     EntityService.update($scope.shared_document.entities[idx], function(){
-            console.log("success");
+            //console.log("success");
         })
   }
   $scope.deleteEntity = function() {
@@ -197,6 +224,7 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
   $scope.$watch('shared_document.entities', function (newVal) {
       var entities = []
       if ($scope.shared_document){
+          $scope.inactive = false;
           angular.forEach($scope.shared_document.entities, function(e){
             entities.push({
                 _id: e._id,
@@ -212,7 +240,31 @@ function EditorCtrl($scope, socket, DocumentService, EntityService,PlumbService,
               // a must be equal to b
               return 0;
           });
-          $scope.documentHash = MD5(JSON.stringify(entities))
+          $scope.documentHash.push(MD5(JSON.stringify(entities)).substring(0,6))
+          if($scope.documentHash.length > $scope.HASHARRAYLENGTH){
+              $scope.documentHash.shift();
+          }
       }
   }, true);
+
+  $scope.inactive = false;
+  $scope.lastnow = new Date().getTime();
+  $scope.check_put_comment_frequency = function(){
+      var DELAY_MILISECONDS = 8000
+      $scope.now = new Date().getTime()
+      if ($scope.now > $scope.lastnow + DELAY_MILISECONDS){
+          $scope.inactive = true
+          socket.emit("sync",{"sync": $scope.documentHash}, function(result){
+
+          })
+      } else {
+          $timeout($scope.check_put_comment_frequency, DELAY_MILISECONDS);
+      }
+
+  }
+  $scope.$watch("inactive",function(newval){
+     $scope.inactive = newval;
+     $scope.lastnow = new Date().getTime();
+     $scope.check_put_comment_frequency();
+  })
 }

@@ -86,7 +86,7 @@ function AppCtrl($scope, socket) {
   $scope.messages = [];
 
   $scope.sendMessage = function () {
-    socket.emit('send:message', {
+    socket.emit('chat', {
       message: $scope.message
     });
 

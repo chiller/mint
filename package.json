@@ -1,6 +1,6 @@
 {
   "name": "mint-editor",
-  "version": "0.0.1-10",
+  "version": "0.0.1-16",
   "private": true,
   "dependencies": {
     "express": "2.5.10",

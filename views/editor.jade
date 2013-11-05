@@ -13,6 +13,7 @@ block body
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
 
     .edit
+
       p Entity
       p label:
       input(ng-model="selectedEntity.title",save-selected)
@@ -30,13 +31,17 @@ block body
       input(ng-model="selectedConnection.to",readonly)
       p label:
       input(ng-model="selectedConnection.label", save-selected-con)
-      div
-          p {{documentHash}}
+
+    div.hashholder(ng-class="{inactive: inactive != false }")
+        p {{conflict}}
+        p(ng-repeat='hash in documentHash|reverse',style='color:#{{hash|uppercase}}') {{hash|uppercase}}
     .toolbox
 
       button(ng-click="addEntity()") E
       button(ng-click="addConnection()") C
       button(ng-click="deleteEntity()") D
+      input(ng-model="message")
+      button(ng-click="sendChat()") Send
 
     #templateholder
       textarea(ng-model="shared_document.template",save-selected-tmp)
@@ -55,7 +60,8 @@ block body
   script(src='/socket.io/socket.io.js')
   script(src='js/app.js')
   script(src='js/services.js')
-  script(src="http://www.webtoolkit.info/djs/webtoolkit.md5.js")
+  //script(src="http://www.webtoolkit.info/djs/webtoolkit.md5.js")
+  script(src="js/lib/webtoolkit.md5.js")
 
   script(src='js/controllers/editor.js')
   script(src='js/controllers/hash.js')

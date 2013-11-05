@@ -12,7 +12,7 @@ app.factory('socket', function ($rootScope) {
       socket.on(eventName, function () {  
         var args = arguments;
         $rootScope.$apply(function () {
-          console.log(args)
+          //console.log(args)
           callback.apply(socket, args);
         });
       });
@@ -75,6 +75,7 @@ app.factory('AQ', function($rootScope){
         }
     }
 });
+
 
 app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
   return {

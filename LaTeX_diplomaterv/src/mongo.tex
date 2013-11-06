@@ -1,0 +1,23 @@
+%----------------------------------------------------------------------------
+\section{MongoDB}
+%----------------------------------------------------------------------------
+
+A MongoDB egy nyílt forráskódú dokumentum-orientált adatbázis rendszer. A MongoDB nem egy relációs adatbázis, nem lehet SQL nyelv segítségével lekérdezéseket futtatni, nem támogat JOIN műveletet. A MongoDB BSON\footnote{Binary JSON} formájában tárol kulcs-érték párokat, az RDBMS\footnote{Relational Database Management System} alapfogalmai: adatbázis, tábla, sor, oszlop; a MongoDB megfelelői: adatbázis, kollekció, dokumentum, mező. Egy mező értéke lehet egszerű típus, lista vagy beágyazott dokumentum. A dokumentumok nem támogatnak sémát, tehát azonos fajta információnak lehet eltérő sémájú tartalma. 
+
+Indexelés
+Séma nélküliség
+Replikáció
+Sharding
+
+http://css.dzone.com/articles/how-acid-mongodb
+
+Fontos megjegyezni, hogy a RDBMS rendszerekkel szemben a MongoDB nem tud ACID trazakciókat biztosítani. 
+\begin{enumerate}
+\item{Atomicitás} Csak dokumentum szintű atomikus műveletek biztosítottak, ha több kollekció vagy dokumentumon átívelő atomikus tranzakciókat szeretnénk, akkor vagy használjunk RDBMS-t, vagy saját magunk kell egy zárolási mechanizmust fejleszteni.
+\item{Konzisztencia} Replikáció esetében a fő adatbázis csomópontot érintik az írás műveletek, az olvasás műveletek meg -- opcionálisan --  a ``közelebb'' tartózkodó csomóponthoz fordulnak. Ebben az esetben ``eventual consistency''-ről beszélünk és nem biztosított, hogy friss adatot olvasunk.  
+\item{Izoláció} MongoDB esetében nem lehet beszélni izolációról, mert csak dokumentumszintű tranzakciók vannak és minden dokumentum művelet hatása azonnal elérhető a többi folyamat számára. 
+\item{Tartósság} Teljesítmény árán lehet a tartósságot növelni, példáúl úgy, hogy egy írás művelet a többi csomópontra is íródhat mielőtt visszatérne.
+\end{enumerate}
+A CAP\footnote{(C)onsistency - Konzisztencia, (A)vailability - Elérhetőség, (P)artition tolerance - Partícionálás tolerancia} tétel kijelenti, hogy egy elosztott rendszer nem tudja egyszerre teljesíteni a ...
+585
+

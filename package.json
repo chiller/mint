@@ -1,13 +1,14 @@
 {
   "name": "mint-editor",
-  "version": "0.0.1-16",
+  "version": "0.0.1-20",
   "private": true,
   "dependencies": {
     "express": "2.5.10",
     "jade": ">= 0.26.1",
     "socket.io": ">= 0.9.6",
     "mongodb": "~1.3.9",
-    "underscore": "~1.5.2"
+    "underscore": "~1.5.2",
+    "newrelic": "~1.0.1"
   },
   "subdomain": "galacziendre-mint",
   "scripts": {

@@ -2,6 +2,18 @@
 /**
  * Module dependencies.
  */
+switch(process.env.NODE_ENV){
+    case 'development':
+        console.log("dev")
+
+    case 'production':
+        require('newrelic');
+        console.log("prod")
+
+    default:
+        console.log("*")
+}
+
 
 var express = require('express'),
   routes = require('./routes'),
@@ -14,11 +26,13 @@ var conn_string_prod = "mongodb://nodejitsu:54994e0b6fa6817af58f0160756facf7@pau
 var conn_string_local = "mongodb://localhost:27017/mint"
 
 app.configure('development', function(){
+
     conn_string = conn_string_local
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
+    //require('newrelic');
     conn_string = conn_string_prod
     app.use(express.errorHandler());
 });

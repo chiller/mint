@@ -5,7 +5,10 @@
 
 function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
 
-
+    $scope.showcode = false;
+    $scope.togglecode = function() {
+        $scope.showcode = !$scope.showcode;
+    }
 
     jsPlumb.importDefaults({
         Connector:["Bezier",{curviness: 10}],

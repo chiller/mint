@@ -32,9 +32,7 @@ block body
       p label:
       input(ng-model="selectedConnection.label", save-selected-con)
 
-    div.hashholder(ng-class="{inactive: inactive != false }")
-        p {{conflict}}
-        p(ng-repeat='hash in documentHash|reverse',style='color:#{{hash|uppercase}}') {{hash|uppercase}}
+
     .toolbox
 
       button(ng-click="addEntity()") E
@@ -42,12 +40,17 @@ block body
       button(ng-click="deleteEntity()") D
       input(ng-model="message")
       button(ng-click="sendChat()") Send
+      button(ng-click="togglecode()") Code
+      button(ng-click="compile()",ng-show="showcode") Compile
+      input(ng-show="showcode",type="text",value="node mintrepl {{shared_document._id}}",size="50")
+      span(ng-class="{inactive: inactive != false }")
+            span {{conflict}}
+            span(ng-repeat='hash in documentHash|reverse',style='color:#{{hash|uppercase}};background-color:#{{hash|uppercase}}') *
+
     .clr
-    #templateholder
+    #templateholder(ng-show="showcode")
       textarea(ng-model="shared_document.template",save-selected-tmp)
       textarea#result(ng-model="compile_result",readonly)
-      button(ng-click="compile()") Compile
-      div node mintrepl {{shared_document._id}}
 
   //script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src='js/lib/jquery-1.9.1.min.js')

@@ -21,11 +21,14 @@ p {
     margin:0px;
     padding:0px;
 }
-
+body{
+    /* Monospace stack */
+    font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
+}
 .hashholder {
     margin: 30px;
     position: fixed;
-    right: 100px;
+    left: 100px;
     bottom: 100px;
     border-style: solid;
 }
@@ -114,6 +117,9 @@ a {
 }
 
 #templateholder textarea{
-    width: 580px;
+    width: 40%;
     height:400px;
+
+    font-family: inherit;
+    font-size: 12px;
 }

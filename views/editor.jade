@@ -42,7 +42,7 @@ block body
       button(ng-click="deleteEntity()") D
       input(ng-model="message")
       button(ng-click="sendChat()") Send
-
+    .clr
     #templateholder
       textarea(ng-model="shared_document.template",save-selected-tmp)
       textarea#result(ng-model="compile_result",readonly)
@@ -64,7 +64,6 @@ block body
   script(src="js/lib/webtoolkit.md5.js")
 
   script(src='js/controllers/editor.js')
-  script(src='js/controllers/hash.js')
   script(src='js/filters.js')
   script(src='js/directives.js')
 

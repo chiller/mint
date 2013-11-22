@@ -7,11 +7,64 @@
 %----------------------------------------------------------------------------
 A következő alfejezetekben a felhasznált technológiákra fogok kitérni több hangsúlyt fektetve azokra a technológiákra amik vagy újabbak vagy fontosabb szerepet játszottak az elkészült alkalmazásban.
 
+(10 oldal)
 
 %----------------------------------------------------------------------------
 \section{Javascript}
 %----------------------------------------------------------------------------
-Derp.
+
+\subsection{Prototípus öröklés a Javascriptben}
+
+%https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain
+
+Javascript egy prototípus alapú objektumorientált nyelv, ez azt jelenti, hogy objektumok vannak Javascriptben, amik nem osztálypéldányok és az öröklés szempontjából minden objektumnak van egy referenciája a prototípusára, és ez addig megy tovább amíg a prototípus null lesz. 
+
+Örökölt attribútumok esetében úgy működik a feloldás, hogy először az objektum saját attribútumai között keressük, ha nem találjuk, akkor a prototípus láncon tovább megyünk és ott keressük, és így tovább a végéig, ahol, ha nem találjuk meg akkor undefined az eredmény. A függvények attribúmként viselkednek ebből a szempontból és ezáltal a függvény felüldefineálás is működik.
+
+\subsubsection{Objektumpéldányosítás}
+
+Több módon történik az objektumok példányosítása, az egyszerű esetekben a következőképpen néz ki a prototípus lánc: 
+\begin{enumerate}
+\item \lstinline| var o = { a: 1 };| esetében o az Object-ből örököl és a prototípuslánc:
+
+ \lstinline|o ---> Object.prototype ---> null|
+\item \lstinline| var a = ["egy", "meggy", "citrom"]; | esetében az a egy tömb aminek a prototípusa az Object \lstinline|a ---> Array.prototype ---> Object.prototype ---> null|
+\item \lstinline| function foo(){ return 0; }| a függvény is egy ``egyszerű'' objektum: 
+
+\lstinline| foo ---> Function.prototype ---> Object.prototype ---> null| 
+
+\item 
+\begin{lstlisting}
+{
+    function Alma() {
+        this.color = "green";
+    }
+    Alma.prototype = {
+        ripe: function() {
+            this.color = "red";
+        } 
+    }
+    var a = new Alma();
+}
+\end{lstlisting}
+
+A konstruktor az egy egyszerű function ami meghívódik a new kulcsszó használatakor, ekkor a prototípuslánc: 
+
+\lstinline| a ---> Alma.prototype ---> Object.prototype ---> null|
+
+\end{enumerate}
+
+Meg kell jegyezni, hogy a hosszú prototípusláncok teljesítménycsökkentést jelentenek, hiszen végig kell menni mindig a láncon egyes attribútumokért. Az is fontos, hogy a Javascript környezet annyira megengedő, hogy beépített objektumokat lehet változtatni, úgynevezett ``monkey patching''-gel, ez viszont nem javasolt, mert nehéz debuggolni, megkönnyíti annak a fejlesztőnek a munkáját aki nem tud a patch-ről és ha két modul ugyanazt a kódot patch-eli, akkor amelyik később lefut az ``nyer''.
+
+
+
+
+
+Mit old meg az angularjs a javascript rossz dolgaiból?
+
+\subsection{Coffeescript}
+
+Miért nem használtam ?
 
 %----------------------------------------------------------------------------
 \section{HTML5 Canvas vs DOM}

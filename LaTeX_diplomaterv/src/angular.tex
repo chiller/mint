@@ -34,7 +34,9 @@ Az AngularJS fordító segítségével ki lehet terjeszteni a HTML szintaxist ú
 
 \subsection{Model View Controller}
 
-\subsection{Adatkötés}
+Az MVC architektúra a desktop alkalmazások világában lett népszerű és csak az utóbbi években terjedt a webes alkalmazások világába. Az alap ötlet a tiszta elválasztása az adat kezelésnek (modell), az üzleti logikának (kontroller) és a megjelenítésnek (nézet). Angular alkalmazásokban a nézet a Document Object Model, a kontrollerek Javascript objektumok vagy függvények, és további objektum attribútumokban van tárolva a model.  
+
+\subsubsection{Adatkötés}
 
 jQuery és hasonló megoldások segítségével újratöltés nélkül frissíteni tudjuk a DOM-ot felhasználói események hatására vagy adatok frissítése esetében, de még az egyszerű esetekben sem biztos hogy triviális a DOM és adatok összehangolása. Az AngularJS ezt két irányú adatkötéssel próbálja megoldani ráadásul deklaratívan. Egy egyszerű példa adatkötésre:
 
@@ -48,6 +50,21 @@ jQuery és hasonló megoldások segítségével újratöltés nélkül frissíte
 Ekkor az input mező módosítása automatikusan a model-t is frissíti és ez a cimkét is frissíti alatta. Ehhez az alap funkcionalitáshoz nem is szükséges más kódot írni.
 
 
-\subsection{Függőséginjektálás}
+\subsubsection{Függőséginjektálás}
 
+Függőséginjektálás egy szoftver tervezési minta amiben beégetett függőségek helyett kicserélhető komponenseket használunk amiket akár futás időben is cserélhetünk. 
 
+\pdfcomment[icon=Note]{http://www.jot.fm/contents/issue_2012_04/article3.html}
+Ez egység tesztelés esetében válik hasznossá, hiszen jobban lehet izolálni alkalmazás logikát azzal, hogy függőségeket kicserélünk a tesztekben egy úgynevezett ``mocked'' függőséggel. Egy jó példa olyan függőségre amit teszt esetekben ki szeretnénk cserélni egy olyan kódrészlet ami egy különálló rendszernek az API-ját használja ráadásul állapotmódosítással járuló módon. 
+
+Egy kontroller a DOM -- vagy a nézet -- egy bizonyos részéhez van kötve, és függőséginjektálás során egy úgynevezett scope kontextus objektumhoz fér hozzá amin keresztül a modellhez férünk hozzá. Ez az elválasztás segít az újrafelhasználásban és karbantarthatóságban, mert, minden kontroller csak azt lát amit kell, hogy lásson és nem ``szennyezzük'' a globális környezetet. 
+
+A scope objektumok egy hierarchiába vannak rendezve, létezik egy gyökér scope, és egymásbaágyazott kontrollerek scope objektumai prototípus örökléssel származnak egymásból.  
+ 
+\begin{lstlisting}
+function HelloController($scope) {
+    $scope.greeting = {text: "Hello"}
+}
+\end{lstlisting}
+
+\subsection{Szolgáltatások}

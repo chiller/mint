@@ -11,7 +11,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
     }
 
     jsPlumb.importDefaults({
-        Connector:["Bezier",{curviness: 10}],
+        Connector:["StateMachine",{ curviness:1 } ],
         PaintStyle:{ lineWidth:4, strokeStyle:"#ffa500" },
         Endpoint:[ "Dot", { radius:1 } ],
         EndpointStyle:{ fillStyle:"#ffa500" }   ,

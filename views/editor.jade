@@ -47,6 +47,7 @@ block body
       textarea(ng-model="shared_document.template",save-selected-tmp)
       textarea#result(ng-model="compile_result",readonly)
       button(ng-click="compile()") Compile
+      div node mintrepl {{shared_document._id}}
 
   //script(src='http://code.jquery.com/jquery-1.9.1.min.js')
   script(src='js/lib/jquery-1.9.1.min.js')

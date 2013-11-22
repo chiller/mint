@@ -9,7 +9,9 @@ module.exports = exports = function(app, db) {
     sa = new SocketAdapter(app);
     //compile
     compile = new CompileApi(db, sa);
+    app.get('/api/compile/modules/:id/', compile.getmodule);
     app.get('/api/compile/:id', compile.compile);
+
     //document api
     api = new DocumentApi(db, sa);
     app.get('/api/docs', api.docs);

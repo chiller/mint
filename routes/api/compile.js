@@ -13,12 +13,28 @@ module.exports = function (db, sa) {
 
     var docs = db.collection("docs");
 
+    this.getmodule = function(req, res){
+
+        docs.findOne({"_id": mongo.BSONPure.ObjectID(req.params.id) }, function(err, data){
+            if (err) throw err;
+            res.write(data.compiled);
+            res.end();
+
+        })
+
+    }
+
     this.compile = function(req, res){
         denormalize(req.params.id, function(doc){
             res.setHeader('Content-Type', 'text/plain');
             var data = _.template(doc.template.toString(),{doc: doc}).toString()
 
             //res.write(" lajos[Object object],[Object object]")
+
+            docs.update({"_id": mongo.BSONPure.ObjectID(req.params.id) }, {$set: {compiled: data}}, function(err, res){
+                if(err) throw err;
+            })
+
             res.write(data)
             res.end()
 

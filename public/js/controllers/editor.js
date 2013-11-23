@@ -20,9 +20,11 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         Anchor: "Continuous",
         Overlays : [
         [ "Arrow", {
-            location:1,
+            location:-1,
             id:"arrow",
             foldback:0.8
+            length:8,
+            width:8,
             foldback:1
         } ]
         ]

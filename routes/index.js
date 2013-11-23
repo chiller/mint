@@ -31,14 +31,10 @@ module.exports = exports = function(app, db) {
     app.delete('/api/docs/connections/delete', connections.remove);
 
     //pages
-    app.get('/editor', function(req, res){
+    app.get('/', function(req, res){
       res.render('editor', {
         title: 'About'
       });
-    });
-    app.get('/playground', function(req, res){res.render('playground');});
-    app.get('/', function(req, res){
-        res.render('index');
     });
     app.get('/partials/:name', function (req, res) {
         var name = req.params.name;

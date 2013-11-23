@@ -10,7 +10,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         $scope.showcode = !$scope.showcode;
     }
 
-    $scope.marks = {};
+
 
     jsPlumb.importDefaults({
         Connector:["StateMachine",{ curviness:1 } ],
@@ -71,6 +71,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
   }
   $scope.loadDoc = function(idx) {
     $scope.users = [];
+    $scope.marks = {}
     $scope.documentHash = []
     $scope.HASHARRAYLENGTH = 4
     $scope.selectedDocIndex = idx;
@@ -87,7 +88,8 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
       $scope.selectedEntity2 = $scope.selectedEntity;
       $scope.selectedEntity = $scope.shared_document.entities[i]; 
     }
-    $scope.selectedEntity.mark = null;
+    //$scope.selectedEntity.mark = null;
+    $scope.marks[$scope.selectedEntity._id] = null;
     socket.emit("mark", {"id": $scope.selectedEntity._id , "user": $scope.users[0] }, function(res){})
   }
 
@@ -158,20 +160,30 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
             }  else {
                 $scope.users.splice($scope.users.indexOf((MD5(JSON.stringify(data.msg.id)).substring(0,6))),1)
 
-                var old = AQ.find($scope.shared_document.entities, "mark", MD5(JSON.stringify(data.msg.id)).substring(0,6))
-                try{ $scope.shared_document.entities[old].mark = null; }
-                catch(ex){ console.log("no old")}
+                //var old = AQ.find($scope.shared_document.entities, "mark", MD5(JSON.stringify(data.msg.id)).substring(0,6))
+                //try{ $scope.shared_document.entities[old].mark = null; }
+                //catch(ex){ console.log("no old")}
             }
         }
    });
     socket.on('mark', function (data) {
         //console.dir("mark: "+data.id);
-        var old = AQ.find($scope.shared_document.entities, "mark", data.user)
+
+        /*var old = AQ.find($scope.shared_document.entities, "mark", data.user)
         try{ $scope.shared_document.entities[old].mark = null; }
         catch(ex){ console.log("no old")}
         var current = AQ.find($scope.shared_document.entities, "_id", data.id)
         console.log(current)
-        $scope.shared_document.entities[current].mark = data.user;
+        $scope.shared_document.entities[current].mark = data.user;*/
+
+
+        var inverted = _.invert($scope.marks)
+        // user->id
+        $scope.marks[inverted[data.user]] = null;
+        $scope.marks[data.id] = data.user;
+
+
+
     });
 
     $scope.arrdiff = function (a1, a2)

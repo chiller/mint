@@ -22,30 +22,10 @@ var ntmodule = angular.module('myApp.directives', []).
         ng-click='selectEntity($index, $event)'\
         id={{entity._id}}>\
         <div class='entity_title'>{{entity.title}}</div>\
-        <div class='entity_mark' style='background-color:#{{entity.mark}};'></div>\
+        <div class='entity_mark' style='background-color:#{{marks[entity._id]}};'></div>\
         </div>",
     replace: true,
     link: function(scope, elm, attrs) {
-      /*
-      $(elm).draggable({
-      	containment: ".container",
-      	//use this for performance optimisation
-      	grid: [5,5],
-      	drag: 
-      	function( event, ui ) {
-      		jsPlumb.repaintEverything();
-        }
-      	,
-      	stop:
-      	function( event, ui ) {
-      		//TODO: move this code to controller
-          scope.shared_document.entities[scope.$index].position = ui.position 
-      		//scope.sendshared();
-            scope.$apply()
-            jsPlumb.repaintEverything();
-            scope.updateEntity(scope.$index);
-        }});
-      */
       jsPlumb.draggable(elm,
           {containment: ".container",
            stop: function( event, ui ) {
@@ -55,12 +35,12 @@ var ntmodule = angular.module('myApp.directives', []).
         }} );
 
       jsPlumb.makeSource(elm.children()[0], {
-
             isSource:true
       });
 
-        jsPlumb.makeTarget(elm.children()[0], {
-        });
+      jsPlumb.makeTarget(elm.children()[0], {
+
+      });
 
 
 

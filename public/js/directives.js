@@ -15,12 +15,15 @@ var ntmodule = angular.module('myApp.directives', []).
  ntmodule.directive('ntDraggable', function($timeout) {
 
   return {
-    template: "<div class='draggable' style='top:{{entity.position.top}}px;\
+    template: "<div class='draggable' style='\
+            top:{{entity.position.top}}px;\
     		left:{{entity.position.left}}px' \
         ng-class='{selected1 : entity==selectedEntity, selected2 : entity==selectedEntity2 }'\
         ng-click='selectEntity($index, $event)'\
         id={{entity._id}}>\
-        <div class='entity_title'>{{entity.title}}</div></div>",
+        <div class='entity_title'>{{entity.title}}</div>\
+        <div class='entity_mark' style='background-color:#{{entity.mark}};'></div>\
+        </div>",
     replace: true,
     link: function(scope, elm, attrs) {
       /*

@@ -22,7 +22,6 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         [ "Arrow", {
             location:-1,
             id:"arrow",
-            foldback:0.8
             length:8,
             width:8,
             foldback:1
@@ -71,6 +70,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
     })
   }
   $scope.loadDoc = function(idx) {
+    $scope.users = [];
     $scope.documentHash = []
     $scope.HASHARRAYLENGTH = 4
     $scope.selectedDocIndex = idx;
@@ -82,10 +82,13 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
   
   $scope.selectEntity = function(i) {
     $scope.selectedConnection = null;
+
     if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
       $scope.selectedEntity2 = $scope.selectedEntity;
       $scope.selectedEntity = $scope.shared_document.entities[i]; 
     }
+    $scope.selectedEntity.mark = null;
+    socket.emit("mark", {"id": $scope.selectedEntity._id , "user": $scope.users[0] }, function(res){})
   }
 
 
@@ -146,8 +149,30 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         }
     });
    socket.on('chat', function (data) {
-        console.log("chat: "+data.msg);
+        console.dir("chat: "+data.msg.text);
+        console.dir("chat: "+data.msg.id);
+        if(data.msg.id){
+            if(data.msg.text=="client joined") {
+                console.log(data.msg.id)
+                $scope.users.push((MD5(JSON.stringify(data.msg.id)).substring(0,6)))
+            }  else {
+                $scope.users.splice($scope.users.indexOf((MD5(JSON.stringify(data.msg.id)).substring(0,6))),1)
+
+                var old = AQ.find($scope.shared_document.entities, "mark", MD5(JSON.stringify(data.msg.id)).substring(0,6))
+                try{ $scope.shared_document.entities[old].mark = null; }
+                catch(ex){ console.log("no old")}
+            }
+        }
    });
+    socket.on('mark', function (data) {
+        //console.dir("mark: "+data.id);
+        var old = AQ.find($scope.shared_document.entities, "mark", data.user)
+        try{ $scope.shared_document.entities[old].mark = null; }
+        catch(ex){ console.log("no old")}
+        var current = AQ.find($scope.shared_document.entities, "_id", data.id)
+        console.log(current)
+        $scope.shared_document.entities[current].mark = data.user;
+    });
 
     $scope.arrdiff = function (a1, a2)
     {

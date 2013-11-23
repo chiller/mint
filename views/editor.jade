@@ -32,6 +32,10 @@ block body
       p label:
       input(ng-model="selectedConnection.label", save-selected-con)
 
+      br
+      br
+      p users
+      .user(ng-repeat="user in users",style="background-color:#{{user}}")
 
     .toolbox
 

@@ -11,42 +11,23 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
     }
 
 
-
-    jsPlumb.importDefaults({
-        Connector:["StateMachine",{ curviness:1 } ],
-        PaintStyle:{ lineWidth:4, strokeStyle:"#52A529" },
-        Endpoint:[ "Dot", { radius:1 } ],
-        EndpointStyle:{ fillStyle:"#52A529" }   ,
-        Anchor: "Continuous",
-        Overlays : [
-        [ "Arrow", {
-            location:-1,
-            id:"arrow",
-            length:8,
-            width:8,
-            foldback:1
-        } ]
-        ]
-
-    });
-
-  jsPlumb.bind("beforeDrop", function(i,c) {
+    jsPlumb.bind("beforeDrop", function(i,c) {
 
       var new_connection = {
       from: $("#"+i.sourceId).parent().attr('id'),
       to: $("#"+i.targetId).parent().attr('id')
         }
-      console.log(i)
       $scope.shared_document.connections.push(new_connection)
       ConnectionService.save({_id: $scope.shared_document._id,"from":new_connection.from, "to":new_connection.to });
       PlumbService.addPlumb(new_connection)
-
       return false;
   })
+
   DocumentService.query(function(response){
       $scope.docs=response
       $scope.loadDoc(0);
   });
+
   $scope.init = function(id){
     DocumentService.get({id:id}, function(response){
         $scope.compile_result = " ";
@@ -204,6 +185,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         console.log("sync: "+$scope.arrdiff(data.sync, $scope.documentHash));
         if($scope.arrdiff(data.sync, $scope.documentHash).length && $scope.documentHash.length == $scope.HASHARRAYLENGTH){
             $scope.conflict = true;
+            alert("conflict")
         }  else {
             $scope.conflict = false;
         }

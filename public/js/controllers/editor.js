@@ -10,18 +10,20 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
         $scope.showcode = !$scope.showcode;
     }
 
+    $scope.marks = {};
+
     jsPlumb.importDefaults({
         Connector:["StateMachine",{ curviness:1 } ],
-        PaintStyle:{ lineWidth:4, strokeStyle:"#ffa500" },
+        PaintStyle:{ lineWidth:4, strokeStyle:"#52A529" },
         Endpoint:[ "Dot", { radius:1 } ],
-        EndpointStyle:{ fillStyle:"#ffa500" }   ,
+        EndpointStyle:{ fillStyle:"#52A529" }   ,
         Anchor: "Continuous",
         Overlays : [
         [ "Arrow", {
             location:1,
             id:"arrow",
-            length:14,
             foldback:0.8
+            foldback:1
         } ]
         ]
 

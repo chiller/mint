@@ -123,8 +123,8 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
         jsPlumb.bind('click', function (connection, e) {
 
             var idx = $scope.shared_document.connections.indexOf(connection.scope);
-            $("path").each(function(){this.style.setProperty("stroke","#ffa500")})
-            e.target.style.setProperty("stroke","#fc0")
+            $("path").each(function(){this.style.setProperty("stroke","#52A529")})
+            e.target.style.setProperty("stroke","#75EE3B")
             $scope.selectedConnection = $scope.shared_document.connections[idx];
             $scope.selectedConnection_obj = connection
             $scope.selectedEntity = null;

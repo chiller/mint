@@ -1,12 +1,37 @@
-/* app css stylesheet */
+/* app css stylesheet
+Scheme http://colorschemedesigner.com/#2G51Tw0w0w0w0
+
+#48DD00
+#52A529
+#2F8F00
+#75EE3B
+#95EE6B
+Secondary Color A:
+#00A779
+#1F7D63
+#006D4F
+#35D3A7
+#5FD3B3
+Secondary Color B:
+#BAF300	96B62E	799E00	CDF93E	D9F970
+
+
+
+
+
+
+
+
+
+*/
 input {
   background-color:transparent;
-  border: 1px solid #DCF2E3;
+  border: 1px solid #3CB61B;
   color:#CCC;
 }
 button {
   border-style:none;
-  background-color: #DCF2E3;
+  background-color: #3CB61B;
 }
 
 .header {
@@ -23,6 +48,9 @@ p {
 }
 body{
     /* Monospace stack */
+    background-color: #1f1e1f;
+    color: #3CB61B;
+    font-size: 10px;
     font-family: Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
 }
 .hashholder2 {
@@ -58,44 +86,65 @@ a {
 }
 
 .draggable { 
-	width: 50px; height: 50px; padding: 0.5em; background-color: #AAAA77;    
+	width: 50px; height: 50px; padding: 0.5em;
+    background-color: #3CB61B;
             position: absolute;
     z-index:2;
+    color: #003726;
+    font-weight: bold;
+    border-color: #3CB61B;
+    border-style:solid;
+    border-width:2px;
 }
 .draggable.selected1 {
-  border-color: #FFAA77;
+  border-color: #95EE6B;
   border-style:solid;
   border-width:2px;
 }
 .draggable.selected2 {
-  border-color: #DDAA77;
+  border-color: #3CB61B;
   border-style:solid;
   border-width:2px;
 }
 .entity_title{
+    position: absolute;
+    top:23px;
     border-style:solid;
     border-width:1px;
-    border-color: #DDAA77;
+    border-color: #3CB61B;
+}
+.entity_mark{
+    position: absolute;
+    bottom:0px;
+    right:0px;
+    width: 8px;
+    height:8px;
 }
 .listleft {
-  width: 10%;float:left;
+  width: 125px;
+    position: fixed;
+    left:0px;
 }
 .container {
-	width: 70%; height: 600px; background-color: #DCF2E3;
+	width: 1000px; height: 600px;
+    margin-left:125px;
+    background-color: #448A31;
   float: left;
     z-index:1;
 }
 
 .edit {
   padding-left: 10px;
-  width: 19%;
+  width: 125px;
   float: right;
+  position: fixed;
+  right: 0;
 }
 .editinside{
   margin-left: 20px;
 }
 .toolbox {
-  margin-left: 10%;
+  margin-left: 125px;
   clear: both;
   float: left;
 }
@@ -117,15 +166,24 @@ a {
 
 ._jsPlumb_overlay{
     z-index: 110;
+    color: #000;
 }
 #templateholder{
-    margin: 10px;
+    margin: 0px 125px;
 }
 #templateholder textarea{
     margin: 10px;
-    width: 40%;
-    height:400px;
-
+    width: 480px;
+    height:600px;
+    color: #ccc;
+    background-color: #000;
     font-family: inherit;
     font-size: 12px;
+}
+
+.user{
+    width: 10px;
+    height: 10px;
+    float: left;
+    margin: 2px;
 }

@@ -9,7 +9,7 @@ block body
       .doc(ng-repeat='doc in docs', ng-click='loadDoc($index)',ng-class="{selected: $index==selectedDocIndex}") {{doc.text}}
       input(ng-model="newDoc.text")
       button(ng-click="addDoc()") +
-    .container
+    .container(ng-show="!showcode")
       .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
 
     .edit

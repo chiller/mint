@@ -32,10 +32,9 @@ Az első kérdés ami felmerül itt az, hogy ez egyáltalán próbléma? Próbl�
 
 Jó esetben körülbelül 100 ms alatt mindenkihez eljutnak az események, ez azt jelentené, hogy nem lehet annyira gyakori ez a próbléma, hogy egy verziókezelő rendszerhez hasonló megoldással lassítsuk a felhasználók munkafolyamatát.
 
-\pdfcomment[icon=Note]{insert: Zárolás?}
+\pdfcomment[icon=Note]{insert: Zárolás}
 
 Egy egyszerű felhasználói élmény javítás egy jelzés lesz, ami úgy néz ki, hogy minden felhasználó látja, hogy ki éppen milyen objektumot jelölt ki színekkel jelölve. Ha valaki más ki szeretné törölni az objektumot aminek az életrajzát éppen írjuk, akkor a rendszer legalább szól, hogy azt valaki kijelölte. Ez a megoldás egyik fő előnye, hogy nem bonyolítja egyáltalán a munkafolyamatot példáúl a zároláshoz képest.
-\pdfcomment[icon=Note]{insert: Ezt meg is kéne csinalni? }
 
 \end{enumerate}
 \item { módosítás - törlés } Ez a szituáció ugyanaz mint az előző. A fent említett megjelölés egy megoldás, de egy visszavonás művelet megnövekedett komplexitás árán megoldaná teljesen a próblémát.
@@ -143,6 +142,8 @@ Egy új socket-re eseménykezelőket hoz létre a SocketAdapter és a legfontosa
 Derp.
 
 
+
+
 %----------------------------------------------------------------------------
 \subsection{Szolgáltatások}
 %----------------------------------------------------------------------------
@@ -160,6 +161,9 @@ Derp.
 %----------------------------------------------------------------------------
 \subsection{Unit teszt esetek}
 %----------------------------------------------------------------------------
+
+
+\input{src/mark}
 
 
 \input{src/compile}
@@ -182,11 +186,3 @@ A Wireshark csomagvizsgáló eszközzel megvizsgáltam jobban a websockets kommu
 Derp.
 
 
-%----------------------------------------------------------------------------
-\section{Szimuláció}
-%----------------------------------------------------------------------------
-A szimuláció célja automatizálni a felhasználói bemenetet egy teljesítmény méréshez. A megoldásnak tartalmaznia kell alapszintű felhasználói bemenet szimulálását: egérkattintás, szövegbeírás, várakozás és mivel egy grafikus modellt akarunk szerkeszteni a ``drag and drop'' funkcióra is szükség van. 
-
-A böngészőautomatizálás Selenium Webdriver segítségével történt, ez az eszköz lehetővé teszi, hogy különböző nyelveken megírt (Python, Java, PHP stb. ) teszt esetekben a Webdriver API-val kommunikálva böngésző példányokat lehet irányítani. 
-Seleniumhoz tartozik egy grafikus fejlesztőkörnyezet is ami Selenium IDE néven Firefox böngészőkiegészítésként fut, vele rögzíteni lehet felhasználói bemenetet és egér eseményeket, majd egy ilyen felvételt újralejátszani, módosítani. Ez előnyös teszterek számára akik repetitív munkát végeznek és nem tudnak programozni, de fejlesztők számára is jó, mert ezekből a felvételeket Python, Ruby stb teszteseteket lehet exportálni. 
-Azon kívül, hogy automatizált tesztelésre a szkriptek alkalmasabbak, a Selenium IDE sajnos nem tud egérmozgatást rögzíteni, így nem hasznos a feladat szempontjából. A Selenium API javascript implementációját példáúl a selenium-webdriver csomag valósítja meg, viszont hamarosan kiderült, hogy ez a csomag nem támogatja ``drag and drop'' funcktiót, emiatt a Python implementációt választottam. 

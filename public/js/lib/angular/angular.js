@@ -2892,7 +2892,7 @@ function $AnchorScrollProvider() {
  * - hide all the global state in the browser caused by the window object
  * - abstract away all the browser specific features and inconsistencies
  *
- * For tests we provide {@link ngMock.$browser mock implementation} of the `$browser`
+ * For test we provide {@link ngMock.$browser mock implementation} of the `$browser`
  * service, which can be used for convenient testing of the application without the interaction with
  * the real browser apis.
  */
@@ -2951,7 +2951,7 @@ function Browser(window, document, $log, $sniffer) {
   self.notifyWhenNoOutstandingRequests = function(callback) {
     // force browser to execute all pollFns - this is needed so that cookies and other pollers fire
     // at some deterministic time in respect to the test runner's actions. Leaving things up to the
-    // regular poller would result in flaky tests.
+    // regular poller would result in flaky test.
     forEach(pollFns, function(pollFn){ pollFn(); });
 
     if (outstandingRequestCount === 0) {
@@ -3197,7 +3197,7 @@ function Browser(window, document, $log, $sniffer) {
    * Executes a fn asynchroniously via `setTimeout(fn, delay)`.
    *
    * Unlike when calling `setTimeout` directly, in test this function is mocked and instead of using
-   * `setTimeout` in tests, the fns are queued in an array, which can be programmatically flushed
+   * `setTimeout` in test, the fns are queued in an array, which can be programmatically flushed
    * via `$browser.defer.flush()`.
    *
    */
@@ -4647,7 +4647,7 @@ function $DocumentProvider(){
  * The default implementation simply delegates to `$log.error` which logs it into
  * the browser console.
  *
- * In unit tests, if `angular-mocks.js` is loaded, this service is overridden by
+ * In unit test, if `angular-mocks.js` is loaded, this service is overridden by
  * {@link ngMock.$exceptionHandler mock $exceptionHandler}
  *
  * @param {Error} exception Exception associated with the error.
@@ -7595,7 +7595,7 @@ function $RootScopeProvider(){
        * you can register a `watchExpression` function  with {@link ng.$rootScope.Scope#$watch $watch()}
        * with no `listener`.
        *
-       * You may have a need to call `$digest()` from within unit-tests, to simulate the scope
+       * You may have a need to call `$digest()` from within unit-test, to simulate the scope
        * life-cycle.
        *
        * # Example
@@ -7677,7 +7677,7 @@ function $RootScopeProvider(){
             }
 
             // Insanity Warning: scope depth-first traversal
-            // yes, this code is a bit crazy, but it works and we have tests to prove it!
+            // yes, this code is a bit crazy, but it works and we have test to prove it!
             // this piece should be kept in sync with the traversal in $broadcast
             if (!(next = (current.$$childHead || (current !== target && current.$$nextSibling)))) {
               while(current !== target && !(next = current.$$nextSibling)) {
@@ -8006,7 +8006,7 @@ function $RootScopeProvider(){
           });
 
           // Insanity Warning: scope depth-first traversal
-          // yes, this code is a bit crazy, but it works and we have tests to prove it!
+          // yes, this code is a bit crazy, but it works and we have test to prove it!
           // this piece should be kept in sync with the traversal in $digest
           if (!(next = (current.$$childHead || (current !== target && current.$$nextSibling)))) {
             while(current !== target && !(next = current.$$nextSibling)) {
@@ -9104,7 +9104,7 @@ function $TimeoutProvider() {
       *
       * To cancel a the timeout request, call `$timeout.cancel(promise)`.
       *
-      * In tests you can use {@link ngMock.$timeout `$timeout.flush()`} to
+      * In test you can use {@link ngMock.$timeout `$timeout.flush()`} to
       * synchronously flush the queue of deferred functions.
       *
       * @param {function()} fn A function, who's execution should be delayed.

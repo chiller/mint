@@ -3,11 +3,14 @@ var EntityApi = require('./api/entities.js');
 var CompileApi = require('./api/compile.js');
 var ConnectionApi = require('./api/connections.js');
 var SocketAdapter = require('./socketAdapter.js');
+var ForkApi = require('./api/fork.js')
 module.exports = exports = function(app, db) {
 // Routes
     // Socket.io Communication
     sa = new SocketAdapter(app);
     //compile
+    fork = new ForkApi(db);
+    app.post('/api/fork/:id/', fork.fork);
     compile = new CompileApi(db, sa);
     app.get('/api/compile/modules/:id/', compile.getmodule);
     app.get('/api/compile/:id', compile.compile);

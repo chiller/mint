@@ -19,7 +19,6 @@ module.exports = function (app) {
                 }
             }
             var clients = io.sockets.clients(msg.id);
-            console.log(clients);
             socket.join(msg.id);
             io.sockets["in"](msg.id).emit("chat", {msg: {"text": "client joined", id:socket.id}});
             for (var i=0;i<clients.length;i++) {

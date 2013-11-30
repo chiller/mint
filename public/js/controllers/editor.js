@@ -293,4 +293,15 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
      $scope.lastnow = new Date().getTime();
      $scope.check_put_comment_frequency();
   })
+
+  $scope.fork = function(){
+      $http({method: 'POST', url: '/api/fork/'+$scope.shared_document._id+"/" }).
+          success(function(data, status, headers, config) {
+              console.log(data)
+          }).
+          error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+          });
+  }
 }

@@ -40,7 +40,7 @@ Egy egyszerű felhasználói élmény javítás egy jelzés lesz, ami úgy néz 
 \item { módosítás - törlés } Ez a szituáció ugyanaz mint az előző. A fent említett megjelölés egy megoldás, de egy visszavonás művelet megnövekedett komplexitás árán megoldaná teljesen a próblémát.
 \end{enumerate}
 
-\pdfcomment[icon=Note]{insert: A többi miért irreleváns?}
+A létrehozás-törlés, létrehozás-módosítás és létrehozás-létrehozás kombinációk nem fordulhatnak elő ugyanazon az entitáson, hiszen nem lehet olyat módosítani egyidőben amit a másik kliens hoz létre ugyanabban az időben.
 
 Ha a két művelet két különböző csúcsot érint, akkor nincs próbléma, mert triviálisan mindkét művelet érvényesül, ha a egy csúcsot és egy hozzá tartozó élet érint, akkor sincs gond, mert a csúcs törlése maga után vonja az él törlését is. 
 
@@ -111,7 +111,11 @@ A position attribútum konkrétan a kliensoldali CSS pozícionálásra van haszn
 \section{A szerver oldali alkalmazás}
 %----------------------------------------------------------------------------
 
+%----------------------------------------------------------------------------
+\subsection{API}
+%----------------------------------------------------------------------------
 
+A különböző diagram elemek 
 
 
 

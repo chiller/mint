@@ -46,6 +46,7 @@ block body
       button(ng-click="sendChat()") Send
       button(ng-click="togglecode()") Code
       button(ng-click="compile()",ng-show="showcode") Compile
+      button(ng-click="fork()") Fork
       input(ng-show="showcode",type="text",value="node mintrepl {{shared_document._id}}",size="50")
       span(ng-class="{inactive: inactive != false }")
             span {{conflict}}

@@ -115,10 +115,37 @@ A position attribútum konkrétan a kliensoldali CSS pozícionálásra van haszn
 \subsection{API}
 %----------------------------------------------------------------------------
 
-A különböző diagram elemek 
+Az AngularJS kliens egy API-n keresztül kommunikál a szerverrel a dinamikus tartalom lekérdezése és mentése céljából. Ez az API JSON adatokat szolgáltat, amit akár módosítás nélkül fel lehet használni a kliens oldalon bemásolva egy AngularJS model-be; ugyanígy az API-nak beküldött új JSON objektumok módosítás nélkül a MongoDB adatbázisba íródnak. Az API több csomagoló függvényből áll, minden entitás típusra egy; egy ilyen csomagolófüggvényben a létrehozás, törlés, módosítás és olvasáshoz implementáltam függvényeket és ezeket a konkrét API-kat require segítségével betöltöm a \lstinline{routes} modul \lstinline{index.js} fájlba, ahol példányosítom. Két függősége is van egy ilyen API modulnak: az adatbázis kapcsolat és a socket szerver példány.
 
+\begin{lstlisting}
+    var DocumentApi = require('./api/docs.js');
+    module.exports = exports = function(app, db) {
+        sa = new SocketAdapter(app);
+        api = new DocumentApi(db, sa);
+        app.get('/api/docs', api.docs);
+        app.get('/api/docs/:id', api.doc);
+        app.post('/api/docs', api.adddoc);
+        app.put('/api/docs/:id', api.updatedoc);
+        app.delete('/api/docs/:id', api.deletedoc);
+    ...
+    }
+\caption{API összekapcsolása a szerverrel}
+\end{lstlisting}
 
+\begin{lstlisting}
+module.exports = function (db, sa) {
+  var docs = db.collection("docs");
 
+  this.deletedoc = function(req, res) {
+    var oid = mongo.BSONPure.ObjectID(req.params.id)
+    docs.remove({_id: oid}, function(err, removed){
+      res.json(removed);
+    })  
+  ...
+\caption{A DocumentApi törlés függvénye}
+\end{lstlisting}
+
+Amikor id-ra hivatkozunk mindig szükséges egy \lstinline{BSONPure.ObjectID} példányba csomagolni az azonosítót, mert csak úgy lehet felhasználni MongoDB lekérdezésben.
 
 %----------------------------------------------------------------------------
 \subsection{Kétirányú kommunikáció}
@@ -143,7 +170,90 @@ Egy új socket-re eseménykezelőket hoz létre a SocketAdapter és a legfontosa
 %----------------------------------------------------------------------------
 \section{A kliens oldali alkalmazás}
 %----------------------------------------------------------------------------
-Derp.
+
+
+
+Az AngularJS alkalmazásomnak a fő építőelemei a szolgáltatások, direktívák és kontrollerek. A kontrollerek a DOM egy részéért felelnek összekapcsolva a modellt és a view-t; a direktívák a HTML kiterjesztését valósítják meg új elemekkel, amik újrafelhasználható UI komponenseket hoznak létre; a szolgáltatások ugyancsak újrafelhasználható függőségek, amiket tetszőleges más komponensbe lehet injektálni.
+
+A külső függőségei: 
+\begin{enumerate}
+\item az AngularJS könyvtár, 
+\item az underscoreJS könyvtár ami funkcionális programozási elemekkel bővíti a nyelvet,
+\item egy md5 hash-t számoló függvény,
+\item Jquery UI a DOM elemek mozgatása miatt,
+\item PlumbJS ami DOM elemeket köt össze nyilakkal.
+\end{enumerate}
+
+Az első próbálkozásaimban nyilakat a HTML SVG path segítségével próbáltam megvalósítani úgy, hogy adatkötés segítségével frissült a nyíl pozíciója egy elhúzott DOM elemhez képest. Sok funkcionalitást kellett volna implementálnom, így kerestem alternatívákat. A PlumbJS egy élhúzó modul aminek segítségével DOM elemeket meg lehet jelölni mint él kiindulópont vagy végpont és ezt a kettőt összeköti egy SVG alapú vektoros nyíllal. Gondoskodik az új él behúzásáért, nyilvántartja a létrehozott éleket, DOM elem körül egy kerületet kell defineálni és ahhoz kapcsolja az élek végpontjait. Továbbá tud nyilat húzni és cimkét tenni a vonalra; azt a következtetést vontam le, hogy mindent tud, amire szükségem van.  
+
+\subsubsection{Jade markup}
+
+A Jade egy olyan markup nyelv ami HTML-t helyettesít, az a fő különbség, hogy a fa nem XML alapú, hanem a gyerekek indentációval különülnek el a szülőtől, ez amúgy is általánosságban szokás, viszont így nincs rá szükség, hogy be is zárjunk HTML elemeket. Az eredmény karakterszámon spórol és olvashatóbb markupot eredményez. A Jade template a Node alkalmazásban fordul le HTML tartalommá. A Jade valóban template rendszer is, tartalmaz példáúl elégazásokat, de én csak markupként használtam, a logika az az Angular kontrollerekre van bízva.
+
+Template öröklés úgy működik, hogy az \lstinline{extends} paranccsal megjelöljük, hogy ki melyik template a szülő template. A szülőben \lstinline{block} elemeket hozhatunk létre és az ezekben levő DOM rész felülírható a gyerek template-ben. 
+
+Egy hasznos funkció benne a kikommentezés, ami úgy használandó mint a Javascript egy soros komment, viszont a szülő kikommentezése a gyerekek kikommentezését is maga után vonja, így se két helyen nem kell kommentezési parancsot tenni a markupba (a HTML esetében nyitó és záró komment tag kellett) se kiválasztani nem kell a kommentezendő DOM részt.
+
+\begin{lstlisting}
+table
+  tr
+    td(style='width: '+(100/2)+'%').
+      Twitter
+    td Facebook
+\caption{Példa Jade markup}
+\end{lstlisting}
+
+\begin{lstlisting}
+<table>
+  <tr>
+    <td style="width: 50%">Twitter</td>
+    <td>Facebook</td>
+  </tr>
+</table>
+\caption{Az ekvivalens HTML}
+\end{lstlisting}
+
+%----------------------------------------------------------------------------
+\subsection{Direktívák}
+%----------------------------------------------------------------------------
+
+\subsubsection{ntDraggable}
+
+Az ntDraggable direktíva a mozgatható diagram dobozokat valósítja és a \lstinline|<div ng-repeat="entity in shared_document.entities" nt-draggable="nt-draggable" class="drag"></div>| kód szúrja be őket a DOM-ba. Az adatkötésnek köszönhetően, ha az entities tömb bővül, vagy ritkul, vagy egy eleme megváltozik, akkor ez a DOM-ban is érvényesül. Ez a direktíva egy HTML template-t is meghatároz a mozgatható entitásnak, gyakorlatilag olyan mintha az eredeti DOM-ban lenne ez a HTML, de, ha új helyre szeretnénk másolni a funkcionalitást nem kell lemásolni. A template a következőket tartalmazza:
+
+\pdfcomment[icon=Note]{insert: Kep a direktivarol}
+
+\pdfcomment[icon=Note]{insert: Kep a függőségi gráfról}
+
+\begin{enumerate}
+\item Egy gyerek div ami a \lstinline|{{entity.title}}| kötésen keresztül a doboz nevét írja ki,
+\item A model megváltozása esetében a pozíciót is tudom frissíteni CSS attribútumra való kötéssel: \lstinline| style='top:{{entity.position.top}}px;left:{{entity.position.left}}px'|
+\item Egy entitás kiválasztása esetében egy CSS osztályt kell hozzáadni a szülőhöz, jelezva , hogy ki van választva. Az AngularJS szolgáltat erre egy \lstinline{ng-class} direktívát ami feltételes CSS class beállítást valósít meg. 
+\item \lstinline|id={{entity._id}}| Az entitás adabázis azonosítója egy az egyben a DOM id lesz -- egy nagyon kézenfekvő megoldás.
+\item A többi felhasználó kijelölését egy kis doboz jelöli, ami a felhasználóhoz rendelt színnel lesz kiszínezve.
+\end{enumerate}
+
+Az ntDraggable direktíva egy \lstinline{link} függvényt is meghatároz, ennek a törzse pont az a hely ahova a DOM manipuláció és eseménykezelő logikát akarjuk tenni -- pontosabban itt az egérrel való tologatást állítom be. Itt látszik, hogy ez a DOM manipuláció függetlenítve van a prezentációs rétegtől és az alkalmazás többi részétől, ami tesztelhetőség és újrafelhasználás szempontjából értelmes. 
+
+Ahhoz, hogy a div mozgatása a jsPlumb élek mozgatását vonja maga után nem \lstinline{jQuery.draggable}-t kell használni, hanem \lstinline{jsPlumb.draggable}-t, ami kiterjeszti az előbbit. A DOM irányából a kötés a modelhez csak a \lstinline{stop} draggable eseményre történik, mert nem akarunk minden egérmozgatásról értesíteni a többi felhasználót, az nem csak hogy pazarló lenne, hanem zavaró is, így csak akkor terjed a módosítás , ha új helyre engedjük el a dobozt.
+
+Az élhúzás egyszerűség kedvéért ugyancsak egér kattintás és húzogatással történik, de nem a dobozt húzzuk, hanem a nevét, ekkor a jsPlumb gondoskodik az új ideiglenes lógó él kirajzolásáról. Ehhez jsPlumb \lstinline{makeSource} és \lstinline{makeTarget} parancsokat kell hívni, ezek beállítják a cím dobozokat mint cél és forrás a jsPlumb élekhez.
+
+Megjegyzendő, hogy direktívák használata miatt a kontroller és a DOM template nincs csatolva a jsPlumb modulhoz, tehát, ha lecserélnénk a jsPlumb megoldást egy sajátra, ez remélhetőleg csak a direktíva módosítását vonja maga után.
+
+\subsubsection{saveSelected}
+
+A szerkesztő kontrollere nyilvántartja a kiválasztott entitást a gráfban, egy korábbi verzióban kettőt is lehetett kiválasztani, majd ezeket össze lehetett gombnyomással kapcsolni éllel, de ez helyettesítve lett a fennebb említett felhasználói szempontból egyszerűbb megoldással. 
+
+Kijelöléskor  
+\pdfcomment[icon=Note]{insert: Kep az attributes pane-rol}
+az entitás attribútumai megjelennek a részlet nézeten és itt lehet módosítani példáúl a címét. Az adatkötés elintézi, hogy az input doboz tartalma megegyezzen mindkét irányba a modellel, de ettől még nem fognak propagálódni a módosítások a szerverre. 
+
+Ez a direktíva azt csinálja meg, hogy amilyen input elemhez csatoljuk, annak a fókusz elvesztése a kijelölt elem szerverre való mentését váltja ki. A \lstinline{saveSelectedCon} direktíva hasonlóan élek szerverre mentését váltja ki.
+
+
+\subsubsection{ntDelete}
+
 
 
 

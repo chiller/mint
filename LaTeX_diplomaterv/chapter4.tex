@@ -219,7 +219,14 @@ table
 
 \subsubsection{ntDraggable}
 
-Az ntDraggable direktíva a mozgatható diagram dobozokat valósítja és a \lstinline|<div ng-repeat="entity in shared_document.entities" nt-draggable="nt-draggable" class="drag"></div>| kód szúrja be őket a DOM-ba. Az adatkötésnek köszönhetően, ha az entities tömb bővül, vagy ritkul, vagy egy eleme megváltozik, akkor ez a DOM-ban is érvényesül. Ez a direktíva egy HTML template-t is meghatároz a mozgatható entitásnak, gyakorlatilag olyan mintha az eredeti DOM-ban lenne ez a HTML, de, ha új helyre szeretnénk másolni a funkcionalitást nem kell lemásolni. A template a következőket tartalmazza:
+Az ntDraggable direktíva a mozgatható diagram dobozokat valósítja és a 
+
+\begin{lstlisting}
+<div ng-repeat="entity in shared_document.entities" nt-draggable="nt-draggable" class="drag"></div>
+\end{lstlisting}
+
+
+kód szúrja be őket a DOM-ba. Az adatkötésnek köszönhetően, ha az entities tömb bővül, vagy ritkul, vagy egy eleme megváltozik, akkor ez a DOM-ban is érvényesül. Ez a direktíva egy HTML template-t is meghatároz a mozgatható entitásnak, gyakorlatilag olyan mintha az eredeti DOM-ban lenne ez a HTML, de, ha új helyre szeretnénk másolni a funkcionalitást nem kell lemásolni. A template a következőket tartalmazza:
 
 \pdfcomment[icon=Note]{insert: Kep a direktivarol}
 
@@ -281,6 +288,11 @@ A websocket kezelés egy tökéletes példa saját AngularJS szolgáltatásra, e
 
 AngularJS az alacsonyszintű $http szolgáltatást kínálja egyszerű AJAX hívásokra, de, ha egy API-val dolgozunk, akkor a $resource egy olyan absztraktabb szolgáltatás ami REST-szerű API-khoz való kapcsolódást valósít meg. Ekkor saját szolgáltatást kell defineálni egy endpoint megadásával és a műveletek meghatározásával:
 
+
+
+
+
+
 \begin{lstlisting}
   app.factory('DocumentService', ['$resource', function($resource){
   return $resource('/api/docs/:id', {id:'@_id'}, 
@@ -289,13 +301,20 @@ AngularJS az alacsonyszintű $http szolgáltatást kínálja egyszerű AJAX hív
     }]);
 \end{lstlisting}
 
-Látható, hogy a saját DocumentService API-nek a $resource a függősége, az /api/docs/:id URL-hez kapcsolódik és kibővítettem két metódussal ami az update és a query metódus. 
+
+
+
+Látható, hogy a saját DocumentService API-nek a \$resource a függősége, az \lstinline{/api/docs/:id} URL-hez kapcsolódik és kibővítettem két metódussal ami az update és a query metódus. 
+
+
+
+
 
 Új entitás létrehozásakor kevés kódot kell futtatni:
 \begin{lstlisting}
  $scope.addEntity = function() {
     EntityService.save({ 
-      position: {"left":300, "top":300 },
+      position: {"left":300, top:300 },
       title:"*", 
       document: $scope.shared_document._id}, 
       function(res){}
@@ -306,6 +325,16 @@ Látható, hogy a saját DocumentService API-nek a $resource a függősége, az 
 Az a kényelmes mellékhatása van ennek a kódnak, hogy új entitás létrehozásakor a DOM-ba kerül.\pdfcomment[icon=Note]{insert: Egybol belekerul a domba?}
 
 \subsubsection{JSPlumbService}
+
+
+
+
+
+
+
+
+
+
 
 A laza csatolás szem előtt tartása miatt a jsPlumb hívások is egy szolgáltatásban vannak és nincsenek a kontroller vagy view-hoz szorosan csatolva. 
 

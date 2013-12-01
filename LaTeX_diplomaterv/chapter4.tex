@@ -254,14 +254,32 @@ Ez a direktíva azt csinálja meg, hogy amilyen input elemhez csatoljuk, annak a
 
 \subsubsection{ntDelete}
 
+Az ndDelete direktíva a billentyű funkciókért felelős, amiből kettő van: entitás létrehozás (E gomb) és törlés (backspace gomb). A triviális megoldás az, hogy a document elemre egy \lstinline{keydown} eseménykezelőt állítunk be. Ez sajnos nem elég, mert, ha éppen szöveget szerkesztünk az oldalon, akkor arra is reagálni fog. A direktíva eseménykezelője megkülönbözteti, hogy az eseményt fogadó elem input vagy textarea elem-e és ha igen, akkor az alapértelmezett működés következik be, egyébként meg a backspace hatására az éppen kijelölt entitást vagy élt kitörli.
 
-
-
+Fontos megjegyezni, hogy az olyan callback, ami nem AngularJS része, példáúl egy jQuery eseménykezelő, nem fogja az adatkötés frissítését kiváltani, tehát ha backspace gombnál kitörlünk egy entitást a model lsitából, ez a DOM-ban nem fog érvényesülni, ilyenkor \lstinline{$scope.$apply();} parancsot kell hívni. 
 
 %----------------------------------------------------------------------------
 \subsection{Szolgáltatások}
 %----------------------------------------------------------------------------
 
+\subsubsection{SocketService}
+
+A websocket kezelés egy tökéletes példa saját AngularJS szolgáltatásra, ezt akár több kontroller, direktíva vagy szolgáltatásba szeretnénk injektálni és fontos lenne a könnyű hozzáférés és a scope frissítés \lstinline{$scope.$apply();} segítségével. Pontosan ez történik, a SocketService kapcsolódik a szerveroldali Socket.IO szerverhez, majd apply blokkban futtatja a socket üzenet küldés (emit) és fogadás (on) callback metódusokat.
+
+Így kontrollerből átlátszóan használom ezt az adapter és ez a következőképpen néz ki kontrolleren belül:
+
+\begin{lstlisting}
+ function EditorCtrl($scope,socket, ...) {
+    socket.on('entity:create', function (data) {
+      var entities = $scope.shared_document.entities;
+      entities.push(data.obj);
+    });
+ }
+\end{lstlisting}
+
+\subsubsection{API szolgáltatások}
+
+AngularJS az alacsonyszintű $http szolgáltatást kínálja egyszerű AJAX hívásokra, de, ha egy API-val dolgozunk, akkor a $resource egy olyan absztraktabb szolgáltatás ami REST-szerű API-khoz való kapcsolódást valósít meg. Ekkor saját szolgáltatást kell defineálni egy endpoint megadásával és a műveletek meghatározásával:
 
 \begin{lstlisting}
   app.factory('DocumentService', ['$resource', function($resource){
@@ -271,6 +289,51 @@ Ez a direktíva azt csinálja meg, hogy amilyen input elemhez csatoljuk, annak a
     }]);
 \end{lstlisting}
 
+Látható, hogy a saját DocumentService API-nek a $resource a függősége, az /api/docs/:id URL-hez kapcsolódik és kibővítettem két metódussal ami az update és a query metódus. 
+
+Új entitás létrehozásakor kevés kódot kell futtatni:
+\begin{lstlisting}
+ $scope.addEntity = function() {
+    EntityService.save({ 
+      position: {"left":300, "top":300 },
+      title:"*", 
+      document: $scope.shared_document._id}, 
+      function(res){}
+    )
+  }
+\end{lstlisting}
+
+Az a kényelmes mellékhatása van ennek a kódnak, hogy új entitás létrehozásakor a DOM-ba kerül.\pdfcomment[icon=Note]{insert: Egybol belekerul a domba?}
+
+\subsubsection{JSPlumbService}
+
+A laza csatolás szem előtt tartása miatt a jsPlumb hívások is egy szolgáltatásban vannak és nincsenek a kontroller vagy view-hoz szorosan csatolva. 
+
+Ez a szolgáltatás beállítja az alapértelmezett jsPlumb paramétereket:
+
+\begin{enumerate}
+\item az élek görbülésének mértéke és stílusa,
+\item az élek színe, vastagsága,
+\item a végpontok stílusa,
+\item egy overlay beállítása, ami nyilat valósít meg,
+\item  rögzítési pont -- ez esetben folytonos -- ami azt jelenti, hogy nem diszkrét számú pontra illeszkedhet, hanem a doboz kerülete mentén egy közelebbi ponthoz fog kapcsolódni a másik doboz helyzetéhez képest.
+\end{enumerate}
+
+Két metódust szolgáltat : új élek létrehozása és egy új diagram betöltésekor  vagy váltáskor az élek felrajzolása egy éllista alapján.
+Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell ezt megvalósítani.
+
+
+\subsection{A szerkesztő kontroller}
+
+\begin{enumerate}
+\item A kontroller betöltésekor lekéri a DocumentService-től az összes diagramot és majd az elsőt betölti,
+\item defineál egy inicializáló metódust ami a diagram betöltését valósítja meg. Ekkor bizonyos változók újra az eredeti értéküket kapják meg, majd frissülnek az API-ból a diagram adatai, az entitásokat lekéri és inicializálja az éleket. A végén socket üzenetet küld arról, hogy az új diagramra váltott és a szerveroldlon egy másik socket szobába kerül;
+\item új diagram létreho
+\item 
+\item 
+\end{enumerate}
+
+2492
 
 %----------------------------------------------------------------------------
 \subsection{Unit teszt esetek}

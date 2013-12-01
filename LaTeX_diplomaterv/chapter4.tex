@@ -103,7 +103,7 @@ A position attribútum konkrétan a kliensoldali CSS pozícionálásra van haszn
     },
     ...],
     "entities": [],
-},
+}a,
 \end{lstlisting}
 
 
@@ -129,7 +129,7 @@ Az AngularJS kliens egy API-n keresztül kommunikál a szerverrel a dinamikus ta
         app.delete('/api/docs/:id', api.deletedoc);
     ...
     }
-\caption{API összekapcsolása a szerverrel}
+
 \end{lstlisting}
 
 \begin{lstlisting}
@@ -142,7 +142,7 @@ module.exports = function (db, sa) {
       res.json(removed);
     })  
   ...
-\caption{A DocumentApi törlés függvénye}
+
 \end{lstlisting}
 
 Amikor id-ra hivatkozunk mindig szükséges egy \lstinline{BSONPure.ObjectID} példányba csomagolni az azonosítót, mert csak úgy lehet felhasználni MongoDB lekérdezésben.

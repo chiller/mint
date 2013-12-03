@@ -2,8 +2,6 @@
 \chapter{Az elvégzett munka}
 %----------------------------------------------------------------------------
 
-(40 oldal)
-
 %----------------------------------------------------------------------------
 \section{Rendszerterv}
 %----------------------------------------------------------------------------
@@ -12,63 +10,7 @@
 \includegraphics[width=100mm,keepaspectratio]{figures/Rendszerterv.png}\\
 \end{figure}
 
-\subsection{Kollaboráció}
-
-Mivel kollaboratív alkalmazásról van szó elsőbbségi szempont az ellentmondó, nagyjából egyidejű változtatások konfliktusait feloldani. Felmerült ötletként a Google Docs-ban alkalmazott Operational Transformation megoldás amiben folyó szöveg egyidejű módosítása van megoldva ``előbb-útóbbi'' konzisztencia elérésével. Az Operational Transformation algoritmust nehéz implementálni CITATIONNEEDED, viszont vannak nyílt forráskódú megoldások rá\footnote{http://www.sharejs.com}. Nem ezen a vonalon indultam el, mert nehézkesnek gondoltam annak a rétegnek a fejlesztését ami a DOM-ban levő gráfot szöveggé- és vissza transzformálja akkor is , ha meg van oldva a különböző kliensek által látott szövegreprezentáció kollaboratív változtatása. 
-
-Erre az alternatíva ami végül kiválasztásra került egy meglehetősen pehelysúlyú megoldás: a gráf módosítását jól meghatározott eseményekként defineálom és ezek az események a többi felhasználóhoz Websockets broadcast üzeneteken keresztül jutnának el. Egy példa esemény egy entitás módosítása: az A kliens böngészőjében elhúzunk egy dobozt, a kliensoldali kód a szervernek egy kérésben szól a módosításról, a szerver perzisztálja az adatot és Websockets broadcast üzeneten keresztül értesíti a többi résztvevőt. Ilyenkor az esemény üzenet az új értékét is tartalmazza az entitásnak ami módosult. 
-
-Ebben a megoldásban igazából semmi konfliktus feloldás nincsen és a továbbiakban be fogom mutatni, hogy ez nem is feltétlenül szükséges. Először is nézzük meg, hogy milyen jellegű konfliktusokról lehet szó; a közösen manipulált elemeket lehet egyidejűleg létrehozni, törölni és módosítani, feltételezve két szereplőt a következő esetek relevánsak:
-
-\begin{enumerate}
-\item { törlés - törlés} Ha majdnem egyszerre ketten törlik ugyanazt az entitást, akkor csak kezelni kell kliens és szerver oldalon, hogy a később érkező törlés művelet már fölösleges. 
-\item { módosítás - módosítás} Itt két eset lehetséges:
-\begin{enumerate}
-\item Különböző attribútumok változnak. Ekkor, ha csak a változásokat küldjük el , akkor ????összefésülhetők az attribútumok, ha nem , akkor igazából a következő esetről beszélünk,
-\item Ugyanazok az attribútumok változnak. Ekkor sajnos arról beszélünk, hogy egyidejűleg az első felhasználó jobbra 
-húzta , a másik felhasználó balra húzta az objektumot és a később történt esemény fog végül érvényesülni. 
-
-Az első kérdés ami felmerül itt az, hogy ez egyáltalán próbléma? Próbléma, mert a mozgatás elvesztése apró művelet könnyen megismételhető, de ha egy hosszú szöveg beírásáról van szó egy attribútum mezőbe, akkor nem kívánatos elveszíteni azt. Egyszerű modellek szerkesztésénél mint egy állapot diagram nem tipikus a hosszú szövegek beírása. 
-
-Jó esetben körülbelül 100 ms alatt mindenkihez eljutnak az események, ez azt jelentené, hogy nem lehet annyira gyakori ez a próbléma, hogy egy verziókezelő rendszerhez hasonló megoldással lassítsuk a felhasználók munkafolyamatát.
-
-\pdfcomment[icon=Note]{insert: Zárolás}
-
-Egy egyszerű felhasználói élmény javítás egy jelzés lesz, ami úgy néz ki, hogy minden felhasználó látja, hogy ki éppen milyen objektumot jelölt ki színekkel jelölve. Ha valaki más ki szeretné törölni az objektumot aminek az életrajzát éppen írjuk, akkor a rendszer legalább szól, hogy azt valaki kijelölte. Ez a megoldás egyik fő előnye, hogy nem bonyolítja egyáltalán a munkafolyamatot példáúl a zároláshoz képest.
-
-\end{enumerate}
-\item { módosítás - törlés } Ez a szituáció ugyanaz mint az előző. A fent említett megjelölés egy megoldás, de egy visszavonás művelet megnövekedett komplexitás árán megoldaná teljesen a próblémát.
-\end{enumerate}
-
-A létrehozás-törlés, létrehozás-módosítás és létrehozás-létrehozás kombinációk nem fordulhatnak elő ugyanazon az entitáson, hiszen nem lehet olyat módosítani egyidőben amit a másik kliens hoz létre ugyanabban az időben.
-
-Ha a két művelet két különböző csúcsot érint, akkor nincs próbléma, mert triviálisan mindkét művelet érvényesül, ha a egy csúcsot és egy hozzá tartozó élet érint, akkor sincs gond, mert a csúcs törlése maga után vonja az él törlését is. 
-
-Az 5FEJEZET-ben teljesítményelemzés keretein belül további indoklást részletezek. 
-
-Az előnye a megoldásnak az egyszerűség és a remélhetőleg jobb felhasználói élmény ami abból eredhet, hogy visszaigazolás nélkül módosul a felhasználó felületén a diagram a saját beavatkozása után. Egy olyan alkalmazásnál ami egy nem-kollaboratív offline alkalmazással versenyzik létfontosságú a kis reakcióidő a felületen. Az egyszerűség maga után vonja a könnyebb karbantarthatóságot és kisebb hibalehetőséget.   
-
-
-Egy hátránya az, hogy az események száma nő a komplexitás növekedésével. 
-
-
-
-\subsubsection{Eltérések detektálása}
-
-Egy funkció ami jelzi, hogy két felhasználó eltérő diagramot lát holott ugyanazt kellene, hogy lássák -- nevezzük eltérés detektálásnak -- két szempontból is hasznos lesz: egyrészt a teljesítményelemzés során fel lehet használni arra, hogy a kollaborációs megoldás hatékonyságát vizsgáljam különböző paraméterek mellett , másrészt felhasználói élmény szempontjából szükséges, hiszen, ha eltérést vesz észre az algoritmus, akkor a diagram újratöltésével orvosolható a próbléma. 
-A kérdés az, hogy mi az amit összehasonlítunk ilyenkor? A teljesítményt és a sávszélességet szem előtt tartva egy egyszerű megoldás egy hash értéket számolni a diagramból majd ezt összevetni a többi kliens által kiszámolt értékkel.
-
-Ux
-
-Szerver is részt vesz?
-
-Teljesítmény
-
-Nyugtázás?
-
-Másik kérdés, hogy, hogyan oldható meg az, hogy ugyanabban az időben normális körülmények között előfordulhat, hogy 
-
-
+\input{src/collaboration}
 
 %----------------------------------------------------------------------------
 \section{Adatbázis}
@@ -327,15 +269,6 @@ Az a kényelmes mellékhatása van ennek a kódnak, hogy új entitás létrehoz�
 \subsubsection{JSPlumbService}
 
 
-
-
-
-
-
-
-
-
-
 A laza csatolás szem előtt tartása miatt a jsPlumb hívások is egy szolgáltatásban vannak és nincsenek a kontroller vagy view-hoz szorosan csatolva. 
 
 Ez a szolgáltatás beállítja az alapértelmezett jsPlumb paramétereket:
@@ -351,9 +284,24 @@ Ez a szolgáltatás beállítja az alapértelmezett jsPlumb paramétereket:
 Két metódust szolgáltat : új élek létrehozása és egy új diagram betöltésekor  vagy váltáskor az élek felrajzolása egy éllista alapján.
 Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell ezt megvalósítani.
 
+\subsection{Függőségek vizualizálása}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=15cm,keepaspectratio]{figures/dependencies.png}
+\caption{Függőségek vizualizálása AngularJS chrome toolbar-ban}
+\label{fig:angulardependencies}
+\end{figure}
+
+
+\cite{https://github.com/angular/angularjs-batarang/blob/master/README.md}
+A Batarang nevű kiegészítés a Google Chrome böngészőhöz egy AngularJS debuggoló eszköz, a ~\ref{fig:angulardependencies} ábrán látszik a függőségek vizualizálása, ami az egyik eszköz a Batarang-ban. A kör mentén fel vannak sorakoztatva a beépített -- általában \$-vel kezdődő nevűek -- és a fejlesztő által implementált komponensek: szolgáltatások, direktívák, filterek. A függőségi gráfban egy komponenst kiválasztva zöld színű élek mutatnak az őt felhasználó komponensekre, a pirosak meg azokra mutat amik őt használják.
+
+
+
 
 \subsection{A szerkesztő kontroller}
-
+\label{subsec:hashref}
 \begin{enumerate}
 \item A kontroller betöltésekor lekéri a DocumentService-től az összes diagramot és majd az elsőt betölti,
 \item defineál egy inicializáló metódust ami a diagram betöltését valósítja meg. Ekkor bizonyos változók újra az eredeti értéküket kapják meg, majd frissülnek az API-ból a diagram adatai, az entitásokat lekéri és inicializálja az éleket. A végén socket üzenetet küld arról, hogy az új diagramra váltott és a szerveroldlon egy másik socket szobába kerül;
@@ -362,6 +310,8 @@ Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell
 \item 
 \end{enumerate}
 
+
+documenthash
 
 %----------------------------------------------------------------------------
 \subsection{Unit teszt esetek}
@@ -374,19 +324,13 @@ Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell
 \input{src/compile}
 
 
+%----------------------------------------------------------------------------
+\section{Az alkalmazás bemutatása}
+%----------------------------------------------------------------------------
 
 
 %----------------------------------------------------------------------------
-\section{A Websockets protokoll vizsgálata}
-%----------------------------------------------------------------------------
-
-A Wireshark csomagvizsgáló eszközzel megvizsgáltam jobban a websockets kommunikációt.  
-
-
-
-
-%----------------------------------------------------------------------------
-\section{Promises és a ``callback hell''}
+\section{Továbbfejlesztési lehetőségek}
 %----------------------------------------------------------------------------
 Derp.
 

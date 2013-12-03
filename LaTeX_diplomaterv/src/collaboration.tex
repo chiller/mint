@@ -1,0 +1,52 @@
+\subsection{Kollaboráció}
+
+Mivel kollaboratív alkalmazásról van szó elsőbbségi szempont az ellentmondó, nagyjából egyidejű változtatások konfliktusait feloldani. Felmerült ötletként a Google Docs-ban alkalmazott Operational Transformation megoldás amiben folyó szöveg egyidejű módosítása van megoldva ``előbb-útóbbi'' konzisztencia elérésével. Az Operational Transformation algoritmust nem triviális implementálni, viszont vannak nyílt forráskódú megoldások rá\footnote{http://www.sharejs.com}. Nem ezen a vonalon indultam el, mert nehézkesnek gondoltam annak a rétegnek a fejlesztését ami a DOM-ban levő gráfot szöveggé- és vissza transzformálja akkor is , ha meg van oldva a különböző kliensek által látott szövegreprezentáció kollaboratív változtatása. 
+
+Erre az alternatíva ami végül kiválasztásra került egy meglehetősen pehelysúlyú megoldás: a gráf módosítását jól meghatározott eseményekként defineálom és ezek az események a többi felhasználóhoz Websockets broadcast üzeneteken keresztül jutnának el. Egy példa esemény egy entitás módosítása: az A kliens böngészőjében elhúzunk egy dobozt, a kliensoldali kód a szervernek egy kérésben szól a módosításról, a szerver perzisztálja az adatot és Websockets broadcast üzeneten keresztül értesíti a többi résztvevőt. Ilyenkor az esemény üzenet az új értékét is tartalmazza az entitásnak ami módosult. 
+
+Ebben a megoldásban igazából semmi konfliktus feloldás nincsen és a továbbiakban be fogom mutatni, hogy ez nem is feltétlenül szükséges. Először is nézzük meg, hogy milyen jellegű konfliktusokról lehet szó; a közösen manipulált elemeket lehet egyidejűleg létrehozni, törölni és módosítani, feltételezve két szereplőt a következő esetek relevánsak:
+
+\begin{enumerate}
+\item { törlés - törlés} Ha majdnem egyszerre ketten törlik ugyanazt az entitást, akkor csak kezelni kell kliens és szerver oldalon, hogy a később érkező törlés művelet ne okozzon hibát. 
+\item { módosítás - módosítás} Itt két eset lehetséges:
+\begin{enumerate}
+\item Különböző attribútumok változnak. Ekkor, ha csak a változásokat küldjük el , akkor triviálisan összefésülhetők a különböző attribútumokra vonatkozó egyidejű változásokat, ha nem , akkor igazából a következő esetről beszélünk,
+\item Ugyanazok az attribútumok változnak. Ekkor sajnos arról beszélünk, hogy, példáúl, egyidejűleg az első felhasználó jobbra 
+húzta , a másik felhasználó balra húzta az objektumot és a később történt esemény fog végül érvényesülni. 
+
+Az első kérdés ami felmerül itt az, hogy ez egyáltalán próbléma-e? Próbléma, mert ugyan a mozgatás elvesztése apró művelet és könnyen megismételhető, de ha egy hosszú szöveg beírásáról van szó egy attribútum mezőbe, akkor nem kívánatos elveszíteni azt, ha a másik résztvevő kitörli a régi változatot. Egyszerű modellek szerkesztésénél mint egy állapot diagramnál a hosszú szövegek beírása nem tipikus próbléma. 
+
+Jó esetben körülbelül 100 ms alatt mindenkihez eljutnak az események, ez azt jelentené, hogy nem lehet annyira gyakori ez a próbléma, hogy egy verziókezelő rendszerhez hasonló megoldással lassítsuk a felhasználók munkafolyamatát.
+
+
+
+Egy egyszerű felhasználói élmény javítás egy jelzés lesz, ami úgy néz ki, hogy minden felhasználó látja, hogy ki éppen milyen objektumot jelölt ki színekkel jelölve. Ha valaki más ki szeretné törölni az objektumot aminek az életrajzát éppen írjuk, akkor a rendszer legalább szól, hogy azt valaki kijelölte. Ez a megoldás egyik fő előnye, hogy nem bonyolítja egyáltalán a munkafolyamatot példáúl a zároláshoz képest.
+
+\end{enumerate}
+\item { módosítás - törlés } Ez a szituáció ugyanaz mint az előző. A fent említett megjelölés egy megoldás, de egy visszavonás művelet megnövekedett komplexitás árán megoldaná teljesen a próblémát.
+\end{enumerate}
+
+A létrehozás-törlés, létrehozás-módosítás és létrehozás-létrehozás kombinációk nem fordulhatnak elő ugyanazon az entitáson, hiszen nem lehet olyat módosítani egyidőben amit a másik kliens hoz létre ugyanabban az időben.
+
+Ha a két művelet két különböző csúcsot érint, akkor nincs próbléma, mert triviálisan mindkét művelet érvényesül, ha a egy csúcsot és egy hozzá tartozó élet érint, akkor sincs gond, mert a csúcs törlése maga után vonja az él törlését is. 
+\pdfcomment[icon=Note]{insert: 
+Az 5FEJEZET-ben teljesítményelemzés keretein belül további indoklást részletezek. Zárolás}
+
+
+\subsubsection{Zárolás}
+
+Szigorú zárolás alatt az értendő, hogy valamilyen algoritmus lehetővé teszi, hogy a felhasználó módosítások elől védje a diagram bizonyos részét és itt a módosítások nem kívánt elveszítéséről van szó általános egyidejű szerkesztés közben. Elképzelhető, hogy van értelme ``véglegesíteni'' egy diagramot és akkor megtilthatjuk zárolással a további módosításokat. Elég könnyű találni próblémákat a részleges zárolás ötletében, talán a legkézenfekvőbb a deadlock kialakulása: ketten egyszerre akarnak egy olyan halmazt módosítani, amit nem lehet egyszerre zárolni és egymást kizárják. Tehát nő a komplexitás azzal, hogy a rendszernek ezt meg kell akadályoznia és azt is meg kell akadályoznia, hogy túl sokáig ne lehessen zárolni.  
+
+Az előnye a pehelysúlyú kollaborációs megoldásnak az egyszerűség és a remélhetőleg jobb felhasználói élmény ami abból eredhet, hogy visszaigazolás nélkül módosul a felhasználó felületén a diagram a saját beavatkozása után. Egy olyan alkalmazásnál ami egy nem-kollaboratív offline alkalmazással versenyzik létfontosságú a kis reakcióidő a felületen. Az egyszerűség maga után vonja a könnyebb karbantarthatóságot és kisebb hibalehetőséget.   
+
+A hátránya az, hogy nem garantálja, hogy mindenkinek érvényesülnek vagy megmaradnak a módosításai.
+
+\subsubsection{Eltérések detektálása}
+
+Egy funkció ami jelzi, hogy két felhasználó eltérő diagramot lát holott ugyanazt kellene, hogy lássák -- nevezzük eltérés detektálásnak -- két szempontból is hasznos lesz: egyrészt a teljesítményelemzés során fel lehet használni arra, hogy a kollaborációs megoldás hatékonyságát vizsgáljam különböző paraméterek mellett , másrészt felhasználói élmény szempontjából szükséges, hiszen, ha eltérést vesz észre az algoritmus, akkor a diagram újratöltésével orvosolható a próbléma. 
+A kérdés az, hogy mi az amit összehasonlítunk ilyenkor? A teljesítményt és a sávszélességet szem előtt tartva egy egyszerű megoldás egy hash értéket számolni a diagramból majd ezt összevetni a többi kliens által kiszámolt értékkel.
+
+Felmerült a kérdés, hogy a diagram hash logika hol legyen: kliensoldal, szerveroldal vagy mindkettő. Kezdtem ott, hogy a kliensoldalon mindenképpen van rá szükség, viszont a szerveroldalon a hash kiszámolásához mindig szükség van az egész diagramra a memóriában, ez sok queryt jelenthet, másrészt a kliensoldalon úgyis mindig be van töltve az egész diagram. Ha kihagyom a szerver oldalt belőle, akkor Websocket-es megoldás eléggé kézenfekvőnek tűnik a több kliens összeegyeztetéséhez.
+
+Másik kérdés, hogy, hogyan oldható meg az, hogy ugyanabban az időben normális körülmények között előfordulhat, hogy ketten nem ugyanazt a dokumentumot látják átmenetileg. Erről bővebben a ~\ref{subsec:hashref} fejezetben lesz szó.
+

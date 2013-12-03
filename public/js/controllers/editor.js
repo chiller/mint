@@ -29,6 +29,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
   });
 
   $scope.init = function(id){
+
     DocumentService.get({id:id}, function(response){
         $scope.compile_result = " ";
       $scope.shared_document = response;
@@ -298,7 +299,10 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
   $scope.fork = function(){
       $http({method: 'POST', url: '/api/fork/'+$scope.shared_document._id+"/" }).
           success(function(data, status, headers, config) {
-              console.log(data)
+              DocumentService.query(function(response){
+                  $scope.docs=response
+                  $scope.loadDoc($scope.docs.length-1)
+              });
           }).
           error(function(data, status, headers, config) {
               // called asynchronously if an error occurs

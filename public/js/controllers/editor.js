@@ -51,6 +51,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
     })
   }
   $scope.loadDoc = function(idx) {
+    jsPlumb.detachEveryConnection();
     $scope.users = [];
     $scope.marks = {}
     $scope.documentHash = []

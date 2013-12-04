@@ -2,30 +2,19 @@ var mongo = require('mongodb');
 var url = require('url');
 module.exports = function (db) {
     "use strict";
-
     var docs = db.collection("docs");
     var entities = db.collection("entities");
-
-
-
     var updateconnections = function(res, newents, doc, newdoc) {
-
         newdoc.connections = newdoc.connections.map(function(con){
             newents.forEach(function(e){
-                if (e.old_id==con.from){
-                   con.from = e._id
-                }
-                if (e.old_id==con.to){
-                    con.to = e._id
-                }
+                if (e.old_id==con.from){  con.from = e._id }
+                if (e.old_id==con.to){  con.to = e._id }
             })
             return con;
         })
-        console.log(newdoc)
         docs.update({_id: newdoc._id}, newdoc, function(err, finaldoc){
             res.json(finaldoc);
         })
-
     }
 
     this.fork = function (req, res) {
@@ -43,22 +32,13 @@ module.exports = function (db) {
                             x.document = newdoc[0]._id.toString();
                             return x;})
 
-
-
-                        //console.log(newents)
                         entities.insert(newents, function(err, out){
                             if (err) throw err;
                             updateconnections(res, newents, doc, newdoc[0]);
                         });
 
-
-
-
                     })
-
-
                 })
-
             });
         }
 }

@@ -26,7 +26,7 @@ A vizuális programozás menete a következő egy minta nyelv példányán amibe
 
 Az eredeti ``séma'' csúcsok listáját és élek listáját jelenti, viszont ez az adatformátum nem hasznos relációk kezelésére. Ezért reláció helyett redundancia bevezetésével oldom meg: egy diagram ilyen reprezentációjában egy él többször is jelenik meg. Ez leegyszerűsítve így néz ki:
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Denormalizált -- vagy redundáns -- séma]
     {   edges: [
             {from: a, to: b},
             {from: a, to: c}],
@@ -46,7 +46,7 @@ akkor megnövekedne fölöslegesen a komplexitás (tranzakciókra lenne szüksé
 A gráftranszformáció template egy Underscore template. Underscore.JS egy Javascript könyvtár ami funkcionális programozás eszközökkel bővíti e nyelvet, anélkül, hogy kiterjesztené a beépített típusokat. \cite{underscorejs.org}
 Ezen belül a template rendszer lehetővé teszi egy template fájlt lefordítását adott kontextus alapján. A template-ben \lstinline{<\%= \%>} segítségével változó behelyettesítés történik, \lstinline{<\% \%>} segítségével Javascript kódot lehet értelmeztetni. 
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=Underscore template lefordítása]
 var compiled = _.template("hello: <%= name %>");
 compiled({name: 'moe'});
 => "hello: moe"
@@ -61,7 +61,7 @@ Az alkalmazásban így néz ki felhasználói szemszögből:
 \label{fig:compileseq}
 \end{figure}
 
-\begin{lstlisting}[caption=A template]
+\begin{lstlisting}[caption=A gráftranszformációs Underscore template]
 Elements: 
 <% 
     doc.entities.forEach(function(el){
@@ -72,8 +72,8 @@ Elements:
 %>
 \end{lstlisting}
 
-És a kimenet: 
-\begin{lstlisting}[language=HTML]
+
+\begin{lstlisting}[language=HTML,caption=Az eredmény]
 Elements: 
 
 source
@@ -99,7 +99,7 @@ A generált kód elmentődik az adatbázisba a diagram egyik attribútumába, é
 
 Parancssorból is fel lehet használni \lstinline{node mintrepl <id>} segítségével, a mintrepl egy javascript szkript, ami a fent említett API-n keresztül letölti és értelmezi a fájlt, majd futtatja a letöltött kódot és egy REPL\footnote{Read-Eval-Print-Loop} interaktív node shell-t futtat. 
 
-\begin{lstlisting}
+\begin{lstlisting}[caption=A generált kód felhasználása NodeJS shellben]
  $ node mintrepl 5242aa48ddda9b0000000001
  mint 5242aa48ddda9b0000000001> tanulo = new sm()
  mint 5242aa48ddda9b0000000001> tanulo.consumeEvent("kávé")

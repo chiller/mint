@@ -1,3 +1,4 @@
+\definecolor{darkgreen}{rgb}{0.2,0.6,0.2}
 \lstdefinelanguage{JavaScript}{
   keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
   keywordstyle=\color{blue}\bfseries,
@@ -8,7 +9,7 @@
   comment=[l]{//},
   morecomment=[s]{/*}{*/},
   commentstyle=\color{purple}\ttfamily,
-  stringstyle=\color{red}\ttfamily,
+  stringstyle=\color{darkgreen}\ttfamily,
   morestring=[b]',
   morestring=[b]"
 }
@@ -26,5 +27,7 @@
    tabsize=2,
    breaklines=true,
    showtabs=false,
-   captionpos=b
+   captionpos=b,
+   aboveskip=9pt,
+   belowskip=9pt,
 }

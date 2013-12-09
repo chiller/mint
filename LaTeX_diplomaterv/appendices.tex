@@ -12,26 +12,112 @@
 %----------------------------------------------------------------------------
 \section{Az alkalmazás telepítése}
 %----------------------------------------------------------------------------
-\begin{figure}[!ht]
-\centering
-%\includegraphics[width=150mm, keepaspectratio]{figures/TeXnicCenter.png}
-\caption{A TeXnicCenter Windows alapú \LaTeX-szerkesztõ.} 
-\end{figure}
 
-Derp.
 
 %----------------------------------------------------------------------------
-\clearpage\section{Az alkalmazás telepítése}
+\clearpage\section{Az állapotgép kód generálása}
 %----------------------------------------------------------------------------
+
 \begin{figure}[!ht]
 \centering
-%\includegraphics[width=150mm, keepaspectratio]{figures/TeXnicCenter.png}
-\caption{A TeXnicCenter Windows alapú \LaTeX-szerkesztõ.} 
+\includegraphics[width=100mm, keepaspectratio]{figures/tanulo.png}
+\caption{A bemeneti diagram} 
 \end{figure}
 
-Derp.
+
+\begin{lstlisting}[caption=Az állapotgép kódgeneráló UnderscoreJS template-je]  
+
+var sm = function() {
+
+states = [
+
+<% doc.entities.forEach(function(entity,i){
+%>
+  {"name": "<%= entity.title %>", 
+   <%if(i==0){ %> "initial":true, <% }%>
+  "events": {
+    <% entity.connections_from.forEach(function(con){%>
+        "<%=con.label%>":"<%=con.to%>",
+    <%}) %>}
+},<%
+}) %>
+
+]
+
+ function StateMachine(states){
+        this.states = states;
+        this.indexes = {}; 
+        for( var i = 0; i< this.states.length; i++){
+            this.indexes[this.states[i].name] = i;
+            if (this.states[i].initial){
+                this.currentState = this.states[i];
+            }
+        }
+        this.consumeEvent = function(e){
+            if(this.currentState.events[e]){
+                this.currentState = this.states[this.indexes[this.currentState.events[e]]] ;
+                console.log(this.currentState.name);
+            }
+        }
+        this.getStatus = function(){
+            return this.currentState.name;
+        }
+    }
+    return new StateMachine(states);
+}
+
+\clearpage
+
+\end{lstlisting}
 
 
 
+\begin{lstlisting}[caption=A generálás eredménye] 
+
+var sm = function() {
+
+states = [
 
 
+  {"name": "Jatszik", 
+    "initial":true, 
+  "events": {"almos":"Alszik","holnapvizsga":"Tanul",}
+},
+  {"name": "Tanul", 
+   
+  "events": {"unatkozik":"Jatszik",}
+},
+  {"name": "Alszik", 
+   
+  "events": {"felebred":"Kave",}
+},
+  {"name": "Kave", 
+   
+  "events": {"holnapvizsga":"Tanul","almos":"Kave",}
+},
+
+]
+
+ function StateMachine(states){
+        this.states = states;
+        this.indexes = {}; 
+        for( var i = 0; i< this.states.length; i++){
+            this.indexes[this.states[i].name] = i;
+            if (this.states[i].initial){
+                this.currentState = this.states[i];
+            }
+        }
+        this.consumeEvent = function(e){
+            if(this.currentState.events[e]){
+                this.currentState = this.states[this.indexes[this.currentState.events[e]]] ;
+                console.log(this.currentState.name);
+            }
+        }
+        this.getStatus = function(){
+            return this.currentState.name;
+        }
+    }
+    return new StateMachine(states);
+}
+
+\end{lstlisting}

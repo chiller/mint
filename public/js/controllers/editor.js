@@ -2,114 +2,311 @@
 
 /* Controllers */
 
-function setUpPlumb() {
 
-        jsPlumb.importDefaults({
-          PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
-          Endpoint:[ "Dot", { radius:5 } ],
-          EndpointStyle:{ fillStyle:"#ffa500" }
-        });
-          
-        var shapes = $(".draggable");
-          
-        // make everything draggable
-        //jsPlumb.draggable(shapes);
-        window.pcon = [];
-        // loop through them and connect each one to each other one.
-        for (var i = 0; i < shapes.length; i++) {
-          for (var j = i + 1; j < shapes.length; j++) {           
-            window.pcon.push(jsPlumb.connect({
-              source:shapes[i],  // just pass in the current node in the selector for source 
-              target:shapes[j],
-              // here we supply a different anchor for source and for target, and we get the element's "data-shape"
-              // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
-            }));       
-          } 
+function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,PlumbService,ConnectionService, AQ, $http) {
+
+    $scope.showcode = false;
+    $scope.togglecode = function() {
+        $scope.showcode = !$scope.showcode;
+    }
+
+
+    jsPlumb.bind("beforeDrop", function(i,c) {
+
+      var new_connection = {
+      from: $("#"+i.sourceId).parent().attr('id'),
+      to: $("#"+i.targetId).parent().attr('id')
         }
+      $scope.shared_document.connections.push(new_connection)
+      ConnectionService.save({_id: $scope.shared_document._id,"from":new_connection.from, "to":new_connection.to });
+      PlumbService.addPlumb(new_connection)
+      return false;
+  })
 
-}
+  DocumentService.query(function(response){
+      $scope.docs=response
+      $scope.loadDoc(0);
+  });
 
-function setUpPlumbWithScope($scope) {
+  $scope.init = function(id){
 
-        jsPlumb.importDefaults({
-          Connector:"StateMachine",
-          PaintStyle:{ lineWidth:3, strokeStyle:"#ffa500" },
-          Endpoint:[ "Dot", { radius:5 } ],
-          EndpointStyle:{ fillStyle:"#ffa500" }
-        });
-          
-        var shapes = $(".draggable");
-       
-        
-        // loop through them and connect each one to each other one.
-        for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
-          
-          var t = $scope.shared_document.connections[i]
-           jsPlumb.connect({
+    DocumentService.get({id:id}, function(response){
+        $scope.compile_result = " ";
+      $scope.shared_document = response;
+      
+      EntityService.query({document:response._id },function(response){
+        var entities = response;
+        $scope.shared_document.entities = entities;
+        //TODO: this is ugly
+        setTimeout(function(){
+          PlumbService.setUpPlumbWithScope($scope);
+        },500)
+      });
 
-              source:shapes[t.from],  // just pass in the current node in the selector for source 
-              target:shapes[t.to],
-              // here we supply a different anchor for source and for target, and we get the element's "data-shape"
-              // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
-              anchors:[
-                [ "Perimeter", { shape:"Rectangle" }],
-                [ "Perimeter", { shape:"Rectangle" }]
-              ]
-            });   
-
-
-         };    
-}
-
-function EditorCtrl($scope, socket) {
-
-    var entities = [
-    {position: {'left':100, 'top':100 }, title:"alma"},
-    {position: {'left':200, 'top':100 }, title:"korte"},
-    {position: {'left':300, 'top':100 }, title:"birs"},
-    {position: {'left':300, 'top':300 }, title:"citrom"},
-    {position: {'left':400, 'top':200 }, title:"lime"},
-    {position: {'left':400, 'top':300 }, title:"pari"},
-  ]
-  var connections = [
-    {"from":1, "to":2},
-  ]
-
-  setTimeout(function(){
-    setUpPlumbWithScope($scope);
-  },1000)
-
-  $scope.shared_document = {
-    entities: entities,
-    connections: connections
+    })
   }
+  $scope.addDoc = function() {
+    $scope.newDoc.author="";
+    DocumentService.save($scope.newDoc, function(res){
+      $scope.docs.push(res)
+    })
+  }
+  $scope.loadDoc = function(idx) {
+    jsPlumb.detachEveryConnection();
+    $scope.users = [];
+    $scope.marks = {}
+    $scope.documentHash = []
+    $scope.HASHARRAYLENGTH = 4
+    $scope.selectedDocIndex = idx;
+    $scope.init($scope.docs[idx]._id);
+    socket.emit("room:change", {id: $scope.docs[idx]._id});
+  }
+
+
+  
+  $scope.selectEntity = function(i) {
+    $scope.selectedConnection = null;
+
+    if ($scope.selectedEntity != $scope.shared_document.entities[i]) {
+      $scope.selectedEntity2 = $scope.selectedEntity;
+      $scope.selectedEntity = $scope.shared_document.entities[i]; 
+    }
+    //$scope.selectedEntity.mark = null;
+    $scope.marks[$scope.selectedEntity._id] = null;
+    socket.emit("mark", {"id": $scope.selectedEntity._id , "user": $scope.users[0] }, function(res){})
+  }
+
+
 
   //shared
-  socket.on('shared:update', function (data) {
-    $scope.shared_document = data.shared_document
-    setUpPlumbWithScope($scope);
-    setTimeout(function(){jsPlumb.repaintEverything()}, 0);
+  //TODO: this needsto be extracted from here
+  socket.on('entity:create', function (data) {
+      var entities = $scope.shared_document.entities;
+      entities.push(data.obj);
+      console.log(data.msg);
   });
+  socket.on('entity:update', function (data) {
+        var entities = $scope.shared_document.entities;
+        var entity = AQ.find(entities, "_id", data.obj._id)
+        if (entity!=null) {
+          entities[entity].position = data.obj.position;
+          entities[entity].title = data.obj.title;
+          setTimeout(function(){jsPlumb.repaintEverything();},0);
+        }
+
+    });
+    socket.on('entity:delete', function (data) {
+        var entities = $scope.shared_document.entities;
+        var entity = AQ.find(entities, "_id", data.obj)
+        console.log("*")
+        if (entity!=null) {
+            //debugger
+            console.log("deleting"+entity.toString())
+            jsPlumb.detachAllConnections($("#"+data.obj));
+            entities.splice(entity,1);
+        }
+        console.log(data.msg);
+    });
+    socket.on('connection:create', function (data) {
+
+
+        console.log("connection:create")
+        var c = AQ.findConnection($scope.shared_document.connections, data.obj);
+        if (c==null){
+            $scope.shared_document.connections.push(data.obj);
+            PlumbService.addPlumb(data.obj);
+        }
+        console.log(data.msg);
+
+    });
+    socket.on('connection:delete', function (data) {
+        //TODO: optimise this
+        var cons = jsPlumb.getAllConnections();
+        for(var i = 0;i<cons.length;i++){
+            if(cons[i].scope.from == data.obj.from && cons[i].scope.to == data.obj.to )
+            {
+                jsPlumb.detach(cons[i]);
+                var c = AQ.findConnection($scope.shared_document.connections, data.obj);
+                if (c!=null){
+                    $scope.shared_document.connections.splice(c, 1);
+                }
+            }
+        }
+    });
+   socket.on('chat', function (data) {
+        console.dir("chat: "+data.msg.text);
+        console.dir("chat: "+data.msg.id);
+        if(data.msg.id){
+            if(data.msg.text=="client joined") {
+                console.log(data.msg.id)
+                $scope.users.push((MD5(JSON.stringify(data.msg.id)).substring(0,6)))
+            }  else {
+                $scope.users.splice($scope.users.indexOf((MD5(JSON.stringify(data.msg.id)).substring(0,6))),1)
+
+                //var old = AQ.find($scope.shared_document.entities, "mark", MD5(JSON.stringify(data.msg.id)).substring(0,6))
+                //try{ $scope.shared_document.entities[old].mark = null; }
+                //catch(ex){ console.log("no old")}
+            }
+        }
+   });
+    socket.on('mark', function (data) {
+        //console.dir("mark: "+data.id);
+
+        /*var old = AQ.find($scope.shared_document.entities, "mark", data.user)
+        try{ $scope.shared_document.entities[old].mark = null; }
+        catch(ex){ console.log("no old")}
+        var current = AQ.find($scope.shared_document.entities, "_id", data.id)
+        console.log(current)
+        $scope.shared_document.entities[current].mark = data.user;*/
+
+
+        var inverted = _.invert($scope.marks)
+        // user->id
+        $scope.marks[inverted[data.user]] = null;
+        $scope.marks[data.id] = data.user;
+
+
+
+    });
+
+    $scope.arrdiff = function (a1, a2)
+    {
+        var a=[], diff=[];
+        for(var i=0;i<a1.length;i++)
+            a[a1[i]]=true;
+        for(var i=0;i<a2.length;i++)
+            if(a[a2[i]]) delete a[a2[i]];
+            else a[a2[i]]=true;
+        for(var k in a)
+            diff.push(k);
+        return diff;
+    }
+
+    socket.on('sync', function (data) {
+
+        console.log("sync: "+$scope.arrdiff(data.sync, $scope.documentHash));
+        if($scope.arrdiff(data.sync, $scope.documentHash).length && $scope.documentHash.length == $scope.HASHARRAYLENGTH){
+            $scope.conflict = true;
+            alert("conflict")
+        }  else {
+            $scope.conflict = false;
+        }
+    });
+   $scope.sendChat = function(){
+       socket.emit("chat", { "msg": $scope.message} , function(result){
+           console.log(result)
+       })
+   }
   //shared-end
 
-    $scope.sendshared = function () {
-    socket.emit('shared:update', {
-      shared_document : $scope.shared_document
-    });
-  };
+
 
  
+  $scope.addConnection = function() {
+    if ($scope.selectedEntity && $scope.selectedEntity2) {
+      var new_connection = {"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id};
+      $scope.shared_document.connections.push(new_connection)
+      //TODO: only set up new ones
+      //DocumentService.update($scope.shared_document)
+       ConnectionService.save({_id: $scope.selectedEntity.document,"from":$scope.selectedEntity._id, "to":$scope.selectedEntity2._id });
+       PlumbService.addPlumb(new_connection)
+    }
+  }
+  $scope.updateDocument = function() {
+    DocumentService.update($scope.shared_document)
+  }
+  $scope.addEntity = function() {
+    EntityService.save({position: {'left':300, 'top':300 }, title:"*", document: $scope.shared_document._id}, function(res){
+    })
+    
+  }
+  $scope.updateEntity = function(idx) {
+    EntityService.update($scope.shared_document.entities[idx], function(){
+            //console.log("success");
+        })
+  }
+  $scope.deleteEntity = function() {
 
-  $scope.addconn = function() {
-
-    $scope.shared_document.connections.push({"from":$scope.confrom, "to":$scope.conto})
-    console.log($scope.shared_document);
-    setUpPlumbWithScope($scope);
-    $scope.sendshared();
+    if ($scope.selectedEntity) {
+      jsPlumb.detachAllConnections($("#"+$scope.selectedEntity._id.toString()));
+      var idx = $scope.shared_document.entities.indexOf($scope.selectedEntity);
+      EntityService.delete({id: $scope.selectedEntity._id, document: $scope.selectedEntity.document}, function(){
+        $scope.selectedEntity = null;
+        //$scope.shared_document.entities.splice(idx,1)
+      })
+      
+      
+    }
+    
   }
 
+  $scope.compile = function(){
+      $http.get('/api/compile/'+$scope.shared_document._id).
+          success(function(data, status, headers, config) {
+
+              $scope.compile_result = data.toString();
+          })
+
+  }
+
+  $scope.$watch('shared_document.entities', function (newVal) {
+      var entities = []
+      if ($scope.shared_document){
+          $scope.inactive = false;
+          angular.forEach($scope.shared_document.entities, function(e){
+            entities.push({
+                _id: e._id,
+                position: e.position,
+                title: e.title
+            })
+          })
+          entities.sort(function (a, b) {
+              if (a._id > b._id)
+                  return 1;
+              if (a._id < b._id)
+                  return -1;
+              // a must be equal to b
+              return 0;
+          });
+          $scope.documentHash.push(MD5(JSON.stringify(entities)).substring(0,6))
+          if($scope.documentHash.length > $scope.HASHARRAYLENGTH){
+              $scope.documentHash.shift();
+          }
+      }
+  }, true);
+
+  $scope.inactive = false;
+  $scope.lastnow = new Date().getTime();
+  $scope.check_put_comment_frequency = function(){
+      var DELAY_MILISECONDS = 8000
+      $scope.now = new Date().getTime()
+      if ($scope.now > $scope.lastnow + DELAY_MILISECONDS){
+          $scope.inactive = true
+          socket.emit("sync",{"sync": $scope.documentHash}, function(result){
+
+          })
+      } else {
+          $timeout($scope.check_put_comment_frequency, DELAY_MILISECONDS);
+      }
+
+  }
+  $scope.$watch("inactive",function(newval){
+     $scope.inactive = newval;
+     $scope.lastnow = new Date().getTime();
+     $scope.check_put_comment_frequency();
+  })
+
+  $scope.fork = function(){
+      $http({method: 'POST', url: '/api/fork/'+$scope.shared_document._id+"/" }).
+          success(function(data, status, headers, config) {
+              DocumentService.query(function(response){
+                  $scope.docs=response
+                  $scope.loadDoc($scope.docs.length-1)
+              });
+          }).
+          error(function(data, status, headers, config) {
+              // called asynchronously if an error occurs
+              // or server returns response with an error status.
+          });
+  }
 }

@@ -1,0 +1,163 @@
+
+
+\input{jslistings}
+
+%----------------------------------------------------------------------------
+\chapter{Technológiai áttekintés}
+%----------------------------------------------------------------------------
+A következő alfejezetekben a felhasznált technológiákra fogok kitérni több hangsúlyt fektetve azokra a technológiákra amik vagy újabbak vagy fontosabb szerepet játszottak az elkészült alkalmazásban.
+
+%----------------------------------------------------------------------------
+\section{Javascript}
+%----------------------------------------------------------------------------
+
+A Javascript nyelvet az útóbbi évek fejleményei miatt választottam, hiszen már lehetséges vele egy teljes kliens és szerveroldalt átívelő alkalmazást létrehozni. Szkriptnyelv jellege miatt arra számítottam, hogy gyors prototípizálásra lesz lehetőség, ez azért fontos, mert a technológiák nagy része amivel a munkámban foglalkoztam új volt számomra.
+
+A Javascript nyelv nem kerül részletes bemutatásra, helyette arra tértem ki, ami nehezen érthető volt számomra: az , hogy hogyan tud objektumorientált lenni a nyelv, ha tud egyáltalán. 
+
+\subsection{Prototípus öröklés a Javascriptben}
+
+Javascript egy prototípus alapú objektumorientált nyelv, ez azt jelenti, hogy objektumok vannak, amik nem osztálypéldányok és az öröklés szempontjából minden objektumnak van egy referenciája a prototípusára, és ez addig megy tovább amíg a prototípus null lesz\cite{mdnprotoref}. 
+
+Örökölt attribútumok esetében úgy működik a feloldás, hogy először az objektum saját attribútumai között keressük, ha nem találjuk, akkor a prototípus láncon tovább megyünk és ott keressük, és így tovább a végéig, ahol, ha nem találjuk meg akkor \lstinline{undefined} az eredmény. A függvények attribúmként viselkednek ebből a szempontból és ezáltal a függvény felüldefineálás is működik.
+
+\subsubsection{Objektumpéldányosítás}
+
+Több módon történik az objektumok példányosítása, az egyszerű esetekben a következőképpen néz ki a prototípus lánc: 
+\begin{enumerate}
+\item \lstinline| var o = { a: 1 };| esetében o az Object-ből örököl és a prototípuslánc:
+
+ \lstinline|o ---> Object.prototype ---> null|
+\item \lstinline| var a = ["egy", "meggy", "citrom"]; | esetében az \lstinline{a} egy tömb aminek a prototípusa az Object \lstinline|a ---> Array.prototype ---> Object.prototype ---> null|
+\item \lstinline| function foo(){ return 0; }| a függvény is egy ``egyszerű'' objektum: 
+
+\lstinline| foo ---> Function.prototype ---> Object.prototype ---> null| 
+
+\item 
+\begin{lstlisting}
+{
+    function Alma() {
+        this.color = "green";
+    }
+    Alma.prototype = {
+        ripe: function() {
+            this.color = "red";
+        } 
+    }
+    var a = new Alma();
+}
+\end{lstlisting}
+
+A konstruktor az egy egyszerű function ami meghívódik a \lstinline{new} kulcsszó használatakor, ekkor a prototípuslánc: 
+
+\lstinline| a ---> Alma.prototype ---> Object.prototype ---> null|
+
+\end{enumerate}
+
+Meg kell jegyezni, hogy a hosszú prototípusláncok teljesítménycsökkentést jelentenek, hiszen végig kell menni mindig a láncon egyes attribútumokért. Az is fontos, hogy a Javascript környezet annyira megengedő, hogy beépített objektumokat lehet változtatni, úgynevezett ``monkey patching''-gel, ez viszont nem javasolt, mert nehéz debuggolni, megnehezíti annak a fejlesztőnek a munkáját aki nem tud a patch-ről és ha két modul ugyanazt a kódot patch-eli, akkor amelyik később lefut az ``nyer''.
+
+
+
+\subsection{Coffeescript}
+
+Napjainkban nagyon sok olyan nyelv van ami Javascriptre fordul\cite{coffeeref}. A szakdolgozatom elején CoffeeScript-ben fejlesztettem a prototípust, mert egy olyan nyelv ami Javascriptre fordul, de Python jellegű szintaxisa van. A főbb jellegzetességei a következők\cite{maccaw2011}:
+
+\begin{itemize}
+\item zárójelek helyett indentálással történik a kód blokkok elválasztása, emiatt olvashatóbb lehet a kód,
+\item eltávolítja a globális referencia fogalmát és csak lokális változókat lehet deklarálni,
+\item nagyon rövid a függvénydeklaráció: \lstinline|function() { do() ;}| helyett \lstinline{() -> do},
+\item nagyon rugalmas ciklusok és lista generálások: \lstinline{[ apple for apple in apples when not apple.rotten ]} ez egy friss alma listával tér vissza egy sorban, 
+\item a feltételes blokkok és ciklusok zárójelmentesek és egyszerűbb helyes kódot írni: \begin{lstlisting}
+    for i in items
+        if i>5 then print i
+        \end{lstlisting}
+\item nagyon hasznos a feltételes tagváltozóhozzáférés: a \lstinline{apple.tree?.cutDown} kód akkor is sikeresen lefut, ha az \lstinline{apple} objektumnak nincs \lstinline{tree} tagváltozója,
+\item bevezeti a Pythonhoz hasonló osztálydeklaráció szintaxist, ami félrevezető lehet, ha nem ismerjük jól a Javascriptet, hiszen csak ezen az absztrakt szinten objektumorientált, a lefordult Javascriptben prototípus öröklés lesz,
+\item teljesen ekvivalens Javascript kód fordul belőle és visszafordítás is ugyanúgy lehetséges.
+\end{itemize}
+
+Igaz, hogy könnyebb üzleti logikát és funkcionális programozási kihívásokat megoldani a Coffeescript szintaxissal, de azt tapasztaltam, hogy a munkám során nem segített a keretrendszerek (AngularJS, NodeJS) megértésében, nehezebb volt a hibákat debuggolni. Amikor már ismerős volt a technológia, akkor hatékonyabb tudtam lenni Coffeescipt segítségével, de ez csak a végére alakult ki. Egy másik ok az, hogy a jelen dokumentumban sok kódrészlet szerepel és ennek megértését hátráltatja a Coffeescript szintaxis azon olvasó számára aki nem ismeri a nyelvet. 
+
+Bármikor át lehet térni Coffeescriptre hiszen mindkét irányba lehet fordítani, tehát egy létező Javascript projektet Coffeescriptre lehet fordítani, be kell állítani az automatikus fordítást Javascriptre és már dolgozhatunk is tovább Coffeescriptben.
+
+
+\input{socketio}
+
+\input{src/angular}
+
+\input{src/mongo}
+
+
+
+
+\input{src/nodejs}
+
+
+
+%----------------------------------------------------------------------------
+\section{MEAN stack}
+%----------------------------------------------------------------------------
+
+%http://blog.mongodb.org/post/49262866911/the-mean-stack-mongodb-expressjs-angularjs-and
+
+A MEAN, a MongoDB, Express.JS, Angular.JS, Node.JS technológiáknak a rövidítése, és a lényege az, hogy adatbázisban, szerver oldalon és kliens oldalon végig JSON objektumokkal dolgozunk ráadásul nincs is szükség még más keretrendszerre weblapok készítéséhez, ez egy úgynevezett ``full-stack'' megoldás. A MEAN előnye az, hogy a kölönböző rétegekre specializált fejlesztők akik egy ilyen fejlesztésen dolgoznak könnyebben megértik a többi réteg kódját, hiszen Javascript nyelven történik mindhárom fejlesztés. 
+
+
+\section{Felhasznált fejlesztői eszközök}
+
+Ebben a fejezetben azokat a fejleszői és dokumentáló eszközöket mutatom be röviden amikez szakdolgozatomhoz felhasználtam.
+
+\subsection{Jetbrains Webstorm}
+
+A Javascript kódot Jetbrains Webstorm fejlesztőkörnyezetben szerkesztettem. A fő okok amiért ezt választottam:
+\begin{itemize}
+\item bizonyos mértékben támogat ``IntelliSense'' jellegű kódkiegészítést és kódvalidálást, ami szkriptnyelvek esetében elég hasznos,
+\item lehet vele debuggolni egy NodeJS szerveralkalmazást,
+\item támogat kódnavigálást.
+
+\end{itemize}
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=15cm,keepaspectratio]{figures/webstorm.png}
+\caption{Jetbrains Webstorm}
+\label{fig:webstorm}
+\end{figure}
+
+\subsection{Chrome Developer Toolbar}
+
+Az alkalmazásomat fejlesztés közben Google Chrome-ban próbáltam ki főleg a fejlesztői panel miatt, amivel beállítva egy breakpointot vagy a \lstinline{debugger} sor beszúrásával hatékonyan lehet debuggolni. Ráadásul a breakpointnál megállva a Javascript shell az aktuális kontextusban működik és lehet azt a kontextust manipulálni parancsok beírásával.
+
+
+\subsection{Node Inspector}
+
+A Node Inspector eszköz, ami \url{https://github.com/node-inspector/node-inspector} címről szerezhető meg egy olyan szerveralkalmazás amivel egy Chrome Developer Toolbar példányt a NodeJS szerveroldali alkalmazásra lehet csatolni és ugyanazt a debuggolási funkcionalitást lehet elérni szerveroldalon mint kliensoldalon. Sokszor kényelmesebb volt ezt használni a Webstorm debuggernél.
+
+\subsection{Wireshark}
+
+A Wireshark protokollanalizátor a Websockets forgalom vizsgálatára volt hasznos amit a~\ref{sec:simprof} fejezetben részletezek.
+
+\subsection{Lucidcharts}
+
+A rendszerábrákhoz Lucidcharts szerkesztőt használtam, mert hatékonyan lehet benne jó minőségű ábrákat gyártani.
+
+\subsection{Latex}
+
+A jelen szöveges dokumentumot Latex-ben írtam a diplomaterv portál sablonját felhasználva. Elég sok időbe került amire mindent beállítottam, de a következő okok miatt találtam nagyon hatékony eszköznek:
+
+\begin{itemize}
+\item A dokumentumot fel lehet darabolni több fájlba, akár több mélységben is, majd a fordító összefésüli,
+\item nem valószínű, hogy lokális módosítások elrontják a dokumentum egy másik részét,
+\item az ábrák egy helyre vannak gyűjtve, ki tudok cserélni egy ábrát úgy, hogy ne kelljen megnyitanom a szerkesztőt,
+\item kevésbé valószínű, hogy a Notepad jellegű szövegszerkesztőm lefagy, mint az, hogy egy bonyolultabb szövegszerkesztő lefagyjon,
+\item könnyebbnek találtam az ábrák beszúrását és testreszabását.
+\end{itemize}
+
+Sokszor nehéz debuggolni, hogy miért nem fordul le a dokumentum.
+
+\subsection{Git}
+
+Fontos volt, hogy a munkám ne vesszen el, így egy Git repository-ba helyeztem el, amit egy szerverre szinkronizáltam rendszeresen. A szöveges dokumentumot is beletettem a repository-ba, így a teljes munkám előző állapotait is tudtam böngészni.
+
+
+

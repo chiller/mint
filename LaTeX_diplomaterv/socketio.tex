@@ -1,0 +1,59 @@
+%----------------------------------------------------------------------------
+\section{Socket.IO}
+%----------------------------------------------------------------------------
+A Socket.IO egy JavaScript könyvtár ami valósidejű alkalmazások kétirányú kommunikációját támogatja. Ha a hagyományos kliens-szerver weboldal modellre gondolunk, akkor azt a hiányosságot oldja meg, hogy miután letöltődik a honlap a böngészőben, nem egyértelmű, hogy hogyan tudnánk a kliens oldalon reagálni szerver oldali eseményekre. A WebSocket protokoll egy TCP kapcsolaton full-duplex kommunikációt biztosít.
+
+Valósidejű alkalmazásra egy naív próbálkozás az egyszerű AJAX polling, ami így nézhet ki:
+\medskip
+\begin{lstlisting}[caption=Egyszerű polling]
+setInterval(function(){
+    $.ajax({ url: "server", success: function(data){
+        //
+    }, dataType: "json"});
+}, 30000);
+\end{lstlisting}
+
+Ez több próblémát is felvet, többek között azt, hogy, ha a polling intervallum túl kicsi, akkor túl sok lekérés megy a szerverhez, ha az intervallum túl nagy, akkor nem kapunk elég gyakran értesítést. Minden egyes lekérdezés egy-egy kapcsolatfelépítést jelentene, ami pazarló lehet.
+
+Erre egy alternatíva a Long Polling, ekkor a válasz nem érkezik meg a szervertől addig, amíg nincsen olyan esemény amiről a klienst értesítenénk:
+
+\begin{lstlisting}[caption=Long Polling]
+(function poll(){
+    $.ajax({ url: "server", success: function(data){
+        // 
+    }, dataType: "json", complete: poll, timeout: 30000 });
+})();
+\end{lstlisting}
+
+Itt is láthatunk néhány hiányosságot: újra kell kapcsolódni periodikusan, mert a kérés lejárhat (timeout) és a kommunikációs protokoll még mindig HTTP, ami overhead-et jelent.
+
+
+A pollingnál egyszerűbb megoldás egy egyetlen TCP kapcsolatot kialakítani a kétirányú kommunikációra, ezt kínálja a Websocket protokoll
+\cite{rfc6455}.
+
+A Websocket protokoll arra lett tervezve, hogy a létező kompromisszumos kétirányú megoldásokat helyettesítse. A protokollnal két része van: a handshake és az adatátvitel. Miután végbement a handshake, a két fél \emph{üzenetekben} kommunikál egymással amik \emph{keretekre} lehetnek tagolva.
+
+Ez a keretezés a protokoll saját keretezése és az alsó rétegek akár tovább bonthatják.
+
+A Websocket protokoll egy címzési mechanizmust is megvalósít, amivel több szolgáltatást lehet igénybevenni egy kapcsolaton keresztül.
+
+A kommunikáció a TCP 80 porton történik, ami kedvező akkor amikor tűzfal szűri a többi portot. 
+
+
+
+
+A Socket.IO átlátszó módon kiválasztja a legjobb protokollt az aktuális böngésző által támogatottak közül ebben a sorrendben:
+\begin{enumerate}
+\item{WebSocket}
+\item{Adobe Flash Socket}
+\item{AJAX long polling}
+\item{AJAX multipart streaming}
+\item{Forever Iframe}
+\item{JSONP Polling}
+\end{enumerate}
+
+
+
+Megoldások mint a \url{http://pusher.com} megkönnyítik a Websockets implementációt egy 3rd party szolgáltatás keretein belül, de nem ezt használtam többek között azért mert fizetős szolgáltatás és nem akartam egy külső rendszertől függő alkalmazást fejleszteni.
+
+

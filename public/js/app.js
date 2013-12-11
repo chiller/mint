@@ -1,5 +1,5 @@
 'use strict';
 
+var app = angular.module('myApp', ['myApp.filters', 'myApp.directives', 'ngResource']);
 
-// Declare app level module which depends on filters, and services
-var app = angular.module('myApp', ['myApp.filters', 'myApp.directives']);
+

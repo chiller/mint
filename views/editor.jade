@@ -1,29 +1,80 @@
 extends layout
 
 block body
-  h1 Editor
-    
+
   div(ng-controller='EditorCtrl')
-    .container
-      .drag(ng-repeat='entity in shared_document.entities', nt-draggable) 
-    p(ng-repeat="con in shared_document.connections") 
-      {{shared_document.entities[con.from].title}} -> 
-      {{shared_document.entities[con.to].title}}
+    div(nt-delete)
+    br
+    .listleft
+      .doc(ng-repeat='doc in docs', ng-click='loadDoc($index)',ng-class="{selected: $index==selectedDocIndex}") {{doc.text}}
+      input(ng-model="newDoc.text")
+      button(ng-click="addDoc()") +
+    .container(ng-show="!showcode")
+      .drag(ng-repeat='entity in shared_document.entities', nt-draggable)
 
+    .edit
 
-    form(ng-submit="addconn()")
-      input(ng-model='confrom')
-      input(ng-model='conto')
-      input(type='submit', value='Add connection')
+      p Entity
+      p label:
+      input(ng-model="selectedEntity.title",save-selected)
+      br
+      p Entity id:
+      input(ng-model="selectedEntity._id",readonly)
+      br
+      p document id:
+      input(ng-model="selectedEntity.document",readonly)
+      br
+      p Connection
+      p From:
+      input(ng-model="selectedConnection.from",readonly)
+      p To:
+      input(ng-model="selectedConnection.to",readonly)
+      p label:
+      input(ng-model="selectedConnection.label", save-selected-con)
 
-  script(src='http://code.jquery.com/jquery-1.9.1.min.js')
-  script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
-  script(src="http://jsplumbtoolkit.com/js/jquery.jsPlumb-1.5.2-min.js")
-  script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
+      br
+      br
+      p users
+      .user(ng-repeat="user in users",style="background-color:#{{user}}")
+
+    .toolbox
+
+      button(ng-click="addEntity()") E
+      button(ng-click="addConnection()") C
+      button(ng-click="deleteEntity()") D
+      input(ng-model="message")
+      button(ng-click="sendChat()") Send
+      button(ng-click="togglecode()") Code
+      button(ng-click="compile()",ng-show="showcode") Compile
+      button(ng-click="fork()") Fork
+      input(ng-show="showcode",type="text",value="node mintrepl {{shared_document._id}}",size="50")
+      span(ng-class="{inactive: inactive != false }")
+            span {{conflict}}
+            span(ng-repeat='hash in documentHash|reverse',style='color:#{{hash|uppercase}};background-color:#{{hash|uppercase}}') *
+
+    .clr
+    #templateholder(ng-show="showcode")
+      textarea(ng-model="shared_document.template",save-selected-tmp)
+      textarea#result(ng-model="compile_result",readonly)
+
+  //script(src='http://code.jquery.com/jquery-1.9.1.min.js')
+  script(src='js/lib/jquery-1.9.1.min.js')
+  //script(src="http://code.jquery.com/ui/1.10.1/jquery-ui.js")
+  script(src="js/lib/jquery-ui.js")
+  //script(src="http://jsplumbtoolkit.com/js/jquery.jsPlumb-1.5.2-min.js")
+  script(src="js/lib/jquery.jsPlumb-1.5.2-min.js")
+  //script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js')
+  script(src='js/lib/underscore.js')
+  script(src='js/lib/angular/angular.js')
+  script(src='js/lib/angular/angular-resource.js')
   script(src='/socket.io/socket.io.js')
   script(src='js/app.js')
-  script(src='js/services.js')
+  script(src='js/services/services.js')
+  script(src='js/services/plumbService.js')
+  //script(src="http://www.webtoolkit.info/djs/webtoolkit.md5.js")
+  script(src="js/lib/webtoolkit.md5.js")
+
   script(src='js/controllers/editor.js')
   script(src='js/filters.js')
   script(src='js/directives.js')
-  
+

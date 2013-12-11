@@ -1,0 +1,30 @@
+%----------------------------------------------------------------------------
+\section{Node.JS}
+%----------------------------------------------------------------------------
+
+Node.js egy Javascript alapú platform amivel skálázható szerveroldali alkalmazásokat hoznak létre és a Google V8 Javascript motorra épül. Node.js egy webszerver modult is tartalmaz aminek segítségével önmaga is tud webszerverként működni. A platform alapítója azzal a céllal hozta létre a Node.js-t hogy egyszerűen lehessen olyan weboldalakat létrehozni amik képesek kétirányú kommunikációra és én is ezért választottam mint szerver oldali technológia ugyanis a legkönnyebben integrálódik a Socket.IO rendszerrel.  Egy másik ok az, hogy nagyon könnyen lehet benne prototipizálni.
+
+
+
+\subsection{Nem-blokkoló IO}
+
+A legfeltűnőbb sajátossága a Node.JS platformnak az, hogy majdnem semmilyen hívás nem blokkoló és elsőre elég furcsa csupa aszinkron függvényekkel dolgozni. Ebben rejlik a Node.JS skálázhatósága, ahelyett hogy szálakat allokáljon HTTP kérésekhez, amik drágák és nem lehet belőlük nagyon sok, aszinkron módon az operációs rendszertől vár értesítést, hogy van egy bejövő kérés és addig alszik. A Nem-blokkoló IO abban segít, hogy sohasem vár egy erőforrásra, hanem, példáúl, adatbázis lekérdezést indít, kiszolgál néhány más kérést és később megérkezik az adatbázistól a kért adat. 
+
+Ennek egy következménye az úgynevezett ``shared-state concurrency'' amiben a különböző kérések kiszolgálása nem külön folyamat vagy szálban fut, így egy memóriabeli változó megváltozhat a hívás és a callback lefutása között egy másik kérés által. Erre tipikus ellenpélda az Apache szerver ami minden kérésre új szálat indít friss állapottal. Mivel egy folyamatban fut a Node szerver, lehetséges blokkolni a szervert példáúl azzal, hogy egy callback-ben nagy számot faktorizálunk. Node valójában nem valósít meg konkurrenciát hiszen egyszerre csak egy függvény fut, de mivel ezek gyorsan futnak V8 alatt és nem blokkolnak ezért hatékonyan tud átlagos hardveren több ezer lekérdezést kiszolgálni másodpercenként\cite{nodebook}.
+
+\subsection{Modulkezelés}
+
+A böngésző világában egy külső Javascript könyvtár használatánál -- példáúl a gyakori \lstinline|<script src='http://code. jquery.com/jquery-1.6.0.js'>| -- valószínű, hogy a globális névtérbe kerülnek az új deklarált változók. A jQuery a ``\$'' változót deklarálja a globális névtérben, és ha beteszünk egy másik modult ami ugyanezt csinálja, akkor az első nem fog már működni. 
+
+
+A szerveroldali Javascript világában az npm\footnote{Node Packaged Modules} segítségével kell 3rd party modulokat telepíteni és egyidejűleg izolált környezetet biztosítani a különböző projekteknek. A Python világában a virtualenv az eszköz amivel lehet izolált környezetet biztosítani és mellette a pip parancs segítségével lehet modulokat telepíteni. Virtualenv-vel szemben az npm alapértelmezetten a lokális környezetünkbe telepít modulokat, virtualenv esetében ez fordítva van, ez néha zavaró, ha a fejlesztő elfelejti aktiválni a környezetet és rossz környezetbe települ a csomag.
+Az npm továbbá abban is segít, hogy egy telepített függőséget lehetséges egyből bele is íratni a függőségleíróba:
+\lstset{language=bash}   
+\lstinline{npm install --save express}.
+Ez a függőség leíró a package.json fájl és \lstinline{npm install} paranccsal (paraméter nélkül) minden függőség települ. Ez nem csak a rendezettség miatt fontos, hanem amiatt is, hogy sok node webhosting megoldás -- többek között az általam használt nodejitsu\footnote{http://www.nodejitsu.com} -- a package.json csomagjait telepíti az alkalmazásunkhoz.   
+
+A csomagok a require modul segítségével töltődnek be dinamikusan, példáúl
+\begin{lstlisting}
+var fs = require('fs');
+\end{lstlisting}
+

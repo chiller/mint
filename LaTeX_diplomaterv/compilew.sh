@@ -1,0 +1,1 @@
+nodemon -x "pdflatex diploma" -w ./ -e .tex

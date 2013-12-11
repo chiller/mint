@@ -442,8 +442,21 @@ Ekkor törölni kell az éleket a jsPlumb segítségével, hogy ne legyenek lóg
 \subsection{Diagram hash}
 %----------------------------------------------------------------------------
 
+Ahhoz, hogy össze lehessen hasonlítani két különboző kliens által látott diagramot kézenfekvőnek tartottam egy hash értéket számolni a diagram alapján. A hash értéke úgy számolódik, hogy a diagram entitásait azonosító szerint sorrendezem és egy tömbbe pakolom, majd a tömb szerializált formájából egy MD5 hash-t számolok. Mivel sorrendezve vannak az entitások várhatóan két egyforma diagramnak ugyanaz lesz a hash értéke.
 
+A hash számolása nem explicit módon van meghívva, hanem egy AngularJS eszköz segítségével, a \lstinline{watch} paranccsal, ami a modell egy részének a változásait figyeli és a beállított callback metódust meghívja, ha változik a modell.
 
+\begin{lstlisting}[caption=Modell módosításaira meghívódó callback]
+  $scope.$watch('shared_document.entities', function (newVal) {
+      ...
+  }, true);
+\end{lstlisting}
+
+A szerkesztő kontroller kontextusában egy FIFO tömb van ami hash értékeket tárol.
+
+Az \lstinline{inactive} változó értéke azt jelzi, hogy éppen szerkesztünk-e és ez ugyancsak egy \lstinline{watch} segítségével hamisra állítódik, ha elég régóta nem változtatott senki semmit a diagramon. Amikor ez az érték hamisra állítódik egy broadcast üzenetet küld az alkalmazás a többi felhasználónak, amiben a hash értékek tömbjét küldi el. A fogadó oldalon erre a \lstinline{sync} socket üzenetre a kliens összehasonlítja a saját hash tömbjét a kapott tömbbel és ha eltérés van, akkor jelez az alkalmazás, hogy nem egyezik meg a két diagram.
+
+Ez a késleltetés megoldja azt a nehézséget, hogy két kliens normális körülmények között nem feltétlenül látja mindig ugyanazt a diagramot, de ha senki nem változtatott egy ideje, akkor viszont ugyanazt kellene, hogy lássák, tehát akkor kell ellenőrizni.
 
 \input{src/mark}
 

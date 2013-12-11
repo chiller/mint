@@ -17,6 +17,8 @@ Selenium tesztek
 %----------------------------------------------------------------------------
 \subsection{Szimuláció}
 %----------------------------------------------------------------------------
+\label{sec:simprof}
+
 A szimuláció célja automatizálni a felhasználói bemenetet egy teljesítmény méréshez. A megoldásnak tartalmaznia kell alapszintű felhasználói bemenet szimulálását: egérkattintás, szövegbeírás, várakozás és mivel egy grafikus modellt akarunk szerkeszteni a ``drag and drop'' funkcióra is szükség van. 
 
 A böngészőautomatizálás Selenium Webdriver segítségével történt, ez az eszköz lehetővé teszi, hogy különböző nyelveken megírt (Python, Java, PHP stb. ) teszt esetekben a Webdriver API-val kommunikálva böngésző példányokat lehet irányítani. 
@@ -71,7 +73,7 @@ Derp.
 %----------------------------------------------------------------------------
 \section{Adatbázis teljesítményelemzés}
 %----------------------------------------------------------------------------
-
+\label{sec:dbprof}
 Vizsgáljuk meg, hogy csupán az adatbázis szint hogy viselkedik a terhelés szempontjából. Két kollekció van a dokumentumok és az entitások kollekciója. MongoDB shellből megvizsgálva a kollekcióimat vissza is igazolódik amit sejtettem, hogy a kollekciókon van indexállomány az elsődleges kulcson. A mongoDB shell az majdnem egy NodeJS shell, csak az adatbázis műveletei szinkronok és néhány nem-Javascript parancsot is támogat, példáúl:
 
 \begin{itemize}

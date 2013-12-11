@@ -2,25 +2,39 @@
 %----------------------------------------------------------------------------
 \section{Továbbfejlesztési lehetőségek}
 %----------------------------------------------------------------------------
-Derp.
 
-a viz model kibovitese tetszoleges elemekkel
+A következő alfejezetekben azokat az ötleteket gyűjtöm össze amik számomra a továbbfejlesztési irányokat jelentik, hiszen bízom benne, hogy a jövőbeli munkám során hasznos lehet a szakdolgozat alatt fejlesztett alkalmazás.
 
-sema refaktor
+\subsection{Vizuális modellezés kibővítése új elemekkel}
 
-websockets vs api
+Sok vizuális környezethez kevés lehet az alkalmazás eszközkészlete ami, gyakorlatilag, csak névvel ellátott élek és csúcsok.
+Ahelyett, hogy ezeket kiterjesszem új elemekkel, azt javaslom, hogy a diagram szerkesztő része legyen a funkció. Ez azt jelenti, hogy a felhasználó deklarálhat magának vizuálisan új doboz és él fajtákat, majd ezt a többletinformációt a kódgenerálás során tetszőlegesen fel lehet használni.
 
-\subsection{Shell a böngészőben}
+Az, hogy az entitás vagy él más típusú, az abban nyilvánulna meg, hogy az attribútumai között lenne pluszban más attribútum is. Lehetséges, hogy az eszközkészlet szerkesztésénél értelmes lehet az AngularJS direktíva template-jét is szerkeszteni, hogy a megjelenést is lehessen befolyásolni. 
 
-Jelenleg kipróbálni egy shellben a generált kódot csak a rendszer parancssorában lehet NodeJS Repl shellben vagy Chrome illetve Firefox böngészőben a fejlesztői eszközök közt lehet. Mégjobb lenne, ha a webalkalmazás része lenne a shell, ahogyan a templateszerkesztés is része.
+Eszközkészlet halmazokat lehetne létrehozni és ezekből tetszőlegesen betölteni egy új diagramba.
 
-Ez valójában nem is bonyolult, a lényege az \lstinline{var result = window.eval(command);} parancs, ahol a \lstinline{command} a shell parancs és \lstinline{result} a kimenete és ezt a kettőt kell beolvasni és kiírni.
 
-granular eventek
+\subsection{Template továbbfejlesztése}
 
-extra context
+Az első használhatóságot növelő javítás a kód színezés lenne, hiszen egy UnderscoreJS template esetében elég nehéz látni, hogy melyik kód részlet vonatkozik a kimenetre és melyik a futtatandó Javascript kódra, ugye, Javascript kódgenerálás esetében mindkettő Javascript. 
 
-sharejs a szovegdobozra es templatere
+A kódtranszformáló template esetében hasznos lehet nem csak UnderscoreJS templatet használni, hanem kiterjeszteni más template motorokra is, vagy csak sima Javascriptre, ekkor a gráftranszformáció puszta Javascript program lenne.
+
+\subsection{Operational Transformation szöveges bemenetre}
+
+A gráftranszformációs diagramot kollaboratívvá lehetne tenni az Operational Transformation algoritmussal. Szerencsére erre már van nyílt forráskódú implementáció -- \url{https://github.com/josephg/ShareJS} -- amit kliensoldalon egyszerű módon lehet alkalmazni egy létező alkalmazásban:
+
+\begin{lstlisting}
+sharejs.open('blag', 'text', function(error, doc) {
+  var elem = document.getElementById('pad');
+  doc.attach_textarea(elem);
+});
+\end{lstlisting} 
+
+Ekkor a \lstinline{pad} azonosítójú elemet minden az oldalt megnyitott felhasználó kollaboratívan tud szerkeszteni. 
+
+A működéséhez futtatni kell a sharejs szerveroldali alkalmazást és a kihívás az lenne, hogy ne kelljen két szervert üzemeltetni, hanem valahogyan beintegrálni a már létező szerveroldalba a sharejs szervert. Nem kellene nehéz legyen hiszen a sharejs is NodeJS alapú.
 
 \subsection{Undo}
 
@@ -58,11 +72,11 @@ Ezt a megoldást ki lehet bővíteni általánosabb visszavonásra is, ahol egy 
 }
 \end{lstlisting}
 
-\subsection{Template továbbfejlesztés}
+\subsection{Shell a böngészőben}
 
-Code highlight
+Jelenleg kipróbálni egy shellben a generált kódot csak a rendszer parancssorában lehet NodeJS Repl shellben vagy Chrome illetve Firefox böngészőben a fejlesztői eszközök közt lehet. Mégjobb lenne, ha a webalkalmazás része lenne a shell, ahogyan a templateszerkesztés is része.
 
-\subsection{Aldiagramok}
+Ez valójában nem is bonyolult, a lényege az \lstinline{var result = window.eval(command);} parancs, ahol a \lstinline{command} a shell parancs és \lstinline{result} a kimenete és ezt a kettőt kell beolvasni és kiírni.
 
 \subsection{Livecoding}
 

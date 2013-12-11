@@ -4,21 +4,46 @@
 
 A MongoDB egy nyílt forráskódú dokumentum-orientált adatbázis rendszer. A MongoDB nem egy relációs adatbázis, nem lehet SQL nyelv segítségével lekérdezéseket futtatni, nem támogat JOIN műveletet. A MongoDB BSON\footnote{Binary JSON} formájában tárol kulcs-érték párokat, az RDBMS\footnote{Relational Database Management System} alapfogalmai: adatbázis, tábla, sor, oszlop; a MongoDB megfelelői: adatbázis, kollekció, dokumentum, mező. Egy mező értéke lehet egszerű típus, lista vagy beágyazott dokumentum. A dokumentumok nem támogatnak sémát, tehát azonos fajta információnak lehet eltérő sémájú tartalma. 
 
-Indexelés
-Séma nélküliség
-Replikáció
-Sharding
 
-http://css.dzone.com/articles/how-acid-mongodb
+\subsection{Indexelés}
 
-Fontos megjegyezni, hogy a RDBMS rendszerekkel szemben a MongoDB nem tud ACID trazakciókat biztosítani. 
+MongoDB egy relációs adatbázishoz hasonlóan támogat indexelést, erre egy példa az~\ref{sec:dbprof} fejezetben lesz bemutatva. Érdekes fogalom a ``compound'' vagyis összetett index, ennek segítségével több mezőre is lehet egyszerre indexet építtetni és egy olyan lekérdezés ami egy termék gyártója és típusa alapján szűkít hatékony tud lenni.
+
+Egy másik érdekes index fajta a ``multikey'' index, ami lehetővé teszi, hogy egy tömb értékű mező elemeit is indexeljük. Ha egy blogbejegyzés rekordban a bejegyzést kedvelő felhasználók tömbje van, akkor indexek számára tudunk hatékony lekérdezéseket futtatni, példáúl szűrni az olyan bejegyzéseket, amiket Laci kedvelt.
+
+\subsection{Replikáció}
+
+A MongoDB egyik előnye, hogy nagyon könnyű benne adatbázisreplikációt beállítani. Egy replika halmaz több adatbázist tartalmaz aminek az egyik tagja a fő adatbázis ami elfogad írás műveleteket és a többi tag megkap minden változást és csak olvasás műveletet lehet rajtuk végrehajtani. A fő csomópont kiesése esetében a többi csomópont megszavaz egymás közül egy csomópontot aki átvegye a fő csomópont szerepét. Amikor a régi csomópont feléled, akkor szinkronizálja a változásokat és újra átveszi régi szerepét.
+
+Az a kényelmes, hogy a kapcsolódó adatbázismeghajtók automatikusan kiválasztják a legközelebbi csomópontot az olvasáshoz. A csomópont szavazások és új szerepek kiosztásával nem kell foglalkoznia a fejlesztő aki kapcsolódik egy replika halmazhoz. 
+
+\subsection{Sharding}
+
+Egy nagyon sok adattal dolgozó rendszer túlterhelhet egy MongoDB adatbázist és ezt lehet egy darabig függőleges skálázással orvosolni, vagyis több fizikai erőforrást biztosítunk az adatbázisnak, de ennek is ugyanaz a korlátja, csak magasabban. 
+
+Ehelyett a MongoDB vízszintes skálázhatóságot tesz lehetővé ``sharding'' segítségével. Ekkor az adatok partícionálása történik, a különböző partíciók különböző adatbázisokból lesznek elérhetőek. Az adatok partícionálása egy rögzített mező mentén történik, ezt később nem lehet megváltoztatni. Példáúl egy dokumentumszerkesztő rendszerben érdemes partícionálni a dokumentum tulajdonosa mentén, ekkor egy adatbázisra nézve csökken az írási és olvasási műveletek átlagszáma, ha egy felhasználó munkafolyamatot indít akkor csak az egyik adatbázis partícióban fog dolgozni.
+
+A partícionáló rendszer próbál egyensúlyozottan partícionálni és, ha az egyik partíció megnő, akkor átlátszó módon átmozgat rekordokat egy másik aprtícióba.
+
+A sharding és a replikáció egyszerre használható és kombinálható, példáúl három partíciónk lehet és mind a háromban három-három replika halmazunk lehet, így összesen kilenc csomópontunk lesz.
+
+
+
+\subsection{ACID}
+
+Fontos megjegyezni, hogy a RDBMS rendszerekkel szemben a MongoDB nem tud ACID trazakciókat biztosítani\cite{acidref}. 
 \begin{enumerate}
 \item{Atomicitás} Csak dokumentum szintű atomikus műveletek biztosítottak, ha több kollekció vagy dokumentumon átívelő atomikus tranzakciókat szeretnénk, akkor vagy használjunk RDBMS-t, vagy saját magunk kell egy zárolási mechanizmust fejleszteni.
 \item{Konzisztencia} Replikáció esetében a fő adatbázis csomópontot érintik az írás műveletek, az olvasás műveletek meg -- opcionálisan --  a ``közelebb'' tartózkodó csomóponthoz fordulnak. Ebben az esetben ``eventual consistency''-ről beszélünk és nem biztosított, hogy friss adatot olvasunk.  
 \item{Izoláció} MongoDB esetében nem lehet beszélni izolációról, mert csak dokumentumszintű tranzakciók vannak és minden dokumentum művelet hatása azonnal elérhető a többi folyamat számára. 
 \item{Tartósság} Teljesítmény árán lehet a tartósságot növelni, példáúl úgy, hogy egy írás művelet a többi csomópontra is íródhat mielőtt visszatérne.
 \end{enumerate}
-A CAP\footnote{(C)onsistency - Konzisztencia, (A)vailability - Elérhetőség, (P)artition tolerance - Partícionálás tolerancia} tétel kijelenti, hogy egy elosztott rendszer nem tudja egyszerre teljesíteni a ...
-585
+
+%A CAP\footnote{(C)onsistency - Konzisztencia, (A)vailability - Elérhetőség, (P)artition tolerance - Partícionálás tolerancia} tétel kijelenti, hogy egy elosztott rendszer nem tudja egyszerre teljesíteni a ...
 
 A 32 bites rendszereken a mongoDB szerver csak 2GB tárral gazdálkodhat, ugyanakkor a 64 bites esetben csak a hardver mérete korlátozza.
+
+
+
+
+

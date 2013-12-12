@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Age', 'Weight'],
+          [4, 13],
+          [14, 18],
+          [33, 20],
+          [52, 21],
+          [119, 30],
+          [176, 40],
+          [233, 45],
+          [366, 60],
+          [556, 70],
+          [746, 75]
+        ]);
+
+        var options = {
+          title: 'terhelés egy doboz folyamatos mozgatásakor az összes élszám függvényében',
+          hAxis: {title: 'Élek száma', minValue: 0, maxValue: 15},
+          vAxis: {title: 'Terhelés', minValue: 0, maxValue: 15},
+          legend: 'none',
+          lineWidth: 3
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>

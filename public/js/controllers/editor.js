@@ -25,7 +25,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
 
   DocumentService.query(function(response){
       $scope.docs=response
-      $scope.loadDoc(0);
+      $scope.loadDoc($scope.docs.length -1);
   });
 
   $scope.init = function(id){
@@ -185,7 +185,7 @@ function EditorCtrl($scope, $timeout, socket, DocumentService, EntityService,Plu
     socket.on('sync', function (data) {
 
         console.log("sync: "+$scope.arrdiff(data.sync, $scope.documentHash));
-        if($scope.arrdiff(data.sync, $scope.documentHash).length && $scope.documentHash.length == $scope.HASHARRAYLENGTH){
+        if($scope.arrdiff(data.sync, $scope.documentHash).length == $scope.HASHARRAYLENGTH && $scope.documentHash.length == $scope.HASHARRAYLENGTH){
             $scope.conflict = true;
             alert("conflict")
         }  else {

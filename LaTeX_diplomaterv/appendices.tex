@@ -13,7 +13,7 @@
 \section{Az alkalmazás telepítése}
 %----------------------------------------------------------------------------
 
-Az alkalmazás telepítése példáúl egy Ubuntu Linux rendszeren:
+Az alkalmazás telepítésének lépései következnek példáúl egy Ubuntu Linux rendszeren. Ha a rendszeren már van MongoDB és NodeJS akkor az első és második lépés kiugorható.
 
 \begin{enumerate}
 \item MongoDB adatbázis telepítése a \url{http://docs.mongodb.org/manual/tutorial/install-mongodb-on-ubuntu/} útmutató alapján:
@@ -31,13 +31,32 @@ Az alkalmazás telepítése példáúl egy Ubuntu Linux rendszeren:
 \item \lstinline{git clone git@github.com:chiller/mint.git}
 \item \lstinline{cd mint/}
 \item \lstinline{npm install}
-\item 
+\item \lstinline{node app.js}
 \end{enumerate}
+\item Az alkalmazás megnyitása böngészőben: \url{http://localhost:3000/}
 \end{enumerate}
 
 \clearpage\section{Az alkalmazás bemutatása}
 
-public url
+Az alkalmazás publikusan elérhető \url{http://galacziendre-mint.jit.su/} címen. Google Chrome böngészőn működik a legnagyobb valószínűséggel.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=160mm, keepaspectratio]{figures/demo.png}
+\caption{A szerkesztő nézet} 
+\end{figure}
+
+A funkciók áttekintése:
+
+\begin{enumerate}
+\item A jobboldali panelben diagramok között választhatunk kattintással, ekkor betöltődik a kiválasztott diagram. Új diagram létrehozása a jobboldali panel beviteli mező és a + gomb megnyomása segítségével történik,
+\item A baloldali panel a kiválasztott entitás, vagy a kiválasztott él tulajdonságait mutatja ezek közül a \lstinline{label} szerkeszthető, így lehet elem neveket szerkeszteni,
+
+\item Az alsó panelben a ``Code'' gomb váltogat a diagram és a transzformációs kód nézet között, a ``Fork'' meg lemásolja a diagramot és megnyitja a másolatot.
+\item A transzformációs nézetben a baloldali szövegdoboz várja az Underscore template kódot és a ``Compile gomb hatására'' a jobboldali szövegdobozba lefordul,
+\item A diagramszerkesztőben E billentyűvel lehet létrehozni új elemet, egérrel lehet húzogatni az elemeket és élet úgy lehet húzni, hogy az elem helyett az elem címéből húzunk és akkor egy él húzódik, ezt egy másik elem címére kell húzni,
+\item Elemek és élek kiválasztása kattintással történik. A törlésük backspace gombbal történik.
+\end{enumerate}
 
 %----------------------------------------------------------------------------
 \clearpage\section{Az állapotgép kód generálása}

@@ -54,21 +54,41 @@ Wireshark-ban a Websockets protokoll-ra filtereltem, és egy újraküldött csom
 
 
 
-++++++++++++++++++++++++
-random módon két ember crudol és le kell mérni , hogy mennyire valószínű, hogy elvésznek a bemenetei
-++++++++++++++++++++++++
+
+
 
 %----------------------------------------------------------------------------
 \section{Kliens oldali teljesítményelemzés}
 %----------------------------------------------------------------------------
-Derp.
+ 
+A kliens oldali teljesítményelemzés célja megvizsgálni, hogy a felületen levő elemek számától mennyire függ a teljesítmény. 
 
-A deep watching teljesitmenyelemzése
+A méréshez szkriptet hoztam létre, ami állítható számú elemet hoz létre egy diagramban, majd ezeket össze is köti éllel. Ez a szkript egy MongoDB szkript, mivel sokkal egyszerűbb az adatbázist manipulálni, mint a felületen automatizálni az akár több száz elem létrehozását. 
 
-%----------------------------------------------------------------------------
-\section{Webszerver teljesítményelemzés}
-%----------------------------------------------------------------------------
-Derp.
+Első körben csak elemeket hozattam létre és éleket még nem, és azt tapasztaltam, hogy jól teljesít az alkalmazás, majd kiegészítettem élekkel is, hiszen ez azért fontos, mert az éleket nem az AngularJS menedzseli, hanem a jsPlumb. A mérésekhez, ahogyan a ~\ref{fig:plumb} ábrán is látszik nagyjából egyenletesen állítottam be élszámot és mértem egyszerű Javascript időbélyegek segítségével a diagram felépítési idejét, vagyis a legelső kirajzolást. Az eredmény nem túl bíztató, már 50 él körül ez a felépítési idő meghaladja az 1 másodpercet. Chrome Developer Toolbar segítségével futásidejű analízist végeztem és kiderült, hogy valóban a jsPlumb élhozzáadó és gráfrajzoló műveletei dolgoznak sokáig. 
+
+Sajnos a felépítési idő rosszabb mint lineárisan növekedik az élek számától függően és elég sok él esetében (700 körül) egy percbe telik mire kirajzolja a gráfot.  
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm,keepaspectratio]{figures/plumb.png}
+\caption{jsPlumb élek betöltésének ideje az élek számának függvényében}
+\label{fig:plumb}
+\end{figure}
+
+A másik mérés aminek az eredménye a~\ref{fig:plumb2} ábrán látható azt állapítja meg, hogy a folyamatos elem mozgatása, ami maga után vonja a hozzákapcsolt élek mozgatását, mennyire terheli a processzort. A mérési eredményeket úgy állapítottam meg, hogy egy Selenium scriptet egy percig futtatok ami mozgat egy elemet és közben figyelem a rendszer processzor terheltségét. Az elem mozgatása egyenletesen történik 10-szer másodpercenként egy percen át véletlenszerű kis irányokba. Itt az eredmény jobb lett mint az első mérés esetében, hiszen elég sok él esetében sem terheli még maximálisan a processzort. 
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm,keepaspectratio]{figures/plumb2.png}
+\caption{Terhelés egy doboz folyamatos mozgatásakor az összes élszám függvényében}
+\label{fig:plumb2}
+\end{figure}
+
+Azt lehet itt következtetni, hogy a diagramfelépítési idő sokkal jobban korlátozza a maximális elemszámot mint a processzorigénye az élfrissítésnek. A második mérést nem folytattam több elemszámmal, mert nagyon sok idő lett volna már felépíteni a gráfot. 
+
+Lehetséges megoldás a jsPlumb komponens kicserélése AngularJS adatkötés alapú megoldásra, amit úgy képzelek el, hogy vektorgrafikus nyilakat valósítok meg direktívákkal és ezeknek a tulajdonságait adatkötéssel frissítek. Várhatóan ettől a megoldástól gyorsabb lesz a gráffelépítési idő és, ha a mozgatási teljesítmény mégis romlana, akkor UnderscoreJS \lstinline{throttle} segítségével ritkábbra állítom az élek frissítését.
 
 %----------------------------------------------------------------------------
 \section{Adatbázis teljesítményelemzés}

@@ -24,15 +24,10 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
 
     return {
         setUpPlumbWithScope: function ($scope) {
+            var connectAll = function() {
+                console.log("Connecting: " + $scope.shared_document.connections.length)
 
-
-
-
-            var shapes = $(".draggable");
-            jsPlumb.detachEveryConnection();
-
-            // loop through them and connect each one to each other one.
-            for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
+                for (var i = $scope.shared_document.connections.length - 1; i >= 0; i--) {
 
                 var t = $scope.shared_document.connections[i]
                 if ($("#"+t.from.toString()).length == 0 || $("#"+t.to.toString()).length == 0) {
@@ -46,13 +41,12 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
                     scope: t,
                     source:$("#"+t.from.toString()),
                     target:$("#"+t.to.toString()),
-                    // here we supply a different anchor for source and for target, and we get the element's "data-shape"
-                    // attribute to tell us what shape we should use, as well as, optionally, a rotation value.
                     label: t.label
                 });
 
 
-            };
+            }}
+
             var deleteConnection = function(){
                 var conn_object = connection.scope;
                 $scope.shared_document.connections.splice($scope.shared_document.connections.indexOf(conn_object), 1);
@@ -64,6 +58,22 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
                 //TODO: propagate changes
             }
 
+            start = new Date();
+            var shapes = $(".draggable");
+            jsPlumb.detachEveryConnection();
+            console.log("Loop start:" + ( new Date()-start));
+
+            if (false){
+                jsPlumb.doWhileSuspended( connectAll(),true);
+                console.log("Loop end:" + ( new Date()-start));
+                jsPlumb.repaintEverything();
+                console.log("Repaint end:" + ( new Date()-start));
+            } else{
+                connectAll()
+                console.log("Repaint end:" + ( new Date()-start));
+            }
+
+            console.log("Clickhandler start:" + ( new Date()-start));
             jsPlumb.bind('click', function (connection, e) {
 
                 var idx = $scope.shared_document.connections.indexOf(connection.scope);
@@ -74,6 +84,8 @@ app.factory('PlumbService',function ($rootScope, ConnectionDeleteService) {
                 $scope.selectedEntity = null;
                 $scope.$apply();
             });
+
+            console.log("End:" + ( new Date()-start));
         },
         addPlumb: function(connection) {
             var shapes = $(".draggable");

@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Age', 'Weight'],
+          [8, 0.128],
+            [24, 0.385],
+            [50, 1.070],
+            [81,  1.670],
+            [176,  4.891],
+            [271,  9.990],
+            [366, 16.281],
+            [556, 32.281],
+            [746, 60.485]
+        ]);
+
+        var options = {
+          title: 'jsPlumb élek betöltésének ideje az élek számának függvényében',
+          hAxis: {title: 'Élek száma', minValue: 0, maxValue: 15},
+          vAxis: {title: 'Renderelési idő (s)', minValue: 0, maxValue: 15},
+          legend: 'none',
+          lineWidth: 3
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>

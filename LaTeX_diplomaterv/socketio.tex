@@ -28,10 +28,9 @@ Erre egy alternatíva a Long Polling, ekkor a válasz nem érkezik meg a szerver
 Itt is láthatunk néhány hiányosságot: újra kell kapcsolódni periodikusan, mert a kérés lejárhat (timeout) és a kommunikációs protokoll még mindig HTTP, ami overhead-et jelent.
 
 
-A pollingnál egyszerűbb megoldás egy egyetlen TCP kapcsolatot kialakítani a kétirányú kommunikációra, ezt kínálja a Websocket protokoll
-\cite{rfc6455}.
+A pollingnál egyszerűbb megoldás egy egyetlen TCP kapcsolatot kialakítani a kétirányú kommunikációra, ezt kínálja a Websocket protokoll \cite{rfc6455}.
 
-A Websocket protokoll arra lett tervezve, hogy a létező kompromisszumos kétirányú megoldásokat helyettesítse. A protokollnal két része van: a handshake és az adatátvitel. Miután végbement a handshake, a két fél \emph{üzenetekben} kommunikál egymással amik \emph{keretekre} lehetnek tagolva.
+A Websocket protokoll arra lett tervezve, hogy a létező kompromisszumos kétirányú megoldásokat helyettesítse. A protokollnak két része van: a handshake és az adatátvitel. Miután végbement a handshake, a két fél \emph{üzenetekben} kommunikál egymással amik \emph{keretekre} lehetnek tagolva.
 
 Ez a keretezés a protokoll saját keretezése és az alsó rétegek akár tovább bonthatják.
 

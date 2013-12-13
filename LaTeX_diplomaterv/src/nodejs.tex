@@ -8,9 +8,9 @@ Node.js egy Javascript alapú platform amivel skálázható szerveroldali alkalm
 
 \subsection{Nem-blokkoló IO}
 
-A legfeltűnőbb sajátossága a Node.JS platformnak az, hogy majdnem semmilyen hívás nem blokkoló és elsőre elég furcsa csupa aszinkron függvényekkel dolgozni. Ebben rejlik a Node.JS skálázhatósága, ahelyett hogy szálakat allokáljon HTTP kérésekhez, amik drágák és nem lehet belőlük nagyon sok, aszinkron módon az operációs rendszertől vár értesítést, hogy van egy bejövő kérés és addig alszik. A Nem-blokkoló IO abban segít, hogy sohasem vár egy erőforrásra, hanem, példáúl, adatbázis lekérdezést indít, kiszolgál néhány más kérést és később megérkezik az adatbázistól a kért adat. 
+A legfeltűnőbb sajátossága a Node.JS platformnak az, hogy majdnem semmilyen hívás nem blokkoló és elsőre elég furcsa csupa aszinkron függvényekkel dolgozni. Ebben rejlik a Node.JS skálázhatósága, ahelyett hogy szálakat allokáljon HTTP kérésekhez, amik drágák és nem lehet belőlük nagyon sok, aszinkron módon az operációs rendszertől vár értesítést, hogy van egy bejövő kérés és addig nem blokkol. A Nem-blokkoló IO abban segít, hogy sohasem vár egy erőforrásra, hanem, példáúl, adatbázis lekérdezést indít, kiszolgál néhány más kérést és később megérkezik az adatbázistól a kért adat. 
 
-Ennek egy következménye az úgynevezett ``shared-state concurrency'' amiben a különböző kérések kiszolgálása nem külön folyamat vagy szálban fut, így egy memóriabeli változó megváltozhat a hívás és a callback lefutása között egy másik kérés által. Erre tipikus ellenpélda az Apache szerver ami minden kérésre új szálat indít friss állapottal. Mivel egy folyamatban fut a Node szerver, lehetséges blokkolni a szervert példáúl azzal, hogy egy callback-ben nagy számot faktorizálunk. Node valójában nem valósít meg konkurrenciát hiszen egyszerre csak egy függvény fut, de mivel ezek gyorsan futnak V8 alatt és nem blokkolnak ezért hatékonyan tud átlagos hardveren több ezer lekérdezést kiszolgálni másodpercenként\cite{nodebook}.
+Ennek egy következménye az úgynevezett ``shared-state concurrency'' amiben a különböző kérések kiszolgálása nem külön folyamat vagy szálban fut, így egy memóriabeli változó megváltozhat a hívás és a callback lefutása között egy másik kérés által. Erre tipikus ellenpélda az Apache szerver ami minden kérésre új szálat indít friss állapottal. Mivel egy folyamatban fut a Node szerver, lehetséges blokkolni a szervert példáúl azzal, hogy egy callback-ben nagy számot faktorizálunk. Node valójában nem valósít meg konkurrenciát hiszen egyszerre csak egy függvény fut, de mivel ezek gyorsan futnak V8 alatt és nem blokkolnak ezért hatékonyan tud átlagos hardveren több ezer lekérdezést kiszolgálni másodpercenként \cite{nodebook}.
 
 \subsection{Modulkezelés}
 
@@ -18,6 +18,7 @@ A böngésző világában egy külső Javascript könyvtár használatánál -- 
 
 
 A szerveroldali Javascript világában az npm\footnote{Node Packaged Modules} segítségével kell 3rd party modulokat telepíteni és egyidejűleg izolált környezetet biztosítani a különböző projekteknek. A Python világában a virtualenv az eszköz amivel lehet izolált környezetet biztosítani és mellette a pip parancs segítségével lehet modulokat telepíteni. Virtualenv-vel szemben az npm alapértelmezetten a lokális környezetünkbe telepít modulokat, virtualenv esetében ez fordítva van, ez néha zavaró, ha a fejlesztő elfelejti aktiválni a környezetet és rossz környezetbe települ a csomag.
+
 Az npm továbbá abban is segít, hogy egy telepített függőséget lehetséges egyből bele is íratni a függőségleíróba:
 \lstset{language=bash}   
 \lstinline{npm install --save express}.

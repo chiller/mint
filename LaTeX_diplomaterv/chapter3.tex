@@ -11,13 +11,15 @@ A következő alfejezetekben a felhasznált technológiákra fogok kitérni töb
 \section{Javascript}
 %----------------------------------------------------------------------------
 
-A Javascript nyelvet az útóbbi évek fejleményei miatt választottam, hiszen már lehetséges vele egy teljes kliens és szerveroldalt átívelő alkalmazást létrehozni. Szkriptnyelv jellege miatt arra számítottam, hogy gyors prototípizálásra lesz lehetőség, ez azért fontos, mert a technológiák nagy része amivel a munkámban foglalkoztam új volt számomra.
+%A Javascript nyelvet az útóbbi évek fejleményei miatt választottam, hiszen már lehetséges vele egy teljes kliens és szerveroldalt átívelő alkalmazást létrehozni. Szkriptnyelv jellege miatt arra számítottam, hogy gyors prototípizálásra lesz lehetőség, ez azért fontos, mert a technológiák nagy része amivel a diplomunkámban foglalkoztam új volt számomra.
 
-A Javascript nyelv nem kerül részletes bemutatásra, helyette arra tértem ki, ami nehezen érthető volt számomra: az , hogy hogyan tud objektumorientált lenni a nyelv, ha tud egyáltalán. 
+A Javascript nyelv útóbbi évek fejleményei miatt már lehetséges vele egy teljes kliens és szerveroldalt átívelő alkalmazást fejleszteni. Szkriptnyelv jellege miatt gyors prototípizálásra van lehetőség, ez azért fontos, mert sok technológiát kell megismerni a diplomamunka során.
+
+A Javascript nyelv nem kerül részletes bemutatásra, helyette arra tértem ki, ami nehezen érthető volt számomra: az, hogy hogyan tud objektumorientált lenni a nyelv, ha tud egyáltalán. 
 
 \subsection{Prototípus öröklés a Javascriptben}
 
-Javascript egy prototípus alapú objektumorientált nyelv, ez azt jelenti, hogy objektumok vannak, amik nem osztálypéldányok és az öröklés szempontjából minden objektumnak van egy referenciája a prototípusára, és ez addig megy tovább amíg a prototípus null lesz\cite{mdnprotoref}. 
+Javascript egy prototípus alapú objektumorientált nyelv, ez azt jelenti, hogy objektumok vannak, amik nem osztálypéldányok és az öröklés szempontjából minden objektumnak van egy referenciája a prototípusára, és ez addig megy tovább amíg a prototípus null lesz \cite{mdnprotoref}. 
 
 Örökölt attribútumok esetében úgy működik a feloldás, hogy először az objektum saját attribútumai között keressük, ha nem találjuk, akkor a prototípus láncon tovább megyünk és ott keressük, és így tovább a végéig, ahol, ha nem találjuk meg akkor \lstinline{undefined} az eredmény. A függvények attribúmként viselkednek ebből a szempontból és ezáltal a függvény felüldefineálás is működik.
 
@@ -54,13 +56,13 @@ A konstruktor az egy egyszerű function ami meghívódik a \lstinline{new} kulcs
 
 \end{enumerate}
 
-Meg kell jegyezni, hogy a hosszú prototípusláncok teljesítménycsökkentést jelentenek, hiszen végig kell menni mindig a láncon egyes attribútumokért. Az is fontos, hogy a Javascript környezet annyira megengedő, hogy beépített objektumokat lehet változtatni, úgynevezett ``monkey patching''-gel, ez viszont nem javasolt, mert nehéz debuggolni, megnehezíti annak a fejlesztőnek a munkáját aki nem tud a patch-ről és ha két modul ugyanazt a kódot patch-eli, akkor amelyik később lefut az ``nyer''.
+Meg kell jegyezni, hogy a hosszú prototípusláncok teljesítménycsökkentést jelentenek, hiszen végig kell menni mindig a láncon egyes attribútumokért. Az is fontos, hogy a Javascript környezet annyira megengedő, hogy beépített objektumokat lehet változtatni, úgynevezett ``monkey patching''-gel, ez viszont nem javasolt, mert nehéz debuggolni, megnehezíti annak a fejlesztőnek a munkáját aki nem tud a patch-ről és ha két modul ugyanazt a kódot patch-eli, akkor amelyik később inicializálódik az ``nyer''.
 
 
 
 \subsection{Coffeescript}
 
-Napjainkban nagyon sok olyan nyelv van ami Javascriptre fordul\cite{coffeeref}. A szakdolgozatom elején CoffeeScript-ben fejlesztettem a prototípust, mert egy olyan nyelv ami Javascriptre fordul, de Python jellegű szintaxisa van. A főbb jellegzetességei a következők\cite{maccaw2011}:
+Napjainkban nagyon sok olyan nyelv van ami Javascriptre fordul \cite{coffeeref}. A diplomamunkám elején CoffeeScript-ben fejlesztettem a prototípust, mert egy olyan nyelv ami Javascriptre fordul, de Python jellegű szintaxisa van. A főbb jellegzetességei a következők \cite{maccaw2011}:
 
 \begin{itemize}
 \item zárójelek helyett indentálással történik a kód blokkok elválasztása, emiatt olvashatóbb lehet a kód,
@@ -72,7 +74,7 @@ Napjainkban nagyon sok olyan nyelv van ami Javascriptre fordul\cite{coffeeref}. 
         if i>5 then print i
         \end{lstlisting}
 \item nagyon hasznos a feltételes tagváltozóhozzáférés: a \lstinline{apple.tree?.cutDown} kód akkor is sikeresen lefut, ha az \lstinline{apple} objektumnak nincs \lstinline{tree} tagváltozója,
-\item bevezeti a Pythonhoz hasonló osztálydeklaráció szintaxist, ami félrevezető lehet, ha nem ismerjük jól a Javascriptet, hiszen csak ezen az absztrakt szinten objektumorientált, a lefordult Javascriptben prototípus öröklés lesz,
+\item bevezeti a Pythonhoz hasonló osztálydeklaráció szintaxist, ami félrevezető lehet, ha nem ismerjük jól a Javascriptet, hiszen csak ezen az absztrakt szinten hagyományos módon értve objektumorientált, a lefordult Javascriptben prototípus öröklés lesz,
 \item teljesen ekvivalens Javascript kód fordul belőle és visszafordítás is ugyanúgy lehetséges.
 \end{itemize}
 
@@ -100,12 +102,12 @@ Bármikor át lehet térni Coffeescriptre hiszen mindkét irányba lehet fordít
 
 %http://blog.mongodb.org/post/49262866911/the-mean-stack-mongodb-expressjs-angularjs-and
 
-A MEAN, a MongoDB, Express.JS, Angular.JS, Node.JS technológiáknak a rövidítése, és a lényege az, hogy adatbázisban, szerver oldalon és kliens oldalon végig JSON objektumokkal dolgozunk ráadásul nincs is szükség még más keretrendszerre weblapok készítéséhez, ez egy úgynevezett ``full-stack'' megoldás. A MEAN előnye az, hogy a kölönböző rétegekre specializált fejlesztők akik egy ilyen fejlesztésen dolgoznak könnyebben megértik a többi réteg kódját, hiszen Javascript nyelven történik mindhárom fejlesztés. 
+A MEAN, a MongoDB, ExpressJS, AngularJS, NodeJS technológiáknak a rövidítése, és a lényege az, hogy adatbázisban, szerver oldalon és kliens oldalon végig JSON objektumokkal dolgozunk ráadásul nincs is szükség még más keretrendszerre weblapok készítéséhez, ez egy úgynevezett ``full-stack'' megoldás. A MEAN előnye az, hogy a kölönböző rétegekre specializált fejlesztők akik egy ilyen fejlesztésen dolgoznak könnyebben megértik a többi réteg kódját, hiszen Javascript nyelven történik mindháromnak a fejlesztése. 
 
 
 \section{Felhasznált fejlesztői eszközök}
 
-Ebben a fejezetben azokat a fejleszői és dokumentáló eszközöket mutatom be röviden amikez szakdolgozatomhoz felhasználtam.
+Ebben a fejezetben azokat a fejleszői és dokumentáló eszközöket mutatom be röviden amiket diplomamunkámhoz felhasználtam.
 
 \subsection{Jetbrains Webstorm}
 
@@ -131,11 +133,11 @@ Az alkalmazásomat fejlesztés közben Google Chrome-ban próbáltam ki főleg a
 
 \subsection{Node Inspector}
 
-A Node Inspector eszköz, ami \url{https://github.com/node-inspector/node-inspector} címről szerezhető meg egy olyan szerveralkalmazás amivel egy Chrome Developer Toolbar példányt a NodeJS szerveroldali alkalmazásra lehet csatolni és ugyanazt a debuggolási funkcionalitást lehet elérni szerveroldalon mint kliensoldalon. Sokszor kényelmesebb volt ezt használni a Webstorm debuggernél.
+A Node Inspector eszköz\footnote{ \url{https://github.com/node-inspector/node-inspector} címről szerezhető be} egy olyan szerveralkalmazás amivel egy Chrome Developer Toolbar példányt a NodeJS szerveroldali alkalmazáshoz lehet csatolni és ugyanazt a debuggolási funkcionalitást lehet elérni szerveroldalon mint kliensoldalon. Sokszor kényelmesebb volt ezt használni a Webstorm debuggernél.
 
 \subsection{Wireshark}
 
-A Wireshark protokollanalizátor a Websockets forgalom vizsgálatára volt hasznos amit a~\ref{sec:simprof} fejezetben részletezek.
+A Wireshark protokollanalizátort a Websocket forgalom vizsgálására volt hasznos amit a~\ref{sec:simprof} fejezetben részletezek.
 
 \subsection{Lucidcharts}
 
@@ -149,7 +151,7 @@ A jelen szöveges dokumentumot Latex-ben írtam a diplomaterv portál sablonját
 \item A dokumentumot fel lehet darabolni több fájlba, akár több mélységben is, majd a fordító összefésüli,
 \item nem valószínű, hogy lokális módosítások elrontják a dokumentum egy másik részét,
 \item az ábrák egy helyre vannak gyűjtve, ki tudok cserélni egy ábrát úgy, hogy ne kelljen megnyitanom a szerkesztőt,
-\item kevésbé valószínű, hogy a Notepad jellegű szövegszerkesztőm lefagy, mint az, hogy egy bonyolultabb szövegszerkesztő lefagyjon,
+\item kevésbé valószínű, hogy a Notepad jellegű szövegszerkesztőm lefagy Latex forrás szerkesztése közben, mint az, hogy egy bonyolultabb szövegszerkesztő lefagyjon,
 \item könnyebbnek találtam az ábrák beszúrását és testreszabását.
 \end{itemize}
 
@@ -157,7 +159,7 @@ Sokszor nehéz debuggolni, hogy miért nem fordul le a dokumentum.
 
 \subsection{Git}
 
-Fontos volt, hogy a munkám ne vesszen el, így egy Git repository-ba helyeztem el, amit egy szerverre szinkronizáltam rendszeresen. A szöveges dokumentumot is beletettem a repository-ba, így a teljes munkám előző állapotait is tudtam böngészni.
+Fontos volt, hogy a munkám ne vesszen el, így egy Git repository-ba tettem, amit egy szerverre szinkronizáltam rendszeresen. A szöveges dokumentumot is beletettem a repository-ba, így a teljes munkám előző állapotait is tudtam böngészni.
 
 
 

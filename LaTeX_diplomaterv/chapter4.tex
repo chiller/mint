@@ -2,15 +2,13 @@
 \chapter{Az elvégzett munka}
 %----------------------------------------------------------------------------
 
-\pdfcomment[icon=Note]{insert: ide kell valami}
-
-
+Ebben a fejezetben a megvalósított alkalmazás tervezését és megvalósítását részletezem, helyenként indokolva a hozott döntéseket.
 
 %----------------------------------------------------------------------------
 \section{Rendszerterv}
 %----------------------------------------------------------------------------
 
-\pdfcomment[icon=Note]{insert: ide kell valami}
+A rendszerterv a célkitűzéssel kezdődik, majd a kollaborációs követelmények tisztázásával és a rendszer felépítésével folytatódik.
 
 \input{src/goal}
 
@@ -33,12 +31,12 @@ A kliens oldal egy AngularJS alkalmazás ami Model-View-Controller paradigmára 
 \begin{itemize}
 \item Adatkötés segítségével a modellben tárolt diagram frissen tartja a DOM-ban levő HTML elemekből álló diagramot, 
 \item a manipulálható diagram entitás, a legbonyolultabb vizuális elem, egy direktíva komponenssel van megvalósítva elszigetelve azt a logikát amivel kirajzolja magát. Ez a direktíva a modell rétegen keresztül kommunikálhat a kontrollerrel és a keretrendszer gondoskodik a DOM-ba helyezésért,
-\item a kliensoldali modell réteg nem más mint a \$scope névterében deklarált objektumok, ezt a kontrollerben meghatározott socket üzenet kezelők és API hívások módosítják. Adatkötés során bizonyos felhasználói események is közvetlenül a modellt változtatják,
+\item a kliensoldali modell réteg nem más mint a \$scope kontextusában deklarált objektumok, ezt a kontrollerben meghatározott socket üzenet kezelők és API hívások módosítják. Adatkötés során bizonyos felhasználói események is közvetlenül a modellt változtatják,
 \item a kontroller AngularJS-ben egy egyszerű függvény, amibe a keretrendszer függőségeket injektál, a legfontosabb ezekből a \$scope, ami összeköti a modell és a kontroller réteget. A kontrollerben deklarált \$scope-hoz kötött üzleti logika a DOM-ban is elérhető. A főbb funkciók amik a kliens oldalon vannak megvalósítva:
     \begin{itemize} 
     \item a közösen szerkesztett diagram frissítése és mentése: a felhasználó okozta módosítások egy szerveroldali API segítségével perzisztálódnak, mások által módosított adatok websocket üzeneteken keresztül érkeznek, 
     \item a ``soft locking'' nyilvántartja websocket üzenetek alapján, hogy ki szerkeszti éppen a diagramot és diagram elemek kiválasztásakor a többi résztvevőt értesíti. A többi résztvevőnek a diagramjában a felhasználóhoz rendelt színnel jelezve van, hogy melyik entitást jelölte ki,
-    \item a ``hash sync'' a diagram módosulásakor lenyomatot számol a diagram elemeiből és websocket üzeneteken keresztül értesíti a többi klienst, ha tartósan olyan lenyomatot küldenek, ami nem szerepelt a helyi legútóbbi lenyomatok közt, akkor kijelenthetjük, hogy eltér a két diagram valami hiba miatt. 
+    \item a ``hash sync'' a diagram módosulásakor lenyomatot számol a diagram elemeiből és Websocket üzeneteken keresztül értesíti a többi klienst, ha tartósan olyan lenyomatot küldenek, ami nem szerepelt a helyi legútóbbi lenyomatok közt, akkor kijelenthetjük, hogy eltér a két diagram valami hiba miatt. 
     \end{itemize}
 \end{itemize}
 
@@ -48,9 +46,9 @@ A szerver oldal egy NodeJS alkalmazás MongoDB adatbázissal.
 
 \begin{itemize}
 \item A diagram módosításához számos API végpont van, ezek ExpressJS segítségével vannak implementálva, a MongoDB adatbázisba mentenek és egyes hívásoknál a SocketAdapter-en keresztül broadcast üzeneteket küldenek a csatlakozott kliensekhez,
-\item a SocketAdapter egy csomagoló a Socket.IO keretrendszer köré ami beállítja a munkamenethez szükséges websocket üzenetkezelőket és menedzseli a felhasználók -- megnyitott diagram alapján -- a megfelelő socket szobába rendelését. A kliensek a szerveroldali socket szervert használják egymással való websocketes kommunikációhoz, 
+\item a SocketAdapter egy általam fejlesztett csomagoló a Socket.IO keretrendszer köré ami beállítja a munkamenethez szükséges websocket üzenetkezelőket és menedzseli a felhasználók -- megnyitott diagram alapján -- a megfelelő socket szobába rendelését. A kliensek a szerveroldali socket szervert használják egymással való Websocket kommunikációhoz, 
 \item a ``language API'' az a lefordított diagramokat teszi elérhetővé publikus API-n keresztül, ezt példáúl a NodeJS Repl\footnote{Read, Eval, Print, Loop - egy javascript parancssor NodeJS-hez} be tudja tölteni,
-\item a ``compile'' modul az adatbázisból kinyeri a diagramot és a transzformációs template-t és lefrodítja, így jön létre példáúl egy Javascript osztály a diagram alapján, ennek a kódját adatbázisba menti, 
+\item a ``compile'' modul az adatbázisból kinyeri a diagramot és a transzformációs template-t és lefordítja, így jön létre példáúl egy Javascript osztály a diagram alapján, ennek a kódját adatbázisba menti, 
 \item a ``fork'' funkció létrehoz egy új diagramot egy másik alapján, ez azért van szerveroldalon, mert egy bonyolultabb adat ``deep-copy''-jára van szükség, és mivel MongoDB nem támogat relációkat, óvatosan kell implementálni az új elemek létrehozását.
 \end{itemize}
 
@@ -93,7 +91,7 @@ A \lstinline{position} attribútum konkrétan a kliensoldali CSS pozícionálás
 }
 \end{lstlisting}
 
-Az élek nicsenek külön kollekcióban, hanem csak egy listában vannak a diagram rekordjában. A \lstinline{from} és \lstinline{to} attribútumok a ~\ref{entity} ábra rekordjaira utalnak. Mivel nincsen idegen kulcs fogalma MongoDB-ben, ez a reláció nincs ellenőrizve constraint-ek segítségével, ez azt jelenti, hogy, ha megváltozik egy entitás azonosítója, akkor nem változik meg a \lstinline{connections} tömb tartalma és ez adatbázis sem jelez hibát. Ha mégis megtörténne ilyen, a kliensoldalon a beazonosítatlan él végpontok élei kitörlődnek a diagramból. 
+Az élek nicsenek külön kollekcióban, hanem csak egy tömbben találhatóak a diagram rekordban. A \lstinline{from} és \lstinline{to} attribútumok a ~\ref{entity} ábra rekordjaira utalnak. Mivel nincsen idegen kulcs fogalma MongoDB-ben, ez a reláció nincs ellenőrizve constraint-ek segítségével, ez azt jelenti, hogy, ha megváltozik egy entitás azonosítója, akkor nem változik meg a \lstinline{connections} tömb tartalma és ez adatbázis sem jelez hibát. Ha mégis megtörténne ilyen, a kliensoldalon a beazonosítatlan él végpontok élei kitörlődnek a diagramból. 
 
 Nem biztos, hogy ez optimális felosztás és annak is lennének előnyei, hogy minden ami a dokumentumhoz tartozik egy kollekcióban van és gyakorlatilag egy dokumentum lekérdezéséhez csak egy rekordot szükséges adatbázisból lekérni. Egyrészt implementálni kell egy azonosító generálás mechanizmust ami az adatbázistól független, viszont nagyon leegyszerűsítené a diagram másolást.
 
@@ -105,11 +103,13 @@ A diagram másolás a jelen séma mellett megköveteli azt, hogy az összes ideg
 \section{A szerver oldali alkalmazás}
 %----------------------------------------------------------------------------
 
+A fontosabb főleg szerveroldalon megvalósult funkciók következnek.
+
 %----------------------------------------------------------------------------
 \subsection{API}
 %----------------------------------------------------------------------------
 
-Az AngularJS kliens egy API-n keresztül kommunikál a szerverrel a dinamikus tartalom lekérdezése és mentése céljából. Ez az API JSON adatokat szolgáltat, amit akár módosítás nélkül fel lehet használni a kliens oldalon betöltve egy AngularJS model-be; ugyanígy az API-nak beküldött új JSON objektumok módosítás nélkül a MongoDB adatbázisba íródnak. Az API több csomagoló függvényből áll, minden entitás típusra egy; egy ilyen csomagolófüggvényben a létrehozás, törlés, módosítás és olvasáshoz implementáltam függvényeket és ezeket a konkrét API-kat require segítségével betöltöm a \lstinline{routes} modul \lstinline{index.js} fájlba, ahol példányosítom. Két függősége is van egy ilyen API modulnak: az adatbázis kapcsolat és a socket szerver példány.
+Az AngularJS kliens egy API-n keresztül kommunikál a szerverrel a dinamikus tartalom lekérdezése és mentése céljából. Ez az API JSON adatokat szolgáltat, amit akár módosítás nélkül fel lehet használni a kliens oldalon betöltve egy AngularJS modellbe; ugyanígy az API-nak beküldött új JSON objektumok módosítás nélkül a MongoDB adatbázisba íródnak. Az API több csomagoló függvényből áll, minden entitás típusra egy; egy ilyen csomagolófüggvényben a létrehozás, törlés, módosítás és olvasáshoz implementáltam függvényeket és ezeket a függvényeket require segítségével betöltöm a \lstinline{routes} modul \lstinline{index.js} fájlba, ahol példányosítom. Két függősége is van egy ilyen API modulnak: az adatbázis kapcsolat és a socket szerver példány referenciája.
 
 \begin{lstlisting}[caption=API végpontok bekötése az alkalmazás URL szabályai közé]
     var DocumentApi = require('./api/docs.js');
@@ -145,9 +145,9 @@ Amikor id-ra hivatkozunk mindig szükséges egy \lstinline{BSONPure.ObjectID} p�
 \subsection{Kétirányú kommunikáció}
 %----------------------------------------------------------------------------
 
-Ha azt nézzük, hogy egyidejűleg x darab diagramot szerkeszt diagramonként y darab különböző felhasználó, akkor felmerül az a próbléma, hogy hogyan követjük nyomon, hogy milyen eseményeket milyen socket-ekre kell továbbítani, más szóval hogyan történjen a broadcast. Szerencsére a Socket.IO könyvtár ezt megoldja úgynevezett szoba funkcionalitással.
+Ha azt nézzük, hogy egyidejűleg \emph{x} darab diagramot szerkeszt diagramonként \emph{y} darab különböző felhasználó, akkor felmerül az a próbléma, hogy hogyan követjük nyomon, hogy milyen eseményeket milyen socket-ekre kell továbbítani, más szóval hogyan történjen a broadcast. Szerencsére a Socket.IO könyvtár ezt megoldja úgynevezett szoba funkcionalitással.
 
- Egy szobához hozzáadott socketek tudnak broadcast üzenetet küldeni a többi szobabeli socketnek, ráadásul a socketek eltávolítása is átlátszóan történik és nem kell memóriakezelési próblémákkal küzdeni. Így a socket kezelő szerver oldali logika meglehetősen egyszerű lesz, hiszen ez is a célja a Socket.IO könyvtárnak. 
+ Egy szobához hozzáadott socketek tudnak broadcast üzenetet küldeni a többi szobabeli socketnek, ráadásul a socketek eltávolítása is átlátszóan történik és nem kell memóriakezelési próblémákkal küzdeni. Így a socket-kezelő szerveroldali logika meglehetősen egyszerű lesz, hiszen ez is a célja a Socket.IO könyvtárnak. 
 
 Mivel minden szerkesztendő diagramhoz tartozik egy szoba, kézenfekvő a diagram azonosítóját beállítani a szoba neveként. A modularitást szem előtt tartva, a socket kezeléssel kapcsolatos funkcionalitást egy SocketAdapter nevű objektumba csomagoltam. A SocketAdapter példány példányosítja a Socket.IO szervert és gondoskodik az új kapcsolatok beállításáról, rajta keresztül lehet hívni Socket.IO függvényeket.
 
@@ -174,7 +174,7 @@ update = function(req, res) {
   }
 \end{lstlisting}
 
-A ~\ref{fig:entityupdate} ábrán és a ~\ref{entupdate} kódrészletben azt látjuk, hogyan zajlik a módosításokról való értesítés:
+A~\ref{fig:entityupdate} ábrán és a~\ref{entupdate} kódrészletben azt látjuk, hogyan zajlik a módosításokról való értesítés:
 
 \begin{enumerate}
 \item A kliensoldal meghívja az entitás módosító API-t,
@@ -192,10 +192,10 @@ A JSFiddle egyik funkcionalitása a projekt ``fork''-olása, ami azt jelenti, ho
 \item A kliensoldalon meghívjuk a fork API-t, példáúl 
 
 \url{/api/fork/5242aa48ddda9b0000000001/} címen,
-\item A fork API lekérdezi az adatbázisból a diagramot,
+\item a fork API lekérdezi az adatbázisból a diagramot,
 \item megváltoztatja a cím  attribútumát és kitörli az azonosítóját, így a következő lépésben ha ezt beszúrja akkor új rekord jön létre, ami a régi másolata,
 \item adatbázisból lekérdezi a régi diagram entitásait, 
-\item a régi entitások azonosítóját bemásolja a \lstinline{oldid} attribútumba és majd kitörli az azonosítót és beállítja az új diagram azonosítót. A végén visszaírja az adatbázisba, így ismét új rekordok jönnek létre,
+\item a régi entitások azonosítóját bemásolja az \lstinline{oldid} attribútumba majd kitörli az azonosítót és beállítja az új diagram azonosítót. A végén visszaírja az adatbázisba, így ismét új rekordok jönnek létre,
 \item most hogy az új diagram és entitások megvannak és azonosítójuk is van, az új diagram \lstinline{connections} tömbjében a régi entitásokra mutató azonosítókat ki kell cserélni az újakra,
 \item még egyszer el kell menteni az új diagramot,
 \item vissza kell térni a HTTP kérésre egy válasszal,
@@ -203,11 +203,11 @@ A JSFiddle egyik funkcionalitása a projekt ``fork''-olása, ami azt jelenti, ho
 \end{enumerate}
 
 
-A végén létrejön létrejön az eredeti diagram másolata mindenestül és függetlenül lehet szerkeszteni őket, továbbfejlesztési lehetőségként elképzelhető egy \lstinline{merge} funkció, ami összefésül két diagramot. 
+A végén létrejön az eredeti diagram másolata mindenestül és függetlenül lehet szerkeszteni a két diagramot, továbbfejlesztési lehetőségként elképzelhető egy \lstinline{merge} funkció, ami összefésül két diagramot. 
 
-Ez egy nagyon jó példa arra, amit nehéz megszokni NodeJS-ben, pontosabban az, hogy mivel ez a kód aszinkron, a fenti lépések miatt a kód legmélyebb része már a tizedik indentáció mélységen van és már nem fér ki vízszintesen. Ilyenkor megoldás az, hogy a callback függvénynek nevet adunk és a fő függvény törzsén kívül deklaráljuk:
+Ez egy nagyon jó példa arra, amit nehéz megszokni NodeJS-ben, pontosabban az, hogy mivel ez a kód aszinkron, a fenti lépések miatt a kód legmélyebb része már a tizedik indentáció mélységen van és már nem fér ki vízszintesen a kódszerkesztőben. Ilyenkor megoldás az, hogy a callback függvénynek nevet adunk és a fő függvény törzsén kívül deklaráljuk:
 
-\begin{lstlisting}[caption=callback pokol megoldása]
+\begin{lstlisting}[caption=A \emph{callback pokol} elkerülése]
 var updatecallback = function(err, data, res) {
     res.json(data);
 }
@@ -217,7 +217,7 @@ var update = function(req, res) {
 }
 \end{lstlisting}
 
-Ezt a szituációt callback ``pokolnak'' hívják és van rá megoldás különböző könyvtárak formájában mint példáúl async.js, aminek segítségével egymásbaágyazott callback hívások helyett függvényláncolás lesz.
+Ezt a szituációt callback ``pokolnak'' hívják és van rá megoldás különböző modulokban mint példáúl async.js, aminek segítségével egymásbaágyazott callback hívások helyett függvényláncolást használunk.
 
 %----------------------------------------------------------------------------
 \section{A kliens oldali alkalmazás}
@@ -227,7 +227,7 @@ Ezt a szituációt callback ``pokolnak'' hívják és van rá megoldás különb
 
 Az AngularJS alkalmazásomnak a fő építőelemei a szolgáltatások, direktívák és kontrollerek. A kontrollerek a DOM egy részéért felelnek összekapcsolva a modellt és a view-t; a direktívák a HTML kiterjesztését valósítják meg új elemekkel, amik újrafelhasználható UI komponenseket hoznak létre; a szolgáltatások ugyancsak újrafelhasználható függőségek, amiket tetszőleges más komponensbe lehet injektálni.
 
-A külső függőségei: 
+A kliens oldali alkalmazás külső függőségei: 
 \begin{enumerate}
 \item az AngularJS könyvtár, 
 \item az underscoreJS könyvtár ami funkcionális programozási elemekkel bővíti a nyelvet,
@@ -242,7 +242,7 @@ Az első próbálkozásaimban nyilakat a HTML SVG path segítségével próbált
 
 A Jade egy olyan markup nyelv ami HTML-t helyettesít, az a fő különbség, hogy a fa nem XML alapú, hanem a gyerekek indentációval különülnek el a szülőtől, ez amúgy is általánosságban szokás, viszont így nincs rá szükség, hogy be is zárjunk HTML elemeket. Az eredmény karakterszámon spórol és olvashatóbb markupot eredményez. A Jade template a Node alkalmazásban fordul le HTML tartalommá. A Jade valóban template rendszer is, tartalmaz példáúl elégazásokat, de én csak markupként használtam, a logika az az Angular kontrollerekre van bízva.
 
-Template öröklés úgy működik, hogy az \lstinline{extends} paranccsal megjelöljük, hogy ki melyik template a szülő template. A szülőben \lstinline{block} elemeket hozhatunk létre és az ezekben levő DOM rész felülírható a gyerek template-ben. 
+Template öröklés úgy működik, hogy az \lstinline{extends} paranccsal megjelöljük, hogy melyik template a szülő template. A szülőben \lstinline{block} elemeket hozhatunk létre és az ezekben levő DOM rész felülírható a gyerek template-ben. 
 
 Egy hasznos funkció benne a kikommentezés, ami úgy használandó mint a Javascript egy soros komment, viszont a szülő kikommentezése a gyerekek kikommentezését is maga után vonja, így se két helyen nem kell kommentezési parancsot tenni a markupba (a HTML esetében nyitó és záró komment tag kellett) se kiválasztani nem kell a kommentezendő DOM részt.
 
@@ -279,9 +279,9 @@ Az ntDraggable direktíva a mozgatható diagram dobozokat valósítja és a
 kód szúrja be őket a DOM-ba. Az adatkötésnek köszönhetően, ha az entities tömb bővül, vagy ritkul, vagy egy eleme megváltozik, akkor ez a DOM-ban is érvényesül. Ez a direktíva egy HTML template-t is meghatároz a mozgatható entitásnak, gyakorlatilag olyan mintha az eredeti DOM-ban lenne ez a HTML, de, ha új helyre szeretnénk másolni a funkcionalitást nem kell lemásolni. A template a következőket tartalmazza:
 
 \begin{enumerate}
-\item Egy gyerek div ami a \lstinline|{{entity.title}}| kötésen keresztül a doboz nevét írja ki,
+\item Egy gyerek div elem ami a \lstinline|{{entity.title}}| kötésen keresztül a doboz nevét írja ki,
 \item A model megváltozása esetében a pozíciót is tudom frissíteni CSS attribútumra való kötéssel: \lstinline| style='top:{{entity.position.top}}px;left:{{entity.position.left}}px'|
-\item Egy entitás kiválasztása esetében egy CSS osztályt kell hozzáadni a szülőhöz, jelezva , hogy ki van választva. Az AngularJS szolgáltat erre egy \lstinline{ng-class} direktívát ami feltételes CSS class beállítást valósít meg. 
+\item Egy entitás kiválasztása esetében egy CSS osztályt kell hozzáadni a szülőhöz, jelezve, hogy ki van választva. Az AngularJS szolgáltat erre egy \lstinline{ng-class} direktívát ami feltételes CSS osztály beállítást valósít meg. 
 \item \lstinline|id={{entity._id}}| Az entitás adabázis azonosítója egy az egyben a DOM id lesz -- egy nagyon kézenfekvő megoldás.
 \item A többi felhasználó kijelölését egy kis doboz jelöli, ami a felhasználóhoz rendelt színnel lesz kiszínezve.
 \end{enumerate}
@@ -295,7 +295,7 @@ kód szúrja be őket a DOM-ba. Az adatkötésnek köszönhetően, ha az entitie
 
 Az ntDraggable direktíva egy \lstinline{link} függvényt is meghatároz, ennek a törzse pont az a hely ahova a DOM manipuláció és eseménykezelő logikát akarjuk tenni -- pontosabban itt az egérrel való tologatást állítom be. Itt látszik, hogy ez a DOM manipuláció függetlenítve van a prezentációs rétegtől és az alkalmazás többi részétől, ami tesztelhetőség és újrafelhasználás szempontjából értelmes. 
 
-Ahhoz, hogy a div mozgatása a jsPlumb élek mozgatását vonja maga után nem \lstinline{jQuery.draggable}-t kell használni, hanem \lstinline{jsPlumb.draggable}-t, ami kiterjeszti az előbbit. A DOM irányából a kötés a modelhez csak a \lstinline{stop} draggable eseményre történik, mert nem akarunk minden egérmozgatásról értesíteni a többi felhasználót, az nem csak hogy pazarló lenne, hanem zavaró is, így csak akkor terjed a módosítás , ha új helyre engedjük el a dobozt.
+Ahhoz, hogy a div mozgatása a jsPlumb élek mozgatását vonja maga után nem \lstinline{jQuery.draggable}-t kell használni, hanem \lstinline{jsPlumb.draggable}-t, ami kiterjeszti az előbbit. A DOM irányából a kötés a modelhez csak a \lstinline{stop} draggable eseményre történik, mert nem akarunk minden egérmozgatásról értesíteni a többi felhasználót, az nem csak hogy pazarló lenne, hanem zavaró is, így csak akkor terjed a módosítás, ha új helyre engedjük el a dobozt.
 
 Az élhúzás egyszerűség kedvéért ugyancsak egér kattintás és húzogatással történik, de nem a dobozt húzzuk, hanem a nevét, ekkor a jsPlumb gondoskodik az új ideiglenes lógó él kirajzolásáról. Ehhez jsPlumb \lstinline{makeSource} és \lstinline{makeTarget} parancsokat kell hívni, ezek beállítják a cím dobozokat mint cél és forrás a jsPlumb élekhez.
 
@@ -319,9 +319,9 @@ Ez a direktíva azt csinálja meg, hogy amilyen input elemhez csatoljuk, annak a
 
 \subsubsection{ntDelete}
 
-Az ndDelete direktíva a billentyű funkciókért felelős, amiből kettő van: entitás létrehozás (E gomb) és törlés (backspace gomb). A triviális megoldás az, hogy a document elemre egy \lstinline{keydown} eseménykezelőt állítunk be. Ez sajnos nem elég, mert, ha éppen szöveget szerkesztünk az oldalon, akkor arra is reagálni fog. A direktíva eseménykezelője megkülönbözteti, hogy az eseményt fogadó elem input vagy textarea elem-e és ha igen, akkor az alapértelmezett működés következik be, egyébként meg a backspace hatására az éppen kijelölt entitást vagy élt kitörli.
+Az ntDelete direktíva a billentyű funkciókért felelős, amiből kettő van: entitás létrehozás (E gomb) és törlés (backspace gomb). A triviális megoldás az, hogy a document elemre egy \lstinline{keydown} eseménykezelőt állítunk be. Ez sajnos nem elég, mert, ha éppen szöveget szerkesztünk az oldalon, akkor arra is reagálni fog. A direktíva eseménykezelője megkülönbözteti, hogy az eseményt fogadó elem input vagy textarea elem-e és ha igen, akkor az alapértelmezett működés következik be, egyébként meg a backspace hatására az éppen kijelölt entitást vagy élt kitörli.
 
-Fontos megjegyezni, hogy az olyan callback, ami nem AngularJS része, példáúl egy jQuery eseménykezelő, nem fogja az adatkötés frissítését kiváltani, tehát ha backspace gombnál kitörlünk egy entitást a model lsitából, ez a DOM-ban nem fog érvényesülni, ilyenkor \lstinline{$scope.$apply();} parancsot kell hívni. 
+Fontos megjegyezni, hogy az olyan callback, ami nem AngularJS része, példáúl egy jQuery eseménykezelő, nem fogja a DOM frissítését kiváltani, tehát ha backspace gombnál kitörlünk egy entitást a model listából, ez a DOM-ban nem fog érvényesülni, ilyenkor \lstinline{$scope.$apply();} parancsot kell hívni. 
 
 %----------------------------------------------------------------------------
 \subsection{Szolgáltatások}
@@ -385,7 +385,7 @@ Ez a szolgáltatás beállítja az alapértelmezett jsPlumb paramétereket:
 \item  rögzítési pont -- ez esetben folytonos -- ami azt jelenti, hogy nem diszkrét számú pontra illeszkedhet, hanem a doboz kerülete mentén egy közelebbi ponthoz fog kapcsolódni a másik doboz helyzetéhez képest.
 \end{enumerate}
 
-Két metódust szolgáltat : új élek létrehozása és egy új diagram betöltésekor  vagy váltáskor az élek felrajzolása egy éllista alapján.
+Két metódust szolgáltat: új élek létrehozása és egy új diagram betöltésekor  vagy váltáskor az élek felrajzolása egy éllista alapján.
 Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell ezt megvalósítani.
 
 \subsection{Függőségek vizualizálása}
@@ -398,8 +398,8 @@ Nincsen adatkötés az élek és az AngularJS modellek között, ezért itt kell
 \end{figure}
 
 
-\cite{https://github.com/angular/angularjs-batarang/blob/master/README.md}
-A Batarang nevű kiegészítés a Google Chrome böngészőhöz egy AngularJS debuggoló eszköz, a ~\ref{fig:angulardependencies} ábrán látszik a függőségek vizualizálása, ami az egyik eszköz a Batarang-ban. A kör mentén fel vannak sorakoztatva a beépített -- általában \$-vel kezdődő nevűek -- és a fejlesztő által implementált komponensek: szolgáltatások, direktívák, filterek. A függőségi gráfban egy komponenst kiválasztva zöld színű élek mutatnak az őt felhasználó komponensekre, a pirosak meg azokra mutat akiket ő használ fel.
+
+A Batarang nevű kiegészítés\footnote{\url{https://github.com/angular/angularjs-batarang/blob/master/README.md}} a Google Chrome böngészőhöz egy AngularJS debuggoló eszköz, a ~\ref{fig:angulardependencies} ábrán látszik a függőségek vizualizálása, ami az egyik eszköz a Batarang-ban. A kör mentén fel vannak sorakoztatva a beépített -- általában \$-vel kezdődő nevűek -- és a fejlesztő által implementált komponensek: szolgáltatások, direktívák, filterek. A függőségi gráfban egy komponenst kiválasztva zöld színű élek mutatnak az őt felhasználó komponensekre, a pirosak meg azokra mutat akiket ő használ fel.
 
 
 
@@ -408,10 +408,10 @@ A Batarang nevű kiegészítés a Google Chrome böngészőhöz egy AngularJS de
 
 \begin{itemize}
 \item A kontroller betöltésekor lekéri a DocumentService-től az összes diagramot és majd az elsőt betölti,
-\item defineál egy inicializáló metódust ami a diagram betöltését valósítja meg. Ekkor bizonyos változók újra az eredeti értéküket kapják meg, majd frissülnek az API-ból a diagram adatai, az entitásokat lekéri és inicializálja az éleket. A végén socket üzenetet küld arról, hogy az új diagramra váltott és a szerveroldalon egy másik socket szobába kerül;
+\item defineál egy inicializáló metódust ami a diagram betöltését valósítja meg. Ekkor bizonyos változók újra az eredeti értéküket kapják meg, majd frissülnek az API-ból a diagram adatai, az entitásokat lekéri és inicializálja az éleket. A végén Websocket üzenetet küld arról, hogy az új diagramra váltott és a szerveroldalon egy másik socket szobába kerül;
 \item lehetővé teszi az új diagram létrehozását,
 \item lehetővé teszi az entitások kiválasztását, ami kitörli az esetleges jelzést értesíti a többi felhasználót,
-\item diagram manipuláció websocket üzenetekre deklarál kezelőket, ezek az üzenetek a következők:
+\item diagram manipuláció Websocket üzenetekre deklarál kezelőket, ezek az üzenetek a következők:
 \begin{itemize}
 \item entity:create
 \item entity:update
@@ -428,8 +428,8 @@ Ekkor törölni kell az éleket a jsPlumb segítségével, hogy ne legyenek lóg
 \end{itemize}
 
 \item a \lstinline{chat} üzenet kezelőjében nyilvántartásba veszi a csatlakozott felhasználókat,
-\item a \lstinline{mark} üzenet kezelőjében frissíti a entitás megjelöléseket,
-\item a \lstinline{sync} üzenet kezelőjében összeegyezteti a saját diagramlenyomatait a többi felhasználóéval,
+\item a \lstinline{mark} üzenet kezelőjében frissíti az entitás megjelöléseket,
+\item a \lstinline{sync} üzenet kezelőjében összeegyezteti a saját diagram hash lenyomatait a többi felhasználóéval,
 \item entitások és élek manipulálására szolgáló segédfüggvények,
 \item a diagram változásaira figyelő függvényt kapcsol, ez rendszeresen lenyomatot számol a gráfból.
 
@@ -442,7 +442,7 @@ Ekkor törölni kell az éleket a jsPlumb segítségével, hogy ne legyenek lóg
 \subsection{Diagram hash}
 %----------------------------------------------------------------------------
 
-Ahhoz, hogy össze lehessen hasonlítani két különboző kliens által látott diagramot kézenfekvőnek tartottam egy hash értéket számolni a diagram alapján. A hash értéke úgy számolódik, hogy a diagram entitásait azonosító szerint sorrendezem és egy tömbbe pakolom, majd a tömb szerializált formájából egy MD5 hash-t számolok. Mivel sorrendezve vannak az entitások várhatóan két egyforma diagramnak ugyanaz lesz a hash értéke.
+Ahhoz, hogy össze lehessen hasonlítani két különboző kliens által látott diagramot kézenfekvőnek tartottam egy hash értéket számolni a diagram alapján. A hash értéke úgy számolódik, hogy a diagram entitásait azonosító szerint sorrendezem és egy tömbbe pakolom, majd a tömb szerializált formájából egy MD5 hasht számolok. Mivel sorrendezve vannak az entitások várhatóan két egyforma diagramnak ugyanaz lesz a hash értéke.
 
 A hash számolása nem explicit módon van meghívva, hanem egy AngularJS eszköz segítségével, a \lstinline{watch} paranccsal, ami a modell egy részének a változásait figyeli és a beállított callback metódust meghívja, ha változik a modell.
 
@@ -464,7 +464,5 @@ Ez a késleltetés megoldja azt a nehézséget, hogy két kliens normális kör�
 \input{src/compile}
 
 
-
-\input{src/next}
 
 

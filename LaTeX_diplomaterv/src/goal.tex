@@ -1,6 +1,6 @@
 \subsection{Célkitűzés}
 
-A szakdolgozatom célkitűzése egy olyan alkalmazás, ami vizuális programozási nyelvek vagy adatmodellezési nyelvek fejlesztését teszi lehetővé kollaboratívan és mindezt egy böngészőalkalmazás keretein belül.
+A diplomamunkám célkitűzése egy olyan alkalmazás, ami vizuális programozási nyelvek vagy adatmodellezési nyelvek fejlesztését teszi lehetővé kollaboratívan és mindezt egy böngészőalkalmazás keretein belül.
 
 A másodlagos cél egy teljes alkalmazás építése Javascript alapon korszerű technológiák felhasználásával mint AngularJS, NodeJS, MongoDB.
 
@@ -15,14 +15,14 @@ A koncepció nagyjából a két alkalmazás közötti átmenet, kiegészítve az
 
 A felhasználás amire én terveztem az domén-specifikus modellezéssel való kiegészítése tetszőleges alkalmazásnak. Két példával is ábrázolom ezt az ötletet:
 \begin{enumerate}
-\item Egy interaktív videó webalkalmazás\footnote{vidzor.com} egyik fő funkciója a ``video linking'', amivel a videó lejátszás közben felhasználói eseménytől függően dinamikusan egy másik videó játszódik le -- hasonlóan a weboldalak esetében használt linkre. De ennél még érdekesebb az, hogy több ágon is lehet továbbhaladni egy videonézés közben, más szóval interaktív a video nézési élmény. 
+\item Egy interaktív videó webalkalmazás\footnote{vidzor.com} egyik fő funkciója a ``video linking'', amivel a videó lejátszás közben felhasználói eseménytől függően dinamikusan egy másik videó játszódik le -- hasonlóan a weboldalak esetében használt linkre. De ennél még érdekesebb az, hogy több ágon is lehet továbbhaladni egy videonézés közben, más szóval interaktív a videó nézési élmény. 
 
-Ekkor eléggé triviális azt gondolni, hogy ez egy gráf lehet reprezentálni, ahol a videók csúcsok és a kimenő élek az elágazási lehetőségek. Nagyobb gráf esetén átláthatatlanná válhat egy ilyen videó élmény szerkesztője; én egy ilyen funkciónak a támogatására képzelem, hogy alkalmas a szakdolgozatom munkája. Megjegyzem, hogy ehhez ki kellene terjeszteni a szerkesztőt a video galéria letöltésére többek között. 
-\item Egy munkafolyamat menedzselő alkalmazás: bizonyos állapotátmenetekkel modellezhető folyamat alapján állítanak elő termékeket. A webalkalmazás ami ezt a folyamatot kiegészíti állapotfüggő webes felülettel kiegészíthető egy olyan komponenssel ami nem csak, hogy vizualizálja az állapotgépet, de szerkeszthetővé teszi és kódot is fordít, ami beépül mint állandó komponens. 
+Ekkor eléggé triviális következtetésnek tartom, hogy ezt egy gráffal lehet jól ábrázolni, ahol a videók csúcsok és a kimenő élek az elágazási lehetőségek. Nagyobb gráf esetén átláthatatlanná válhat egy ilyen videó élmény szerkesztője; én egy ilyen funkciónak a támogatására képzelem, hogy alkalmas a diplomamunkám. Megjegyzem, hogy ehhez ki kellene terjeszteni a szerkesztőt a video galéria letöltésére többek között. 
+\item Gondoljunk egy munkafolyamat támogató alkalmazásra. Egy cég bizonyos állapotátmenetekkel modellezhető folyamat alapján állít elő fizikai termékeket és ehhez van egy létező munkafolyamat támogató rendszer. A webalkalmazás ami ezt a folyamatot kiegészíti állapotfüggő webes felülettel kiegészíthető egy olyan komponenssel ami nem csak, hogy vizualizálja az állapotgépet, de szerkeszthetővé teszi és kódot is fordít, ami beépül mint állandó komponens. 
 
 \end{enumerate}
 
-A szakdolgozat keretein belül én a második felhasználói esetet mutatom be példaként: a szerkeszthető állapot diagram alapján egy állapotgép osztályt fordítok le, majd ezt betöltöm egy külső alkalmazásba, példányosítom és használom.
+A diplomamunka keretein belül én a második felhasználói esetet mutatom be példaként: a szerkeszthető állapot diagram alapján egy állapotgép osztályt fordítok le, majd ezt betöltöm egy külső alkalmazásba, példányosítom és használom.
 
 \begin{figure}[!ht]
 \centering

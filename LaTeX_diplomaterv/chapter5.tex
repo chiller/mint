@@ -2,17 +2,12 @@
 \chapter{Teljesítményelemzés és optimalizálás}
 %----------------------------------------------------------------------------
 
-(3-4 oldal)
-
-Derp derp, valami szöveg. Árvíztűrő tükörfúrógép.
-
-Selenium tesztek
+A teljesítményelemzést három esetre végeztem el: azt vizsgáltam, hogy mennyire érzékeny a kollaboráció a rossz internet kapcsolatra, azt, hogy a kliensoldali felület mennyire lassul be a diagram nagyságának függvényében és utolsó sorban azt, hogy az adatbázis mennyire gyors, ha sok adatot tartalmaz. 
 
 
 %----------------------------------------------------------------------------
 \section{Kollaborációs teljesítményelemzés}
 %----------------------------------------------------------------------------
-
 
 %----------------------------------------------------------------------------
 \subsection{Szimuláció}
@@ -38,8 +33,7 @@ A fejlesztés korábbi stádiumában meg kellett győződni, hogy az alkalmazás
 
 A rossz internet kapcsolat szimulálásához OSX-en a Network Link Conditioner alkalmazást használtam, ami az XCode fejlesztőkörnyezet egy kiterjesztése. A felhasználói felülete elég egyszerű és maximálisan megfelel a funkcionalitása a szimulációhoz, ezen kívül a létező profilok is hasznosak, ha példáúl egy gyenge jelű 3G kapcsolatot akarunk szimulálni. A paraméter amire kiváncsi voltam az a csomagvesztési arány volt, úgy azt kezdtem állítani egyre magasabb értékre. Az eszköz bekapcsolása után a ping parancssoros eszköz segítségével egy publikus ip-t pingelve\footnote{példáúl \lstinline{ping www.google.com}} kipróbáltam, hogy valóban akkora a csomagvesztés.
 
-Az eredmény meglepő volt: már olyan csomagvesztési aránynál, ami nekem kicsinek tűnt, példáúl 10-20\% ?????nem lehetett bongeszni????
-de a diagram egyezett a két felhasználónak. Wireshark protokolanalizátor segítségével megvizsgáltam, hogy ez miért is lehet, hogy nem veszett el esemény:
+Az eredmény meglepő volt: már olyan magas csomagvesztési aránynál, aminél már nehézkes volt a weboldalak böngészése (10-20\%) a diagram egyezett a két felhasználónak. Wireshark protokolanalizátor segítségével megvizsgáltam, hogy ez miért is lehet, hogy nem veszett el esemény, ezt a~\ref{fig:wireshark} ábra mutatja be.
 
 
 \begin{figure}[!ht]
@@ -65,7 +59,7 @@ A kliens oldali teljesítményelemzés célja megvizsgálni, hogy a felületen l
 
 A méréshez szkriptet hoztam létre, ami állítható számú elemet hoz létre egy diagramban, majd ezeket össze is köti éllel. Ez a szkript egy MongoDB szkript, mivel sokkal egyszerűbb az adatbázist manipulálni, mint a felületen automatizálni az akár több száz elem létrehozását. 
 
-Első körben csak elemeket hozattam létre és éleket még nem, és azt tapasztaltam, hogy jól teljesít az alkalmazás, majd kiegészítettem élekkel is, hiszen ez azért fontos, mert az éleket nem az AngularJS menedzseli, hanem a jsPlumb. A mérésekhez, ahogyan a ~\ref{fig:plumb} ábrán is látszik nagyjából egyenletesen állítottam be élszámot és mértem egyszerű Javascript időbélyegek segítségével a diagram felépítési idejét, vagyis a legelső kirajzolást. Az eredmény nem túl bíztató, már 50 él körül ez a felépítési idő meghaladja az 1 másodpercet. Chrome Developer Toolbar segítségével futásidejű analízist végeztem és kiderült, hogy valóban a jsPlumb élhozzáadó és gráfrajzoló műveletei dolgoznak sokáig. 
+Első körben csak elemeket hozattam létre és éleket még nem, és azt tapasztaltam, hogy jól teljesít az alkalmazás, majd kiegészítettem élekkel is, hiszen ez azért fontos, mert az éleket nem az AngularJS menedzseli, hanem a jsPlumb. A mérésekhez, ahogyan a~\ref{fig:plumb} ábrán is látszik nagyjából egyenletesen állítottam be élszámot és mértem egyszerű Javascript időbélyegek segítségével a diagram felépítési idejét, vagyis a legelső kirajzolást. Az eredmény nem túl bíztató, már 50 él körül ez a felépítési idő meghaladja az 1 másodpercet. Chrome Developer Toolbar segítségével futásidejű analízist végeztem és kiderült, hogy valóban a jsPlumb élhozzáadó és gráfrajzoló műveletei dolgoznak sokáig. 
 
 Sajnos a felépítési idő rosszabb mint lineárisan növekedik az élek számától függően és elég sok él esetében (700 körül) egy percbe telik mire kirajzolja a gráfot.  
 
@@ -143,9 +137,9 @@ Nézzünk meg egy ilyen lekérdezést a MongoDB shellben:
 \end{lstlisting}
 
 
-A [?] példában nem a lekérdezést lehet látni, hanem a lekérdezés tervet. Ez a terv sok fontos információval szolgál, ha optimalizálni akarunk:
+A fenti példában nem a lekérdezést lehet látni, hanem a lekérdezés tervet. Ez a terv sok fontos információval szolgál, ha optimalizálni akarunk \cite{mongoexplain}:
 
-[reference http://docs.mongodb.org/manual/reference/method/cursor.explain/]
+
 
 \begin{itemize}
                         
@@ -187,7 +181,7 @@ Rekordok száma & Lekérdezési idő ezredmásodpercben \\
 
 Látszik, hogy elég sok rekordnál, egy diagram elemeinek lekérdezése már másodperc nagyságrendű időbe telik. Ez még tolerálható lehetne, mert 10000 felhasználóig valószínüleg 2000000 alatt maradna az összes entitás száma és a lekérdezések nagy része úgyis elsődleges kulcs alapú -- ami gyors. A 10000-es nagyságrendet meghaladva felhasználó számban (feltéve, hogy átlagban egy felhasználó 100 elemet hoz létre összesen) már túl lassúnak bizonyulna ez a megoldás.
 
-Megvizsgáltam mennyire hatékony lehet a megoldás erre a próblémára, nyilvánvalóan indexelni kell a \lstinline{document} attribútumás az entitás kollekciónak és ez a következőképpen történik a MongoDB shellben:
+Megvizsgáltam mennyire hatékony lehet a megoldás erre a próblémára, nyilvánvalóan indexelni kell a \lstinline{document} attribútumát az entitás kollekciónak és ez a következőképpen történik a MongoDB shellben:
 
 \begin{lstlisting}[caption=Index létrehozása]
 > db.entities.ensureIndex({document: 1})

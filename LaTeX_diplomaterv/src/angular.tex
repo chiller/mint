@@ -16,7 +16,7 @@ Az AngularJS egy nyílt forrású JavaScript keretrendszer ami ``single-page''\f
 %\label{fig:angularhtml}
 %\end{figure}
 
-A hagyományos weboldal esetében a böngészőben megjelenített HTML a szerver oldali alkalmazás által van létrehozva.  A single-page alkalmazás ebben az esetben úgy jön létre, hogy AJAX felhasználásával betöltés után töltődnek be újabb részei az oldalnak\cite{angularbook}. AngularJS esetében ez a művelet a kliens oldalra kerül így a szerver inkább egy adatforrás és statikus tartalom szolgáltatóvá válik. Így lazább csatolást érünk el a szerver és kliens oldal között esetleg párhuzamosítva a fejlesztést és növelve az újrafelhasználhatóságot\cite{AngularDocConcepts}.
+A hagyományos weboldal esetében a böngészőben megjelenített HTML a szerver oldali alkalmazás által van létrehozva.  A single-page alkalmazás ebben az esetben úgy jön létre, hogy AJAX felhasználásával betöltés után töltődnek be újabb részei az oldalnak \cite{angularbook}. AngularJS esetében ez a művelet a kliens oldalra kerül így a szerver inkább egy adatforrás és statikus tartalom szolgáltatóvá válik. Így lazább csatolást érünk el a szerver és kliens oldal között esetleg párhuzamosítva a fejlesztést és növelve az újrafelhasználhatóságot \cite{AngularDocConcepts}.
 
 
 
@@ -42,7 +42,7 @@ Beépített direktívák vannak, példáúl \lstinline{ng-repeat}, \lstinline{ng
 
 \subsection{Model-View-Controller}
 
-Az MVC architektúra a desktop alkalmazások világában lett népszerű és csak az utóbbi években terjedt a webes alkalmazások világába. Az alap ötlet a tiszta elválasztása az adat kezelésnek (modell), az üzleti logikának (kontroller) és a megjelenítésnek (nézet). AngularJS alkalmazásokban a nézet a Document Object Model, a kontrollerek Javascript objektumok vagy függvények, és további objektum attribútumokban van tárolva a model.   
+Az MVC architektúra a desktop alkalmazások világában lett népszerű és csak az utóbbi években terjedt a webes alkalmazások világába. Az alap ötlet a tiszta elválasztása az adat kezelésnek (modell), az üzleti logikának (kontroller) és a megjelenítésnek (nézet). AngularJS alkalmazásokban a nézet a Document Object Model, a kontrollerek Javascript objektumok vagy függvények, és további objektum attribútumokban van tárolva a modell.   
 
 \subsubsection{Adatkötés}
 
@@ -62,7 +62,7 @@ Ekkor az input mező módosítása automatikusan a model-t is frissíti és ez a
 
 Függőséginjektálás egy szoftver tervezési minta amiben beégetett függőségek helyett kicserélhető komponenseket használunk amiket akár futás időben is cserélhetünk. 
 
-Ez egység tesztelés esetében válik hasznossá, hiszen jobban lehet izolálni alkalmazás logikát azzal, hogy függőségeket kicserélünk a tesztekben egy úgynevezett ``mocked'' függőséggel. Egy jó példa olyan függőségre amit teszt esetekben ki szeretnénk cserélni egy olyan kódrészlet ami egy különálló rendszernek az API-ját használja ráadásul állapotmódosítással járuló módon, amikor ezt ``mock-oljuk'', akkor tesztelni tudjuk az API felhasználását az API meghívása nélkül.
+Ez egység tesztelés esetében válik hasznossá, hiszen jobban lehet izolálni alkalmazás logikát azzal, hogy függőségeket kicserélünk a tesztekben egy úgynevezett ``mocked'' függőséggel. Egy jó példa olyan függőségre amit teszt esetekben ki szeretnénk cserélni egy olyan kódrészlet ami egy különálló rendszernek az API-ját használja ráadásul állapotmódosítással járó módon, amikor ezt ``mock-oljuk'', akkor tesztelni tudjuk az API felhasználását az API meghívása nélkül.
 
 Egy kontroller a DOM -- vagy a nézet -- egy bizonyos részéhez van kötve, és függőséginjektálás során egy úgynevezett scope kontextus objektumhoz fér hozzá amin keresztül a modellhez férünk hozzá. Ez az elválasztás segít az újrafelhasználásban és karbantarthatóságban, mert, minden kontroller csak azt lát amit kell, hogy lásson és nem ``szennyezzük'' a globális környezetet. 
 
